@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/home/lain/projetqt/employer/build",
+  "command": "/usr/sbin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/lain/projetqt/employer/build/interface_autogen/include -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -O3 -DNDEBUG -mno-direct-extern-access -o CMakeFiles/interface.dir/interface_autogen/mocs_compilation.cpp.o -c /home/lain/projetqt/employer/build/interface_autogen/mocs_compilation.cpp",
+  "file": "/home/lain/projetqt/employer/build/interface_autogen/mocs_compilation.cpp",
+  "output": "CMakeFiles/interface.dir/interface_autogen/mocs_compilation.cpp.o"
+},
+{
+  "directory": "/home/lain/projetqt/employer/build",
+  "command": "/usr/sbin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/lain/projetqt/employer/build/interface_autogen/include -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -O3 -DNDEBUG -mno-direct-extern-access -o CMakeFiles/interface.dir/main.cpp.o -c /home/lain/projetqt/employer/main.cpp",
+  "file": "/home/lain/projetqt/employer/main.cpp",
+  "output": "CMakeFiles/interface.dir/main.cpp.o"
+},
+{
+  "directory": "/home/lain/projetqt/employer/build",
+  "command": "/usr/sbin/c++ -DQT_CORE_LIB -DQT_GUI_LIB -DQT_NO_DEBUG -DQT_WIDGETS_LIB -I/home/lain/projetqt/employer/build/interface_autogen/include -isystem /usr/include/qt6/QtCore -isystem /usr/include/qt6 -isystem /usr/lib/qt6/mkspecs/linux-g++ -isystem /usr/include/qt6/QtWidgets -isystem /usr/include/qt6/QtGui -O3 -DNDEBUG -mno-direct-extern-access -o CMakeFiles/interface.dir/MainWindow.cpp.o -c /home/lain/projetqt/employer/MainWindow.cpp",
+  "file": "/home/lain/projetqt/employer/MainWindow.cpp",
+  "output": "CMakeFiles/interface.dir/MainWindow.cpp.o"
+}
+]

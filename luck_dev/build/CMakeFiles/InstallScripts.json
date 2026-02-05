@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/lain/luck_dev/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

@@ -1,0 +1,1 @@
+/usr/sbin/c++ -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/luck_dev.dir/link.d CMakeFiles/luck_dev.dir/luck_dev_autogen/mocs_compilation.cpp.o CMakeFiles/luck_dev.dir/main.cpp.o CMakeFiles/luck_dev.dir/mainwindow.cpp.o -o luck_dev  /usr/lib/libQt6Widgets.so.6.10.2 /usr/lib/libQt6Gui.so.6.10.2 /usr/lib/libGLX.so /usr/lib/libOpenGL.so /usr/lib/libQt6Core.so.6.10.2
