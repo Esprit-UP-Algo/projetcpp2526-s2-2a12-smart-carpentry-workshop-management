@@ -1,0 +1,559 @@
+/* ========================================
+   MODERN DESIGN - LIGHT MODE
+   Natural Oak & Sage Green
+   Adapté pour LuckDev1 - Gestion de matériel
+   Version COMPACTE avec plus d'espacement entre les éléments
+   ======================================== */
+
+/* ===== STYLES GÉNÉRAUX ===== */
+* {
+    font-family: "Inter", "Segoe UI", "Roboto", sans-serif;
+    font-size: 12px; /* Taille de police réduite */
+    spacing: 6px; /* Espacement général augmenté */
+}
+
+QMainWindow, QDialog {
+    background-color: #F3EFE0;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+/* ===== MAINWINDOW ===== */
+MainWindow {
+    background-color: #F3EFE0;
+    padding: 15px;
+}
+
+/* Conteneur central avec plus d'espace */
+MainWindow QWidget#centralwidget {
+    background-color: transparent;
+    padding: 15px;
+}
+
+/* Boutons principaux dans MainWindow - plus petits */
+MainWindow QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #8A9A5B, stop:1 #9aaa6b);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 15px; /* Padding réduit */
+    font-size: 12px; /* Taille de police réduite */
+    font-weight: 600;
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+    margin: 8px 12px; /* Marge augmentée entre les boutons */
+}
+
+/* Plus d'espace entre les boutons */
+MainWindow QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #9aaa6b, stop:1 #aaba7b);
+}
+
+MainWindow QPushButton:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #7a8a4e, stop:1 #8A9A5B);
+}
+
+/* ===== ADDMATERIALDIALOG ===== */
+AddMaterialDialog {
+    background-color: #F3EFE0;
+    border: none;
+    padding: 15px;
+}
+
+/* Titre principal - plus petit */
+AddMaterialDialog QLabel#label_8 {
+    color: #4D362D;
+    font-size: 16px; /* Taille réduite */
+    font-weight: 700;
+    letter-spacing: -0.1px;
+    background: transparent;
+    border: none;
+    margin-bottom: 20px; /* Marge augmentée sous le titre */
+    padding: 0 0 8px 0;
+    qproperty-alignment: AlignCenter;
+}
+
+/* GroupBox avec plus d'espace intérieur */
+AddMaterialDialog QGroupBox#AjouterMaterielGroupBox {
+    background-color: #FFFFFF;
+    border: 1px solid #E8E4DC;
+    border-radius: 8px;
+    padding: 12px; /* Padding réduit */
+    margin: 20px 0; /* Marge augmentée autour du groupbox */
+    font-weight: 500;
+    color: #4D362D;
+}
+
+AddMaterialDialog QGroupBox#AjouterMaterielGroupBox::title {
+    color: #8A9A5B;
+    font-size: 13px; /* Taille réduite */
+    font-weight: 600;
+    subcontrol-origin: margin;
+    left: 8px;
+    padding: 0 8px;
+    background-color: transparent;
+    margin-bottom: 6px; /* Espacement augmenté */
+}
+
+/* Container du formulaire */
+AddMaterialDialog QWidget#gridLayoutWidget {
+    background-color: transparent;
+    padding: 5px;
+}
+
+/* Grid layout avec PLUS d'espacement entre les lignes */
+AddMaterialDialog QGridLayout {
+    margin: 8px;
+    spacing: 15px; /* ESPACEMENT AUGMENTÉ entre les éléments */
+}
+
+/* Labels du formulaire - plus petits */
+AddMaterialDialog QLabel {
+    font-size: 11px; /* Taille réduite */
+    font-weight: 500;
+    color: #374151;
+    padding: 3px 0; /* Padding réduit */
+    background: transparent;
+    margin-right: 15px; /* Marge augmentée entre label et champ */
+    min-width: 140px; /* Largeur réduite */
+}
+
+/* Labels spécifiques */
+AddMaterialDialog QLabel#label,
+AddMaterialDialog QLabel#label_2,
+AddMaterialDialog QLabel#label_3,
+AddMaterialDialog QLabel#label_4,
+AddMaterialDialog QLabel#label_5,
+AddMaterialDialog QLabel#label_6,
+AddMaterialDialog QLabel#label_7,
+AddMaterialDialog QLabel#label_16 {
+    color: #4D362D;
+    font-weight: 500;
+    font-size: 11px; /* Taille réduite */
+}
+
+/* Champs de formulaire - plus petits mais avec plus d'espace autour */
+AddMaterialDialog QLineEdit,
+AddMaterialDialog QSpinBox,
+AddMaterialDialog QDateEdit,
+AddMaterialDialog QComboBox {
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB; /* Bordure plus fine */
+    border-radius: 5px;
+    padding: 6px 10px; /* Padding réduit */
+    font-size: 11px; /* Taille de police réduite */
+    color: #111827;
+    selection-background-color: #8A9A5B;
+    selection-color: #FFFFFF;
+    min-height: 26px; /* Hauteur réduite */
+    min-width: 160px; /* Largeur réduite */
+    margin: 4px 0; /* Marge augmentée entre les champs */
+}
+
+AddMaterialDialog QLineEdit:focus,
+AddMaterialDialog QSpinBox:focus,
+AddMaterialDialog QDateEdit:focus,
+AddMaterialDialog QComboBox:focus {
+    background-color: #FFFFFF;
+    border-color: #8A9A5B;
+    outline: none;
+}
+
+AddMaterialDialog QLineEdit:hover,
+AddMaterialDialog QSpinBox:hover,
+AddMaterialDialog QDateEdit:hover,
+AddMaterialDialog QComboBox:hover {
+    border-color: #D1D5DB;
+    background-color: #FFFFFF;
+}
+
+/* Section des boutons avec plus d'espace */
+AddMaterialDialog QWidget#horizontalLayoutWidget {
+    background-color: transparent;
+    padding: 20px 15px; /* Padding augmenté */
+    margin-top: 25px; /* Marge augmentée au-dessus */
+}
+
+/* Horizontal layout avec PLUS d'espace entre les boutons */
+AddMaterialDialog QHBoxLayout {
+    spacing: 20px; /* ESPACEMENT AUGMENTÉ entre les boutons */
+    margin: 12px;
+}
+
+/* Boutons du dialog - plus petits */
+AddMaterialDialog QPushButton#AjoutMaterielB {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #8A9A5B, stop:1 #9aaa6b);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px; /* Padding réduit */
+    font-size: 12px; /* Taille réduite */
+    font-weight: 600;
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+    margin: 6px; /* Marge autour des boutons augmentée */
+}
+
+AddMaterialDialog QPushButton#AjoutMaterielB:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #9aaa6b, stop:1 #aaba7b);
+}
+
+AddMaterialDialog QPushButton#AjoutMaterielB:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #7a8a4e, stop:1 #8A9A5B);
+}
+
+AddMaterialDialog QPushButton#CancelB {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Bordure plus fine */
+    color: #374151;
+    border-radius: 5px;
+    padding: 8px 16px; /* Padding réduit */
+    font-size: 12px; /* Taille réduite */
+    font-weight: 600;
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+    margin: 6px; /* Marge autour des boutons augmentée */
+}
+
+AddMaterialDialog QPushButton#CancelB:hover {
+    background-color: #F9FAFB;
+    border-color: #8A9A5B;
+    color: #8A9A5B;
+}
+
+/* ===== MODIFMATERIELDIALOG ===== */
+ModifMaterielDialog {
+    background-color: #F3EFE0;
+    padding: 15px;
+}
+
+ModifMaterielDialog QLabel#label_8 {
+    color: #4D362D;
+    font-size: 16px; /* Taille réduite */
+    font-weight: 700;
+    margin-bottom: 20px; /* Marge augmentée */
+}
+
+ModifMaterielDialog QGroupBox#AjouterMaterielGroupBox {
+    background-color: #FFFFFF;
+    border: 1px solid #E8E4DC;
+    border-radius: 8px;
+    padding: 12px; /* Padding réduit */
+    margin: 20px 0; /* Marge augmentée */
+}
+
+ModifMaterielDialog QPushButton#ModifMaterielB {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #8A9A5B, stop:1 #9aaa6b);
+    color: #FFFFFF;
+    padding: 8px 16px; /* Padding réduit */
+    font-size: 12px; /* Taille réduite */
+    font-weight: 600;
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+}
+
+/* ===== AFFICHERMATERIELDIALOG ===== */
+AfficherMaterielDialog {
+    background-color: #F3EFE0;
+    padding: 15px;
+}
+
+AfficherMaterielDialog QGroupBox#groupBox_2 {
+    background-color: transparent;
+    padding: 12px; /* Padding réduit */
+}
+
+AfficherMaterielDialog QGroupBox#groupBox {
+    background-color: #FFFFFF;
+    border: 1px solid #8A9A5B; /* Bordure plus fine */
+    border-radius: 8px;
+    padding: 15px; /* Padding réduit */
+    margin: 20px 0; /* Marge augmentée */
+}
+
+AfficherMaterielDialog QGroupBox#groupBox::title {
+    color: #8A9A5B;
+    font-size: 14px; /* Taille réduite */
+    font-weight: 600;
+    padding-bottom: 6px; /* Padding réduit */
+}
+
+AfficherMaterielDialog QLabel#label_10 {
+    color: #8A9A5B;
+    font-weight: 600;
+    font-size: 14px; /* Taille réduite */
+    margin: 8px 0; /* Marge augmentée */
+}
+
+/* Layout de la grille avec PLUS d'espacement */
+AfficherMaterielDialog QGridLayout {
+    margin: 12px;
+    spacing: 15px; /* ESPACEMENT AUGMENTÉ */
+}
+
+/* Labels de détail - plus petits */
+AfficherMaterielDialog QLabel {
+    color: #4D362D;
+    font-size: 11px; /* Taille réduite */
+    font-weight: 500;
+    padding: 3px 0; /* Padding réduit */
+    min-width: 160px; /* Largeur réduite */
+}
+
+AfficherMaterielDialog QLabel#quantityLabel,
+AfficherMaterielDialog QLabel#unitPriceLabel {
+    color: #8A9A5B;
+    font-weight: 600;
+    font-size: 13px; /* Taille réduite */
+    padding: 4px 0; /* Padding réduit */
+}
+
+/* Section des boutons avec plus d'espace */
+AfficherMaterielDialog QWidget#horizontalLayoutWidget_2 {
+    background-color: transparent;
+    padding: 20px 12px; /* Padding augmenté */
+    margin-top: 25px; /* Marge augmentée */
+}
+
+/* Boutons - plus petits */
+AfficherMaterielDialog QPushButton#pushButton_2 {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                                stop:0 #8A9A5B, stop:1 #9aaa6b);
+    color: #FFFFFF;
+    border-radius: 5px;
+    padding: 8px 16px; /* Padding réduit */
+    font-size: 12px; /* Taille réduite */
+    font-weight: 600;
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+    margin: 6px; /* Marge augmentée */
+}
+
+AfficherMaterielDialog QPushButton#pushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Bordure plus fine */
+    color: #374151;
+    border-radius: 5px;
+    padding: 8px 16px; /* Padding réduit */
+    font-size: 12px; /* Taille réduite */
+    font-weight: 600;
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+    margin: 6px; /* Marge augmentée */
+}
+
+/* ===== SUPPMATERIELDIALOG ===== */
+SuppMaterielDialog {
+    background-color: #F3EFE0;
+    padding: 15px;
+    min-width: 350px; /* Largeur réduite */
+}
+
+SuppMaterielDialog QLabel#label {
+    color: #4D362D;
+    font-size: 14px; /* Taille réduite */
+    font-weight: 600;
+    text-align: center;
+    padding: 12px; /* Padding réduit */
+    margin: 20px 0; /* Marge augmentée */
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 6px;
+    border-left: 3px solid #DC3545; /* Bordure plus fine */
+}
+
+SuppMaterielDialog QWidget#horizontalLayoutWidget {
+    padding: 20px 12px; /* Padding augmenté */
+    margin-top: 25px; /* Marge augmentée */
+}
+
+SuppMaterielDialog QPushButton#DeleteB {
+    background-color: #DC3545;
+    color: #FFFFFF;
+    border-radius: 5px;
+    padding: 8px 16px; /* Padding réduit */
+    font-weight: 600;
+    font-size: 12px; /* Taille réduite */
+    border: none;
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+    margin: 6px; /* Marge augmentée */
+}
+
+SuppMaterielDialog QPushButton#CancelB {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB; /* Bordure plus fine */
+    color: #374151;
+    border-radius: 5px;
+    padding: 8px 16px; /* Padding réduit */
+    font-weight: 600;
+    font-size: 12px; /* Taille réduite */
+    min-width: 90px; /* Largeur réduite */
+    min-height: 28px; /* Hauteur réduite */
+    margin: 6px; /* Marge augmentée */
+}
+
+/* ===== STYLES COMMUNS POUR TOUS LES DIALOGUES ===== */
+/* SpinBox - plus petits */
+QSpinBox::up-button, QSpinBox::down-button {
+    border: none;
+    background-color: transparent;
+    width: 18px; /* Largeur réduite */
+    height: 10px; /* Hauteur réduite */
+    margin: 1px 1px;
+}
+
+QSpinBox::up-button {
+    subcontrol-position: top right;
+    margin-top: 1px;
+}
+
+QSpinBox::down-button {
+    subcontrol-position: bottom right;
+    margin-bottom: 1px;
+}
+
+QSpinBox::up-arrow {
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-bottom: 4px solid #6B7280; /* Taille réduite */
+}
+
+QSpinBox::down-arrow {
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 4px solid #6B7280; /* Taille réduite */
+}
+
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background-color: rgba(138, 154, 91, 0.1);
+}
+
+/* ComboBox - plus petit */
+QComboBox {
+    padding-right: 25px; /* Réduit */
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 22px; /* Largeur réduite */
+    background-color: transparent;
+}
+
+QComboBox::down-arrow {
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 4px solid #6B7280; /* Taille réduite */
+}
+
+QComboBox QAbstractItemView {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 5px;
+    selection-background-color: rgba(138, 154, 91, 0.1);
+    selection-color: #111827;
+    padding: 6px; /* Padding réduit */
+    margin: 3px 0; /* Marge augmentée */
+}
+
+/* DateEdit - plus petit */
+QDateEdit::drop-down {
+    width: 22px; /* Largeur réduite */
+    border-left: 1px solid transparent;
+}
+
+QDateEdit::down-arrow {
+    border-left: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-top: 4px solid #6B7280; /* Taille réduite */
+}
+
+/* MenuBar - plus petit */
+QMenuBar {
+    background-color: #FFFFFF;
+    color: #4D362D;
+    border-bottom: 1px solid #E8E4DC;
+    padding: 6px 12px; /* Padding réduit */
+    min-height: 25px; /* Hauteur réduite */
+}
+
+QMenuBar::item {
+    padding: 5px 10px; /* Padding réduit */
+    border-radius: 3px;
+    margin: 0 2px; /* Marge réduite */
+}
+
+QMenuBar::item:selected {
+    background-color: rgba(138, 154, 91, 0.1);
+    color: #8A9A5B;
+}
+
+/* StatusBar - plus petit */
+QStatusBar {
+    background-color: #FFFFFF;
+    color: #6B7280;
+    border-top: 1px solid #E8E4DC;
+    padding: 6px 12px; /* Padding réduit */
+    min-height: 22px; /* Hauteur réduite */
+    font-size: 11px; /* Taille réduite */
+}
+
+/* ===== AMÉLIORATIONS GÉNÉRALES ===== */
+/* Widgets de layout */
+QWidget#gridLayoutWidget,
+QWidget#horizontalLayoutWidget,
+QWidget#horizontalLayoutWidget_2 {
+    background-color: transparent;
+}
+
+/* Layout spacing - PLUS d'espacement entre les éléments */
+QGridLayout {
+    margin: 8px;
+    spacing: 15px; /* ESPACEMENT AUGMENTÉ */
+}
+
+QHBoxLayout {
+    spacing: 20px; /* ESPACEMENT AUGMENTÉ entre les éléments horizontaux */
+    margin: 8px;
+}
+
+/* ===== SCROLLBARS - plus fins ===== */
+QScrollBar:vertical {
+    border: none;
+    background-color: #F1F1F1;
+    width: 8px; /* Largeur réduite */
+    margin: 6px 2px; /* Marge augmentée */
+}
+
+QScrollBar::handle:vertical {
+    background-color: #C1C1C1;
+    border-radius: 4px;
+    min-height: 18px; /* Hauteur réduite */
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #A8A8A8;
+}
+
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:vertical {
+    height: 0px;
+}
+
+/* ===== FOCUS STYLES ===== */
+QPushButton:focus, QLineEdit:focus, QSpinBox:focus, QComboBox:focus {
+    outline: none;
+    border-color: #8A9A5B;
+}
+
+/* ===== ESPACEMENT AUGMENTÉ POUR LES GROUPES ===== */
+QGroupBox {
+    margin-top: 20px; /* Marge augmentée */
+    margin-bottom: 20px; /* Marge augmentée */
+}
