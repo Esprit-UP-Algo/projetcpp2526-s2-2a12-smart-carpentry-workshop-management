@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\interface.dir/objects.a
+C:\Qt\Tools\mingw1120_64\bin\ar.exe qc CMakeFiles\interface.dir/objects.a @CMakeFiles\interface.dir\objects1.rsp
+C:\Qt\Tools\mingw1120_64\bin\c++.exe -mwindows -Wl,--whole-archive CMakeFiles\interface.dir/objects.a -Wl,--no-whole-archive -o interface.exe -Wl,--out-implib,libinterface.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\interface.dir\linkLibs.rsp

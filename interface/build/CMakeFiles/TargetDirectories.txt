@@ -1,0 +1,9 @@
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/interface.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/edit_cache.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/rebuild_cache.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/list_install_components.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/install.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/install/local.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/install/strip.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/interface_autogen_timestamp_deps.dir
+C:/Users/amine/Desktop/projetqt/interface/build/CMakeFiles/interface_autogen.dir
