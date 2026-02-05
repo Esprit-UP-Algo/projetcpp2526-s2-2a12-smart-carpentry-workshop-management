@@ -10,8 +10,9 @@ qt_add_executable(interface
     main.cpp
     MainWindow.cpp
     MainWindow.h
-
-
+    # Add non-source assets so they appear in Qt Creator's project tree
+    style.qss
+    logo1.png
 
 )
 
