@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RegisterPage</class>
+ <widget class="QWidget" name="RegisterPage">
+  <layout class="QVBoxLayout">
+   <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>35</height></size></property></spacer></item>
+   <item alignment="Qt::AlignCenter">
+    <widget class="QFrame" name="auth_card">
+     <property name="minimumSize"><size><width>420</width><height>0</height></size></property>
+     <property name="maximumSize"><size><width>420</width><height>16777215</height></size></property>
+     <layout class="QVBoxLayout">
+      <property name="spacing"><number>6</number></property>
+      <property name="leftMargin"><number>45</number></property>
+      <property name="topMargin"><number>45</number></property>
+      <property name="rightMargin"><number>45</number></property>
+      <property name="bottomMargin"><number>45</number></property>
+      <item alignment="Qt::AlignCenter">
+       <widget class="QLabel" name="logoLabel">
+        <property name="minimumSize"><size><width>80</width><height>80</height></size></property>
+        <property name="maximumSize"><size><width>80</width><height>80</height></size></property>
+        <property name="text"><string/></property>
+        <property name="alignment"><set>Qt::AlignCenter</set></property>
+        <property name="scaledContents"><bool>true</bool></property>
+       </widget>
+      </item>
+      <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>16</height></size></property></spacer></item>
+      <item><widget class="QLabel" name="auth_title"><property name="text"><string>Créer un compte</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item>
+      <item><widget class="QLabel" name="auth_subtitle"><property name="text"><string>Inscrivez-vous pour commencer</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item>
+      <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>26</height></size></property></spacer></item>
+      <item><widget class="QLabel"><property name="text"><string>Nom d'utilisateur</string></property></widget></item>
+      <item><widget class="QLineEdit" name="usernameInput"><property name="placeholderText"><string>Choisissez un nom d'utilisateur</string></property></widget></item>
+      <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item>
+      <item><widget class="QLabel"><property name="text"><string>Email</string></property></widget></item>
+      <item><widget class="QLineEdit" name="emailInput"><property name="placeholderText"><string>Entrez votre email</string></property></widget></item>
+      <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item>
+      <item><widget class="QLabel"><property name="text"><string>Mot de passe</string></property></widget></item>
+      <item><widget class="QLineEdit" name="passwordInput"><property name="echoMode"><enum>QLineEdit::Password</enum></property><property name="placeholderText"><string>Créez un mot de passe</string></property></widget></item>
+      <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item>
+      <item><widget class="QLabel"><property name="text"><string>Confirmer le mot de passe</string></property></widget></item>
+      <item><widget class="QLineEdit" name="confirmInput"><property name="echoMode"><enum>QLineEdit::Password</enum></property><property name="placeholderText"><string>Confirmez votre mot de passe</string></property></widget></item>
+      <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>20</height></size></property></spacer></item>
+      <item><widget class="QPushButton" name="registerButton"><property name="objectName"><string>primary_button</string></property><property name="text"><string>Créer un compte</string></property><property name="default"><bool>true</bool></property></widget></item>
+      <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>14</height></size></property></spacer></item>
+      <item><widget class="QPushButton" name="loginLink"><property name="objectName"><string>text_button</string></property><property name="text"><string>Vous avez déjà un compte ? Connectez-vous</string></property></widget></item>
+     </layout>
+    </widget>
+   </item>
+   <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>35</height></size></property></spacer></item>
+  </layout>
+ </widget>
+</ui>
