@@ -48,7 +48,11 @@ QWidget* StockPage::createStockListPage()
 
     struct StatData { QString title; QString value; QString type; };
     QList<StatData> stats = {
+<<<<<<< HEAD
         {"VALEUR TOTALE", "45 280 DT", "value"},
+=======
+        {"VALEUR TOTALE", "45 280 €", "value"},
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
         {"ARTICLES EN STOCK", "156", "items"},
         {"ALERTES STOCK", "8", "alerts"}
     };
@@ -127,10 +131,17 @@ QWidget* StockPage::createStockListPage()
 
     // Sample data
     stockTable->setRowCount(4);
+<<<<<<< HEAD
     QStringList row1 = {"M001", "Chêne massif", "Bois", "120 m²", "45.50 DT", "Bois & Cie", "20", "12/02/2026", "8 m²"};
     QStringList row2 = {"M002", "Contreplaqué", "Panneau", "85 feuilles", "28.00 DT", "Matériaux Moderne", "15", "05/02/2026", "12 feuilles"};
     QStringList row3 = {"M003", "Vis à bois", "Quincaillerie", "2500 unités", "0.12 DT", "Fixation Pro", "500", "20/01/2026", "350 unités"};
     QStringList row4 = {"M004", "Vernis mat", "Finition", "18 L", "32.80 DT", "Peinture Plus", "5", "15/02/2026", "2.5 L"};
+=======
+    QStringList row1 = {"M001", "Chêne massif", "Bois", "120 m²", "45.50 €", "Bois & Cie", "20", "12/02/2026", "8 m²"};
+    QStringList row2 = {"M002", "Contreplaqué", "Panneau", "85 feuilles", "28.00 €", "Matériaux Moderne", "15", "05/02/2026", "12 feuilles"};
+    QStringList row3 = {"M003", "Vis à bois", "Quincaillerie", "2500 unités", "0.12 €", "Fixation Pro", "500", "20/01/2026", "350 unités"};
+    QStringList row4 = {"M004", "Vernis mat", "Finition", "18 L", "32.80 €", "Peinture Plus", "5", "15/02/2026", "2.5 L"};
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 
     for (int row = 0; row < 4; ++row) {
         for (int col = 0; col < 9; ++col) {
@@ -195,7 +206,11 @@ QWidget* StockPage::createAddPage()
     addQuantite->setRange(0, 999999);
     addPrixUnitaire      = new QDoubleSpinBox(formCard);
     addPrixUnitaire->setRange(0, 999999);
+<<<<<<< HEAD
     addPrixUnitaire->setPrefix("DT ");
+=======
+    addPrixUnitaire->setPrefix("€ ");
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
     addFournisseur       = new QLineEdit(formCard);
     addSeuilAlerte       = new QSpinBox(formCard);
     addSeuilAlerte->setRange(0, 999999);
@@ -285,7 +300,11 @@ QWidget* StockPage::createEditPage()
     editQuantite->setRange(0, 999999);
     editPrixUnitaire      = new QDoubleSpinBox(formCard);
     editPrixUnitaire->setRange(0, 999999);
+<<<<<<< HEAD
     editPrixUnitaire->setPrefix("DT ");
+=======
+    editPrixUnitaire->setPrefix("€ ");
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
     editFournisseur       = new QLineEdit(formCard);
     editSeuilAlerte       = new QSpinBox(formCard);
     editSeuilAlerte->setRange(0, 999999);
@@ -441,11 +460,19 @@ void StockPage::populateEditForm(int row)
     editType->setText(stockTable->item(row, 2)->text());
 
     QString qty = stockTable->item(row, 3)->text();
+<<<<<<< HEAD
     qty.remove(" m²").remove(" feuilles").remove(" unités").remove(" L").remove(" DT");
     editQuantite->setValue(qty.toInt());
 
     QString price = stockTable->item(row, 4)->text();
     price.remove(" DT");
+=======
+    qty.remove(" m²").remove(" feuilles").remove(" unités").remove(" L").remove(" €");
+    editQuantite->setValue(qty.toInt());
+
+    QString price = stockTable->item(row, 4)->text();
+    price.remove(" €");
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
     editPrixUnitaire->setValue(price.toDouble());
 
     editFournisseur->setText(stockTable->item(row, 5)->text());
@@ -565,7 +592,11 @@ void StockPage::onSaveAddButtonClicked()
 
     // Create items with formatted text
     QString qtyStr = QString::number(addQuantite->value()) + " m²"; // simplified
+<<<<<<< HEAD
     QString priceStr = QString::number(addPrixUnitaire->value(), 'f', 2) + " DT";
+=======
+    QString priceStr = QString::number(addPrixUnitaire->value(), 'f', 2) + " €";
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 
     stockTable->setItem(newRow, 0, new QTableWidgetItem(addId->text()));
     stockTable->setItem(newRow, 1, new QTableWidgetItem(addNom->text()));
@@ -590,7 +621,11 @@ void StockPage::onSaveEditButtonClicked()
 
     // Update the selected row with edited values
     QString qtyStr = QString::number(editQuantite->value()) + " m²"; // simplified
+<<<<<<< HEAD
     QString priceStr = QString::number(editPrixUnitaire->value(), 'f', 2) + " DT";
+=======
+    QString priceStr = QString::number(editPrixUnitaire->value(), 'f', 2) + " €";
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 
     stockTable->item(currentRow, 0)->setText(editId->text());
     stockTable->item(currentRow, 1)->setText(editNom->text());

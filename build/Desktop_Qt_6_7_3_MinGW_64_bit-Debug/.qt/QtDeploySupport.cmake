@@ -34,7 +34,11 @@ endif()
 set(__QT_DEPLOY_SYSTEM_NAME "Windows")
 set(__QT_DEPLOY_IS_SHARED_LIBS_BUILD "ON")
 set(__QT_DEPLOY_TOOL "C:/Qt/6.7.3/mingw_64/bin/windeployqt.exe")
+<<<<<<< HEAD
 set(__QT_DEPLOY_IMPL_DIR "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/.qt")
+=======
+set(__QT_DEPLOY_IMPL_DIR "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/.qt")
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 set(__QT_DEPLOY_VERBOSE "")
 set(__QT_CMAKE_EXPORT_NAMESPACE "Qt6")
 set(__QT_DEPLOY_GENERATOR_IS_MULTI_CONFIG "0")
@@ -58,7 +62,11 @@ set(__QT_DEPLOY_QT_DEBUG_POSTFIX "")
 
 # Define the CMake commands to be made available during deployment.
 set(__qt_deploy_support_files
+<<<<<<< HEAD
     "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/.qt/QtDeployTargets.cmake"
+=======
+    "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/.qt/QtDeployTargets.cmake"
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
     "C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreDeploySupport.cmake"
 )
 foreach(__qt_deploy_support_file IN LISTS __qt_deploy_support_files)

@@ -19,6 +19,7 @@
 #include <QDialog>
 #include <QFormLayout>
 #include <QDialogButtonBox>
+<<<<<<< HEAD
 #include <QDateEdit>
 #include <QComboBox>
 #include <QDate>
@@ -37,6 +38,8 @@
 #include <algorithm>
 
 
+=======
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -633,6 +636,7 @@ QWidget* MainWindow::createEmployeesPage()
 QWidget* MainWindow::createFinancePage()
 {
     QWidget *page = new QWidget();
+<<<<<<< HEAD
     QVBoxLayout *mainLayout = new QVBoxLayout(page);
     mainLayout->setSpacing(18);
     mainLayout->setContentsMargins(10, 10, 10, 10);
@@ -1244,6 +1248,77 @@ QWidget* MainWindow::createFinancePage()
 
     return page;
 }
+=======
+    QVBoxLayout *layout = new QVBoxLayout(page);
+    layout->setSpacing(18);
+    
+    // Statistics cards
+    QHBoxLayout *statsLayout = new QHBoxLayout();
+    statsLayout->setSpacing(15);
+    
+    struct StatData { QString title; QString value; QString type; };
+    QList<StatData> stats = {
+        {"REVENUS MENSUELS", "45 280 €", "income"},
+        {"DEPENSES", "23 150 €", "expense"},
+        {"MARGE BENEFICIAIRE", "22 130 €", "profit"}
+    };
+    
+    for (const auto& stat : stats) {
+        QFrame *card = new QFrame(page);
+        card->setObjectName("statCard");
+        card->setProperty("type", stat.type);
+        
+        QVBoxLayout *cardLayout = new QVBoxLayout(card);
+        cardLayout->setSpacing(10);
+        cardLayout->setContentsMargins(20, 20, 20, 20);
+        
+        QLabel *title = new QLabel(stat.title, card);
+        title->setObjectName("statTitle");
+        
+        QLabel *value = new QLabel(stat.value, card);
+        value->setObjectName("statValue");
+        
+        cardLayout->addWidget(title);
+        cardLayout->addWidget(value);
+        cardLayout->addStretch();
+        statsLayout->addWidget(card);
+    }
+    
+    layout->addLayout(statsLayout);
+    
+    QHBoxLayout *actionsLayout = new QHBoxLayout();
+    QPushButton *addBtn = new QPushButton("+ Nouvelle Transaction", page);
+    QPushButton *exportBtn = new QPushButton("Rapport Mensuel", page);
+    
+    addBtn->setObjectName("actionButton");
+    exportBtn->setObjectName("actionButton");
+    
+    addBtn->setCursor(Qt::PointingHandCursor);
+    exportBtn->setCursor(Qt::PointingHandCursor);
+    
+    actionsLayout->addWidget(addBtn);
+    actionsLayout->addWidget(exportBtn);
+    actionsLayout->addStretch();
+    
+    QTableWidget *table = new QTableWidget(page);
+    table->setObjectName("dataTable");
+    table->setColumnCount(5);
+    table->setHorizontalHeaderLabels({"CLIENT", "TYPE", "MONTANT", "STATUT", "DATE"});
+    table->horizontalHeader()->setStretchLastSection(true);
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table->verticalHeader()->setVisible(false);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setAlternatingRowColors(true);
+    table->setShowGrid(false);
+    
+    layout->addLayout(statsLayout);
+    layout->addLayout(actionsLayout);
+    layout->addWidget(table);
+    
+    return page;
+}
+
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 QWidget* MainWindow::createDesignsPage()
 {
     QWidget *page = new QWidget();

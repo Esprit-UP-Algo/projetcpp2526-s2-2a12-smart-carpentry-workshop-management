@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow.dir
 C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
 C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
 C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen_timestamp_deps.dir
 C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen.dir
+=======
+C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow.dir
+C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/edit_cache.dir
+C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen_timestamp_deps.dir
+C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen.dir
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a

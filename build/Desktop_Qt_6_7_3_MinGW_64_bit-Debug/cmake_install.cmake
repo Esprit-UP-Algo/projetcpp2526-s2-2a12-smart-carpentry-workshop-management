@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 # Install script for directory: C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf
+=======
+# Install script for directory: C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -37,12 +41,15 @@ if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "C:/Qt/Tools/mingw1120_64/bin/objdump.exe")
 endif()
 
+<<<<<<< HEAD
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
 if(CMAKE_INSTALL_LOCAL_ONLY)
   file(WRITE "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/install_local_manifest.txt"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()
+=======
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 if(CMAKE_INSTALL_COMPONENT)
   if(CMAKE_INSTALL_COMPONENT MATCHES "^[a-zA-Z0-9_.+-]+$")
     set(CMAKE_INSTALL_MANIFEST "install_manifest_${CMAKE_INSTALL_COMPONENT}.txt")
@@ -56,6 +63,12 @@ else()
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
+<<<<<<< HEAD
   file(WRITE "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/${CMAKE_INSTALL_MANIFEST}"
+=======
+  string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
+       "${CMAKE_INSTALL_MANIFEST_FILES}")
+  file(WRITE "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/${CMAKE_INSTALL_MANIFEST}"
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
 endif()

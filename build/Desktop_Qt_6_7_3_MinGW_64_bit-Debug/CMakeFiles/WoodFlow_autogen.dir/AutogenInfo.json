@@ -1,5 +1,6 @@
 {
 	"AUTOGEN_COMMAND_LINE_LENGTH_MAX" : 32000,
+<<<<<<< HEAD
 	"BUILD_DIR" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen",
 	"CMAKE_BINARY_DIR" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug",
 	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug",
@@ -37,6 +38,39 @@
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/Platform/Linker/Windows-GNU-CXX.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/Platform/Linker/Windows-GNU.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/Platform/Linker/GNU.cmake",
+=======
+	"BUILD_DIR" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen",
+	"CMAKE_BINARY_DIR" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug",
+	"CMAKE_CURRENT_BINARY_DIR" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug",
+	"CMAKE_CURRENT_SOURCE_DIR" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management",
+	"CMAKE_EXECUTABLE" : "C:/Qt/Tools/CMake_64/bin/cmake.exe",
+	"CMAKE_LIST_FILES" : 
+	[
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/CMakeLists.txt",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/.qtc/package-manager/auto-setup.cmake",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeSystem.cmake",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/.qtc/package-manager/maintenance_tool_provider.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInitialize.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-Initialize.cmake",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeCXXCompiler.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeSystemSpecificInformation.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeGenericSystem.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeInitializeConfigs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/WindowsPaths.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXInformation.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeLanguageInformation.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Compiler/GNU-CXX.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Compiler/GNU.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Compiler/CMakeCommonCompilerMacros.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU-CXX.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU.cmake",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/3.30.5/CMakeRCCompiler.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeRCInformation.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-windres.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Platform/Windows-GNU-CXX-ABI.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCommonLanguageInclude.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6ConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6ConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6Config.cmake",
@@ -45,6 +79,7 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6Targets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6VersionlessTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/QtFeature.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CheckCXXCompilerFlag.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/Internal/CheckCompilerFlag.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/Internal/CheckFlagCommonConfig.cmake",
@@ -52,6 +87,15 @@
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CheckCXXSourceCompiles.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/Internal/CheckSourceCompiles.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CheckCXXCompilerFlag.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Internal/CheckCompilerFlag.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Internal/CheckFlagCommonConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CheckCXXSourceCompiles.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/Internal/CheckSourceCompiles.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/QtFeatureCommon.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/QtPublicAppleHelpers.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/QtPublicCMakeHelpers.cmake",
@@ -65,6 +109,7 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/QtPublicTestHelpers.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/QtPublicToolHelpers.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/QtPublicWalkLibsHelpers.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/FindThreads.cmake",
@@ -86,6 +131,29 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/Qt6Dependencies.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindThreads.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CheckLibraryExists.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CheckIncludeFileCXX.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CheckCXXSourceCompiles.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigVersion.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigVersionImpl.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/FindWrapAtomic.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CheckCXXSourceCompiles.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersion.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfigVersionImpl.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsDependencies.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6CoreTools/Qt6CoreToolsTargets-relwithdebinfo.cmake",
@@ -94,14 +162,22 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateVersionlessTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateAdditionalTargetInfo.cmake",
@@ -114,21 +190,37 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreMacros.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/Qt6CoreConfigExtras.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Core/QtInstallPaths.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/GNUInstallDirs.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/GNUInstallDirs.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersion.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsConfigVersionImpl.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsDependencies.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsDependencies.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsDependencies.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets-relwithdebinfo.cmake",
@@ -141,6 +233,7 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6GuiConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6GuiConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake",
@@ -165,6 +258,32 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfig.cmake",
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6GuiDependencies.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindVulkan.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindVulkan.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6/FindWrapVulkanHeaders.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindVulkan.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindVulkan.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageHandleStandardArgs.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/FindPackageMessage.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersion.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfigVersionImpl.cmake",
+		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsConfig.cmake",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsDependencies.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6GuiTools/Qt6GuiToolsAdditionalTargetInfo.cmake",
@@ -175,92 +294,164 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6GuiVersionlessTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6GuiPlugins.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QGifPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QGifPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QGifPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QGifPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICOPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICOPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICOPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICOPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QInsightTrackerPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QInsightTrackerPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QInsightTrackerPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QInsightTrackerPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QJpegPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QJpegPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QJpegPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QMinimalIntegrationPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QOffscreenIntegrationPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QPdfPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QPdfPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QPdfPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QPdfPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgIconPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgIconPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgIconPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QSvgPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTgaPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTgaPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTgaPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTgaPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTiffPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTiffPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTiffPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTiffPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QTuioTouchPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QVirtualKeyboardPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QVirtualKeyboardPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QVirtualKeyboardPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QVirtualKeyboardPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWbmpPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWbmpPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWbmpPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWbmpPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWebpPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWebpPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWebpPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWebpPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsDirect2DIntegrationPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsDirect2DIntegrationPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsDirect2DIntegrationPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsDirect2DIntegrationPluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsIntegrationPluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsIntegrationPluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsIntegrationPluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QWindowsIntegrationPluginAdditionalTargetInfo.cmake",
@@ -271,20 +462,29 @@
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsMacros.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6WidgetsPlugins.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Widgets/Qt6QModernWindowsStylePluginAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportConfigVersion.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportConfigVersionImpl.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportConfig.cmake",
+<<<<<<< HEAD
 		"C:/Program Files/CMake/share/cmake-4.1/Modules/CMakeFindDependencyMacro.cmake",
+=======
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeFindDependencyMacro.cmake",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportDependencies.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportTargets-relwithdebinfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportAdditionalTargetInfo.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportVersionlessTargets.cmake",
 		"C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6PrintSupport/Qt6PrintSupportPlugins.cmake",
+<<<<<<< HEAD
 		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/style.qss",
 		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/style-dark.qss",
 		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/assets/icons/icon.jpeg",
@@ -294,79 +494,139 @@
 	"CMAKE_SOURCE_DIR" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf",
 	"CROSS_CONFIG" : false,
 	"DEP_FILE" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen/deps",
+=======
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/style.qss",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/style-dark.qss",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/assets/icons/icon.jpeg",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/assets/icons/pfp.jpeg",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/assets/icons/logo1.png"
+	],
+	"CMAKE_SOURCE_DIR" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management",
+	"CROSS_CONFIG" : false,
+	"DEP_FILE" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen/deps",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 	"DEP_FILE_RULE_NAME" : "WoodFlow_autogen/timestamp",
 	"HEADERS" : 
 	[
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/mainwindow.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/mainwindow.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"EWIEGA46WW/moc_mainwindow.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/common/validators.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/common/validators.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"2PZEZPHIBF/moc_validators.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/core/session.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/core/session.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"PRMOGMWJPH/moc_session.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/database/employeedatabase.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/database/employeedatabase.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"M7KQ2GL7XF/moc_employeedatabase.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/models/employee.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/models/employee.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"M4YTXQ7V2H/moc_employee.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/auth/loginpage.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/auth/loginpage.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"6MB76OGVS6/moc_loginpage.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/auth/registerpage.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/auth/registerpage.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"6MB76OGVS6/moc_registerpage.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/employees/employeedialog.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/employees/employeedialog.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"3XISDMRZGD/moc_employeedialog.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/employees/employeemanagementpage.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/employees/employeemanagementpage.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"3XISDMRZGD/moc_employeemanagementpage.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/stock/stockpage.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/stock/stockpage.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"4BVYGFSTNT/moc_stockpage.cpp",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/toggleswitch.h",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/toggleswitch.h",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			"EWIEGA46WW/moc_toggleswitch.cpp",
 			null
 		]
 	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
+<<<<<<< HEAD
 	"INCLUDE_DIR" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen/include",
 	"MOC_COMPILATION_FILE" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen/mocs_compilation.cpp",
+=======
+	"INCLUDE_DIR" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen/include",
+	"MOC_COMPILATION_FILE" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen/mocs_compilation.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 	"MOC_DEFINITIONS" : 
 	[
 		"MINGW_HAS_SECURE_API=1",
@@ -391,14 +651,29 @@
 	],
 	"MOC_INCLUDES" : 
 	[
+<<<<<<< HEAD
 		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf",
 		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src",
+=======
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 		"C:/Qt/6.7.3/mingw_64/include/QtCore",
 		"C:/Qt/6.7.3/mingw_64/include",
 		"C:/Qt/6.7.3/mingw_64/mkspecs/win32-g++",
 		"C:/Qt/6.7.3/mingw_64/include/QtWidgets",
 		"C:/Qt/6.7.3/mingw_64/include/QtGui",
+<<<<<<< HEAD
 		"C:/Qt/6.7.3/mingw_64/include/QtPrintSupport"
+=======
+		"C:/Qt/6.7.3/mingw_64/include/QtPrintSupport",
+		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++",
+		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/x86_64-w64-mingw32",
+		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/backward",
+		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include",
+		"C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include-fixed",
+		"C:/Qt/Tools/mingw1120_64/x86_64-w64-mingw32/include"
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 	],
 	"MOC_MACRO_NAMES" : 
 	[
@@ -415,6 +690,7 @@
 	[
 		"C:/Qt/Tools/mingw1120_64/bin/g++.exe",
 		"-std=gnu++17",
+<<<<<<< HEAD
 		"-w",
 		"-dM",
 		"-E",
@@ -426,70 +702,135 @@
 	"MULTI_CONFIG" : false,
 	"PARALLEL" : 10,
 	"PARSE_CACHE_FILE" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen.dir/ParseCache.txt",
+=======
+		"-dM",
+		"-E",
+		"-c",
+		"C:/Qt/Tools/CMake_64/share/cmake-3.30/Modules/CMakeCXXCompilerABI.cpp"
+	],
+	"MOC_PREDEFS_FILE" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/WoodFlow_autogen/moc_predefs.h",
+	"MOC_RELAXED_MODE" : false,
+	"MOC_SKIP" : [],
+	"MULTI_CONFIG" : false,
+	"PARALLEL" : 4,
+	"PARSE_CACHE_FILE" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen.dir/ParseCache.txt",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 	"QT_MOC_EXECUTABLE" : "C:/Qt/6.7.3/mingw_64/bin/moc.exe",
 	"QT_UIC_EXECUTABLE" : "C:/Qt/6.7.3/mingw_64/bin/uic.exe",
 	"QT_VERSION_MAJOR" : 6,
 	"QT_VERSION_MINOR" : 7,
+<<<<<<< HEAD
 	"SETTINGS_FILE" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
 		[
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/main.cpp",
+=======
+	"SETTINGS_FILE" : "C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug/CMakeFiles/WoodFlow_autogen.dir/AutogenUsed.txt",
+	"SOURCES" : 
+	[
+		[
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/main.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/mainwindow.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/mainwindow.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/common/validators.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/common/validators.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/core/session.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/core/session.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/database/employeedatabase.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/database/employeedatabase.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/models/employee.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/models/employee.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/auth/loginpage.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/auth/loginpage.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/auth/registerpage.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/auth/registerpage.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/employees/employeedialog.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/employees/employeedialog.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/employees/employeemanagementpage.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/employees/employeemanagementpage.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/src/modules/stock/stockpage.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/src/modules/stock/stockpage.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		],
 		[
+<<<<<<< HEAD
 			"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/toggleswitch.cpp",
+=======
+			"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/toggleswitch.cpp",
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 			"MU",
 			null
 		]
@@ -497,8 +838,13 @@
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : 
 	[
+<<<<<<< HEAD
 		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/ui",
 		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/ui/modules/auth"
+=======
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/ui",
+		"C:/Users/marie.MARIEM/OneDrive/Desktop/QT1/projetcpp2526-s2-2a12-smart-carpentry-workshop-management/ui/modules/auth"
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 	],
 	"UIC_SKIP" : [],
 	"UIC_UI_FILES" : [],

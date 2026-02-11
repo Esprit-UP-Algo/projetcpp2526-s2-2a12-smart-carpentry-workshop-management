@@ -384,7 +384,10 @@
 #define __cpp_runtime_arrays 198712L
 #define __UINT64_TYPE__ long long unsigned int
 #define __UINT32_C(c) c ## U
+<<<<<<< HEAD
 #define ARCHITECTURE_ID "x86_64"
+=======
+>>>>>>> 99c9fa649b408161021bdb48c65a32620ad00b4a
 #define __cpp_alias_templates 200704L
 #define WINNT 1
 #define __FLT_DENORM_MIN__ 1.40129846432481707092372958328991613e-45F
