@@ -1,0 +1,42 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/WoodFlow_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/WoodFlow_autogen.dir/ParseCache.txt"
+  "WoodFlow_autogen"
+  "CMakeFiles/WoodFlow.dir/WoodFlow_autogen/mocs_compilation.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/WoodFlow_autogen/mocs_compilation.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/main.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/main.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/mainwindow.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/mainwindow.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/common/validators.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/common/validators.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/core/session.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/core/session.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/database/employeedatabase.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/database/employeedatabase.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/models/employee.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/models/employee.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/loginpage.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/loginpage.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/registerpage.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/registerpage.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeedialog.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeedialog.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeemanagementpage.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeemanagementpage.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/stock/stockpage.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/src/modules/stock/stockpage.cpp.obj.d"
+  "CMakeFiles/WoodFlow.dir/toggleswitch.cpp.obj"
+  "CMakeFiles/WoodFlow.dir/toggleswitch.cpp.obj.d"
+  "WoodFlow.exe"
+  "WoodFlow.exe.manifest"
+  "WoodFlow.pdb"
+  "WoodFlow_autogen/mocs_compilation.cpp"
+  "WoodFlow_autogen/timestamp"
+  "libWoodFlow.dll.a"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/WoodFlow.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
