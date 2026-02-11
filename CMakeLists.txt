@@ -61,7 +61,8 @@ set(PROJECT_SOURCES
 )
 
 if(Qt6_FOUND)
-    qt_add_executable(WoodFlow ${PROJECT_SOURCES})
+    qt_add_executable(WoodFlow ${PROJECT_SOURCES}
+        src/modules/stock/stockpage.h src/modules/stock/stockpage.cpp)
 else()
     add_executable(WoodFlow ${PROJECT_SOURCES})
 endif()

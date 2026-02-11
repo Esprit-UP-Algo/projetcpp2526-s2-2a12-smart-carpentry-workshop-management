@@ -3,6 +3,7 @@
 #include "src/modules/auth/loginpage.h"
 #include "src/modules/auth/registerpage.h"
 #include "src/core/session.h"
+#include "src/modules/stock/stockpage.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
@@ -406,7 +407,7 @@ void MainWindow::createPages()
 {
     stackedWidget->addWidget(createProjectsPage());
     stackedWidget->addWidget(createEmployeesPage());
-    stackedWidget->addWidget(createStocksPage());
+    stackedWidget->addWidget(new StockPage(this));
     stackedWidget->addWidget(createFinancePage());
     stackedWidget->addWidget(createDesignsPage());
 }
@@ -610,81 +611,6 @@ QWidget* MainWindow::createEmployeesPage()
     return page;
 }
 
-QWidget* MainWindow::createStocksPage()
-{
-    QWidget *page = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(page);
-    layout->setSpacing(18);
-    
-    // Statistics cards
-    QHBoxLayout *statsLayout = new QHBoxLayout();
-    statsLayout->setSpacing(15);
-    
-    struct StatData { QString title; QString value; QString type; };
-    QList<StatData> stats = {
-        {"VALEUR STOCK", "45 280 €", "value"},
-        {"ARTICLES", "156", "items"},
-        {"ALERTES STOCK", "8", "alerts"}
-    };
-    
-    for (const auto& stat : stats) {
-        QFrame *card = new QFrame(page);
-        card->setObjectName("statCard");
-        card->setProperty("type", stat.type);
-        
-        QVBoxLayout *cardLayout = new QVBoxLayout(card);
-        cardLayout->setSpacing(10);
-        cardLayout->setContentsMargins(20, 20, 20, 20);
-        
-        QLabel *title = new QLabel(stat.title, card);
-        title->setObjectName("statTitle");
-        
-        QLabel *value = new QLabel(stat.value, card);
-        value->setObjectName("statValue");
-        
-        cardLayout->addWidget(title);
-        cardLayout->addWidget(value);
-        cardLayout->addStretch();
-        statsLayout->addWidget(card);
-    }
-    
-    layout->addLayout(statsLayout);
-    
-    QHBoxLayout *actionsLayout = new QHBoxLayout();
-    QPushButton *addBtn = new QPushButton("+ Nouveau Materiau", page);
-    QPushButton *editBtn = new QPushButton("Modifier", page);
-    QPushButton *alertBtn = new QPushButton("Alertes Stock", page);
-    
-    addBtn->setObjectName("actionButton");
-    editBtn->setObjectName("actionButton");
-    alertBtn->setObjectName("actionButton");
-    
-    addBtn->setCursor(Qt::PointingHandCursor);
-    editBtn->setCursor(Qt::PointingHandCursor);
-    alertBtn->setCursor(Qt::PointingHandCursor);
-    
-    actionsLayout->addWidget(addBtn);
-    actionsLayout->addWidget(editBtn);
-    actionsLayout->addWidget(alertBtn);
-    actionsLayout->addStretch();
-    
-    QTableWidget *table = new QTableWidget(page);
-    table->setObjectName("dataTable");
-    table->setColumnCount(6);
-    table->setHorizontalHeaderLabels({"MATERIAU", "CATEGORIE", "QUANTITE", "PRIX UNITAIRE", "FOURNISSEUR", "SEUIL"});
-    table->horizontalHeader()->setStretchLastSection(true);
-    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    table->verticalHeader()->setVisible(false);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setAlternatingRowColors(true);
-    table->setShowGrid(false);
-    
-    layout->addLayout(statsLayout);
-    layout->addLayout(actionsLayout);
-    layout->addWidget(table);
-    
-    return page;
-}
 
 QWidget* MainWindow::createFinancePage()
 {

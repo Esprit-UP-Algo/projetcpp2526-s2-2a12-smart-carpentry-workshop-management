@@ -13,6 +13,7 @@
 #include <QComboBox>
 #include <QMenu>
 #include "src/models/employee.h"
+#include "src/modules/stock/stockpage.h"
 #include "toggleswitch.h"
 
 QT_BEGIN_NAMESPACE
@@ -102,7 +103,6 @@ private:
     // Page creation methods
     QWidget* createProjectsPage();
     QWidget* createEmployeesPage();
-    QWidget* createStocksPage();
     QWidget* createFinancePage();
     QWidget* createDesignsPage();
     
