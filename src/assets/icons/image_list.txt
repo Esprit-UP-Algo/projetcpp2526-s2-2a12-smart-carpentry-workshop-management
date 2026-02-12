@@ -1,4 +1,0 @@
-Expected images:
-- logo1.png
-- pfp.jpeg (or pfp.png)
-- icon.jpeg (or icon.png)
