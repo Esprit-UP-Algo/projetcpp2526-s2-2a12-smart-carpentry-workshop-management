@@ -1,7 +1,7 @@
 {
 	"InstallScripts" : 
 	[
-		"C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/cmake_install.cmake"
+		"/home/lain/wf/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/cmake_install.cmake"
 	],
 	"Parallel" : false
 }
