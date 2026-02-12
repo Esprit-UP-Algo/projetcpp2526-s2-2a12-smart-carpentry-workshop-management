@@ -1,5 +1,0 @@
-/home/lain/wf/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/CMakeFiles/WoodFlow.dir
-/home/lain/wf/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/CMakeFiles/edit_cache.dir
-/home/lain/wf/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/CMakeFiles/rebuild_cache.dir
-/home/lain/wf/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/CMakeFiles/WoodFlow_autogen_timestamp_deps.dir
-/home/lain/wf/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-employer-wf/build/CMakeFiles/WoodFlow_autogen.dir
