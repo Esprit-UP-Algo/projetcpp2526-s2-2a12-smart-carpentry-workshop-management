@@ -15,7 +15,7 @@ Atelier_Connexion_CMake/
 ├── main.cpp                    ← Point d'entrée
 ├── mainwindow.h/cpp            ← Formulaire d'ajout d'employé
 ├── mainwindow.ui               ← Interface Qt
-└── oracle-cpp-project.tar      ← (optionnel) image Docker exportée localement
+└── oracle-cpp-project.tar      ← Image Docker exportée (optionnel)
 ```
 
 ---
@@ -33,29 +33,40 @@ Atelier_Connexion_CMake/
 
 ## Étape 1 — Obtenir l'image Docker Oracle
 
-L'image Oracle 11g est disponible publiquement sur Docker Hub :
+Deux méthodes au choix :
+
+### Méthode A — Docker Hub (recommandée)
 
 ```bash
-docker pull oracleinanutshell/oracle-xe-11g
+docker pull lain456/oracle-cpp-project:v1
 ```
 
-Vérifier qu'elle est bien téléchargée :
+### Méthode B — Fichier tar local
+
+Si vous avez le fichier `oracle-cpp-project.tar` :
+
+```bash
+docker load -i oracle-cpp-project.tar
+```
+
+Vérifier que l'image est bien disponible :
 ```bash
 docker images
-# doit afficher : oracleinanutshell/oracle-xe-11g
+# doit afficher : lain456/oracle-cpp-project   v1
 ```
-
-> Alternatively, si vous avez le fichier tar exporté localement :
-> ```bash
-> docker load -i oracle-cpp-project.tar
-> ```
 
 ---
 
 ## Étape 2 — Démarrer le conteneur Oracle
 
+### Si vous avez utilisé Docker Hub :
 ```bash
-docker run -d --name oracle11g -p 1521:1521 -p 8080:8080 oracleinanutshell/oracle-xe-11g
+docker run -d --name oracle11g -p 1521:1521 -p 8080:8080 lain456/oracle-cpp-project:v1
+```
+
+### Si vous avez utilisé le fichier tar :
+```bash
+docker run -d --name oracle11g -p 1521:1521 -p 8080:8080 oracle-cpp-project:v1
 ```
 
 Attendre ~30 secondes que Oracle démarre complètement, puis vérifier :
