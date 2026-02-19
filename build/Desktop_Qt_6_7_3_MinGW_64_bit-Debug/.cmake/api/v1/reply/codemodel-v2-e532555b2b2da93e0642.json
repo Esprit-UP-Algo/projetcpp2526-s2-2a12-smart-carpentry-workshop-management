@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "Atelier_Connexion",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "Atelier_Connexion::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Atelier_Connexion-Debug-4ac75f5aeacad29e379c.json",
+					"name" : "Atelier_Connexion",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Atelier_Connexion_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Atelier_Connexion_autogen-Debug-a7f8664778ee5ef3b15d.json",
+					"name" : "Atelier_Connexion_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "Atelier_Connexion_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-Atelier_Connexion_autogen_timestamp_deps-Debug-10303303c01de7125073.json",
+					"name" : "Atelier_Connexion_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-atelier-oracle/build/Desktop_Qt_6_7_3_MinGW_64_bit-Debug",
+		"source" : "C:/Users/amine/Documents/projetcpp2526-s2-2a12-smart-carpentry-workshop-management-atelier-oracle"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 8
+	}
+}

@@ -1,0 +1,3 @@
+"C:\Program Files\CMake\bin\cmake.exe" -E rm -f CMakeFiles\Atelier_Connexion.dir/objects.a
+C:\Qt\Tools\mingw1120_64\bin\ar.exe qc CMakeFiles\Atelier_Connexion.dir/objects.a @CMakeFiles\Atelier_Connexion.dir\objects1.rsp
+C:\Qt\Tools\mingw1120_64\bin\g++.exe -DQT_QML_DEBUG -g -mwindows -Wl,--whole-archive CMakeFiles\Atelier_Connexion.dir/objects.a -Wl,--no-whole-archive -o Atelier_Connexion.exe -Wl,--out-implib,libAtelier_Connexion.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\Atelier_Connexion.dir\linkLibs.rsp
