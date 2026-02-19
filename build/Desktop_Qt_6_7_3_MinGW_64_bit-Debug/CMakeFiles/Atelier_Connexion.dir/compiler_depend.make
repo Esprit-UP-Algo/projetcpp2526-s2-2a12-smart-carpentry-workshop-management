@@ -1562,7 +1562,6 @@ CMakeFiles/Atelier_Connexion.dir/mainwindow.cpp.obj: C:/Users/amine/Documents/pr
   C:/Qt/6.7.3/mingw_64/include/QtCore/q20memory.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/q20type_traits.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/q23utility.h \
-  C:/Qt/6.7.3/mingw_64/include/QtCore/qabstractitemmodel.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qalgorithms.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qanystringview.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qarraydata.h \
@@ -1640,7 +1639,6 @@ CMakeFiles/Atelier_Connexion.dir/mainwindow.cpp.obj: C:/Users/amine/Documents/pr
   C:/Qt/6.7.3/mingw_64/include/QtCore/qprocessordetection.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qrect.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qrefcount.h \
-  C:/Qt/6.7.3/mingw_64/include/QtCore/qregularexpression.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qscopedpointer.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qscopeguard.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qset.h \
@@ -1672,7 +1670,6 @@ CMakeFiles/Atelier_Connexion.dir/mainwindow.cpp.obj: C:/Users/amine/Documents/pr
   C:/Qt/6.7.3/mingw_64/include/QtCore/qtdeprecationmarkers.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qtenvironmentvariables.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qtextstream.h \
-  C:/Qt/6.7.3/mingw_64/include/QtCore/qtimezone.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qtmetamacros.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qtnoop.h \
   C:/Qt/6.7.3/mingw_64/include/QtCore/qtpreprocessorsupport.h \
@@ -1722,7 +1719,6 @@ CMakeFiles/Atelier_Connexion.dir/mainwindow.cpp.obj: C:/Users/amine/Documents/pr
   C:/Qt/6.7.3/mingw_64/include/QtGui/qtguiexports.h \
   C:/Qt/6.7.3/mingw_64/include/QtGui/qtguiglobal.h \
   C:/Qt/6.7.3/mingw_64/include/QtGui/qtransform.h \
-  C:/Qt/6.7.3/mingw_64/include/QtGui/qvalidator.h \
   C:/Qt/6.7.3/mingw_64/include/QtGui/qwindowdefs.h \
   C:/Qt/6.7.3/mingw_64/include/QtGui/qwindowdefs_win.h \
   C:/Qt/6.7.3/mingw_64/include/QtSql/QSqlDatabase \
@@ -1735,30 +1731,21 @@ CMakeFiles/Atelier_Connexion.dir/mainwindow.cpp.obj: C:/Users/amine/Documents/pr
   C:/Qt/6.7.3/mingw_64/include/QtSql/qtsqlexports.h \
   C:/Qt/6.7.3/mingw_64/include/QtSql/qtsqlglobal.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QApplication \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QComboBox \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QDateEdit \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QDoubleSpinBox \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QGroupBox \
+  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QInputDialog \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QLabel \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QLineEdit \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMainWindow \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMenuBar \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QMessageBox \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QPushButton \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/QSpinBox \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QStatusBar \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/QWidget \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qabstractbutton.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemdelegate.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qabstractslider.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qabstractspinbox.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qapplication.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qcombobox.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdatetimeedit.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdialog.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdialogbuttonbox.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qframe.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qgroupbox.h \
+  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qinputdialog.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qlabel.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qlineedit.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmainwindow.h \
@@ -1766,14 +1753,8 @@ CMakeFiles/Atelier_Connexion.dir/mainwindow.cpp.obj: C:/Users/amine/Documents/pr
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmenubar.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmessagebox.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qpushbutton.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qrubberband.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qsizepolicy.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qslider.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qspinbox.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qstatusbar.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qstyle.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qstyleoption.h \
-  C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtabbar.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtabwidget.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtwidgets-config.h \
   C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtwidgetsexports.h \
@@ -2109,8 +2090,6 @@ C:/Program\ Files/CMake/share/cmake-4.1/Modules/CMakeDetermineCompilerSupport.cm
 
 C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6Gui/Qt6QICNSPluginConfig.cmake:
 
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/QComboBox:
-
 C:/Program\ Files/CMake/share/cmake-4.1/Modules/Compiler/IBMCPP-CXX-DetermineVersionInternal.cmake:
 
 C:/Program\ Files/CMake/share/cmake-4.1/Modules/CheckCXXCompilerFlag.cmake:
@@ -2206,8 +2185,6 @@ C:/Program\ Files/CMake/share/cmake-4.1/Modules/Platform/Linker/Windows-GNU-CXX.
 C:/Qt/6.7.3/mingw_64/include/QtCore/qttranslation.h:
 
 C:/Program\ Files/CMake/share/cmake-4.1/Modules/Compiler/Borland-DetermineCompiler.cmake:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qgroupbox.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtCore/qsystemdetection.h:
 
@@ -2449,8 +2426,6 @@ C:/Qt/6.7.3/mingw_64/include/QtCore/q20type_traits.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtCore/q23utility.h:
 
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qtabbar.h:
-
 C:/Qt/6.7.3/mingw_64/include/QtCore/qalgorithms.h:
 
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/utility:
@@ -2466,8 +2441,6 @@ C:/Qt/6.7.3/mingw_64/include/QtCore/qassert.h:
 C:/Qt/6.7.3/mingw_64/include/QtCore/qcoreapplication.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtCore/qatomic.h:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qcombobox.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtCore/qatomic_cxx11.h:
 
@@ -2667,8 +2640,6 @@ C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6WidgetsTools/Qt6WidgetsToolsConfig.cmake:
 
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/basic_string.h:
 
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qstyle.h:
-
 C:/Qt/6.7.3/mingw_64/include/QtCore/qstringconverter.h:
 
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stringfwd.h:
@@ -2706,8 +2677,6 @@ C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateTargets-
 C:/Qt/6.7.3/mingw_64/include/QtCore/qtconfiginclude.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtCore/qtconfigmacros.h:
-
-C:/Qt/6.7.3/mingw_64/include/QtCore/qregularexpression.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtCore/qtcore-config.h:
 
@@ -3137,8 +3106,6 @@ C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateAdditionalTargetInfo
 
 C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfig.cmake:
 
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qspinbox.h:
-
 C:/Qt/6.7.3/mingw_64/lib/cmake/Qt6ZlibPrivate/Qt6ZlibPrivateConfigVersionImpl.cmake:
 
 C:/Qt/6.7.3/mingw_64/include/QtGui/qguiapplication.h:
@@ -3217,8 +3184,6 @@ C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/shar
 
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/shared_ptr_base.h:
 
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qabstractspinbox.h:
-
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/specfun.h:
 
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/bits/stl_algo.h:
@@ -3282,6 +3247,8 @@ C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ext/new_a
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/ext/numeric_traits.h:
 
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iosfwd:
+
+C:/Qt/6.7.3/mingw_64/include/QtWidgets/qinputdialog.h:
 
 C:/Qt/Tools/mingw1120_64/lib/gcc/x86_64-w64-mingw32/11.2.0/include/c++/iterator:
 
@@ -3441,13 +3408,11 @@ C:/Qt/6.7.3/mingw_64/include/QtWidgets/QApplication:
 
 C:/Qt/6.7.3/mingw_64/include/QtCore/QDate:
 
-C:/Qt/6.7.3/mingw_64/include/QtCore/qabstractitemmodel.h:
-
 C:/Qt/6.7.3/mingw_64/include/QtCore/qcalendar.h:
 
-C:/Qt/6.7.3/mingw_64/include/QtCore/qtimezone.h:
-
 C:/Qt/6.7.3/mingw_64/include/QtCore/qurl.h:
+
+C:/Qt/6.7.3/mingw_64/include/QtWidgets/QInputDialog:
 
 C:/Qt/6.7.3/mingw_64/include/QtGui/qtextdocument.h:
 
@@ -3455,31 +3420,13 @@ C:/Qt/6.7.3/mingw_64/include/QtGui/qtextformat.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtGui/qtextoption.h:
 
-C:/Qt/6.7.3/mingw_64/include/QtGui/qvalidator.h:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/QDateEdit:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/QDoubleSpinBox:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmenubar.h:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/QGroupBox:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qabstractitemdelegate.h:
-
 C:/Qt/6.7.3/mingw_64/include/QtWidgets/QLabel:
 
 C:/Qt/6.7.3/mingw_64/include/QtWidgets/QLineEdit:
 
 C:/Qt/6.7.3/mingw_64/include/QtWidgets/QPushButton:
 
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/QSpinBox:
-
 C:/Qt/6.7.3/mingw_64/include/QtWidgets/QWidget:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qabstractslider.h:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qdatetimeedit.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtWidgets/qframe.h:
 
@@ -3487,8 +3434,4 @@ C:/Qt/6.7.3/mingw_64/include/QtWidgets/qlabel.h:
 
 C:/Qt/6.7.3/mingw_64/include/QtWidgets/qlineedit.h:
 
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qrubberband.h:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qslider.h:
-
-C:/Qt/6.7.3/mingw_64/include/QtWidgets/qstyleoption.h:
+C:/Qt/6.7.3/mingw_64/include/QtWidgets/qmenubar.h:

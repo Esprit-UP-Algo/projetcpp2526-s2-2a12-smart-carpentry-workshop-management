@@ -11,17 +11,19 @@
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QComboBox>
 #include <QtWidgets/QDateEdit>
 #include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QFormLayout>
 #include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
+#include <QtWidgets/QTextEdit>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -30,156 +32,167 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralWidget;
+    QVBoxLayout *vboxLayout;
+    QLabel *label_title;
     QGroupBox *groupBox;
-    QLabel *label_cin;
-    QLineEdit *lineEdit_cin;
-    QLabel *label_nom;
-    QLineEdit *lineEdit_nom;
-    QLabel *label_prenom;
-    QLineEdit *lineEdit_prenom;
-    QLabel *label_poste;
-    QLineEdit *lineEdit_poste;
-    QLabel *label_email;
-    QLineEdit *lineEdit_email;
-    QLabel *label_tel;
-    QLineEdit *lineEdit_tel;
-    QLabel *label_date;
-    QDateEdit *dateEdit_embauche;
-    QLabel *label_salaire;
-    QDoubleSpinBox *spinBox_salaire;
-    QLabel *label_dispo;
-    QComboBox *comboBox_dispo;
-    QLabel *label_comp;
-    QLineEdit *lineEdit_competences;
-    QLabel *label_perf;
-    QDoubleSpinBox *spinBox_perf;
-    QLabel *label_njc;
-    QSpinBox *spinBox_njc;
-    QLabel *label_nja;
-    QSpinBox *spinBox_nja;
-    QLabel *label_hdt;
-    QDoubleSpinBox *spinBox_hdt;
-    QLabel *label_required;
-    QPushButton *pushButton_ajouter;
+    QFormLayout *formLayout;
+    QLabel *label;
+    QLineEdit *lineEdit_id;
+    QLabel *label1;
+    QDoubleSpinBox *spinBox_montant;
+    QLabel *label2;
+    QDateEdit *dateEdit_tran;
+    QLabel *label3;
+    QLineEdit *lineEdit_type;
+    QLabel *label4;
+    QLineEdit *lineEdit_mode;
+    QLabel *label5;
+    QLineEdit *lineEdit_statut;
+    QLabel *label6;
+    QLineEdit *lineEdit_categorie;
+    QLabel *label7;
+    QLineEdit *lineEdit_client;
+    QLabel *label8;
+    QTextEdit *textEdit_description;
+    QHBoxLayout *hboxLayout;
+    QSpacerItem *horizontalSpacer;
     QPushButton *pushButton_reset;
-    QMenuBar *menuBar;
+    QPushButton *pushButton_ajouter;
     QStatusBar *statusBar;
 
     void setupUi(QMainWindow *MainWindow)
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName("MainWindow");
-        MainWindow->resize(480, 600);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName("centralWidget");
+        vboxLayout = new QVBoxLayout(centralWidget);
+        vboxLayout->setObjectName("vboxLayout");
+        label_title = new QLabel(centralWidget);
+        label_title->setObjectName("label_title");
+        label_title->setAlignment(Qt::AlignCenter);
+
+        vboxLayout->addWidget(label_title);
+
         groupBox = new QGroupBox(centralWidget);
         groupBox->setObjectName("groupBox");
-        groupBox->setGeometry(QRect(20, 10, 440, 510));
-        label_cin = new QLabel(groupBox);
-        label_cin->setObjectName("label_cin");
-        label_cin->setGeometry(QRect(10, 30, 140, 20));
-        lineEdit_cin = new QLineEdit(groupBox);
-        lineEdit_cin->setObjectName("lineEdit_cin");
-        lineEdit_cin->setGeometry(QRect(160, 28, 260, 24));
-        label_nom = new QLabel(groupBox);
-        label_nom->setObjectName("label_nom");
-        label_nom->setGeometry(QRect(10, 65, 140, 20));
-        lineEdit_nom = new QLineEdit(groupBox);
-        lineEdit_nom->setObjectName("lineEdit_nom");
-        lineEdit_nom->setGeometry(QRect(160, 63, 260, 24));
-        label_prenom = new QLabel(groupBox);
-        label_prenom->setObjectName("label_prenom");
-        label_prenom->setGeometry(QRect(10, 100, 140, 20));
-        lineEdit_prenom = new QLineEdit(groupBox);
-        lineEdit_prenom->setObjectName("lineEdit_prenom");
-        lineEdit_prenom->setGeometry(QRect(160, 98, 260, 24));
-        label_poste = new QLabel(groupBox);
-        label_poste->setObjectName("label_poste");
-        label_poste->setGeometry(QRect(10, 135, 140, 20));
-        lineEdit_poste = new QLineEdit(groupBox);
-        lineEdit_poste->setObjectName("lineEdit_poste");
-        lineEdit_poste->setGeometry(QRect(160, 133, 260, 24));
-        label_email = new QLabel(groupBox);
-        label_email->setObjectName("label_email");
-        label_email->setGeometry(QRect(10, 170, 140, 20));
-        lineEdit_email = new QLineEdit(groupBox);
-        lineEdit_email->setObjectName("lineEdit_email");
-        lineEdit_email->setGeometry(QRect(160, 168, 260, 24));
-        label_tel = new QLabel(groupBox);
-        label_tel->setObjectName("label_tel");
-        label_tel->setGeometry(QRect(10, 205, 140, 20));
-        lineEdit_tel = new QLineEdit(groupBox);
-        lineEdit_tel->setObjectName("lineEdit_tel");
-        lineEdit_tel->setGeometry(QRect(160, 203, 260, 24));
-        label_date = new QLabel(groupBox);
-        label_date->setObjectName("label_date");
-        label_date->setGeometry(QRect(10, 240, 140, 20));
-        dateEdit_embauche = new QDateEdit(groupBox);
-        dateEdit_embauche->setObjectName("dateEdit_embauche");
-        dateEdit_embauche->setGeometry(QRect(160, 238, 160, 24));
-        dateEdit_embauche->setCalendarPopup(true);
-        label_salaire = new QLabel(groupBox);
-        label_salaire->setObjectName("label_salaire");
-        label_salaire->setGeometry(QRect(10, 275, 140, 20));
-        spinBox_salaire = new QDoubleSpinBox(groupBox);
-        spinBox_salaire->setObjectName("spinBox_salaire");
-        spinBox_salaire->setGeometry(QRect(160, 273, 160, 24));
-        spinBox_salaire->setMaximum(999999.989999999990687);
-        label_dispo = new QLabel(groupBox);
-        label_dispo->setObjectName("label_dispo");
-        label_dispo->setGeometry(QRect(10, 310, 140, 20));
-        comboBox_dispo = new QComboBox(groupBox);
-        comboBox_dispo->addItem(QString());
-        comboBox_dispo->addItem(QString());
-        comboBox_dispo->addItem(QString());
-        comboBox_dispo->setObjectName("comboBox_dispo");
-        comboBox_dispo->setGeometry(QRect(160, 308, 180, 24));
-        label_comp = new QLabel(groupBox);
-        label_comp->setObjectName("label_comp");
-        label_comp->setGeometry(QRect(10, 345, 140, 20));
-        lineEdit_competences = new QLineEdit(groupBox);
-        lineEdit_competences->setObjectName("lineEdit_competences");
-        lineEdit_competences->setGeometry(QRect(160, 343, 260, 24));
-        label_perf = new QLabel(groupBox);
-        label_perf->setObjectName("label_perf");
-        label_perf->setGeometry(QRect(10, 380, 140, 20));
-        spinBox_perf = new QDoubleSpinBox(groupBox);
-        spinBox_perf->setObjectName("spinBox_perf");
-        spinBox_perf->setGeometry(QRect(160, 378, 100, 24));
-        spinBox_perf->setMaximum(10.000000000000000);
-        label_njc = new QLabel(groupBox);
-        label_njc->setObjectName("label_njc");
-        label_njc->setGeometry(QRect(10, 415, 50, 20));
-        spinBox_njc = new QSpinBox(groupBox);
-        spinBox_njc->setObjectName("spinBox_njc");
-        spinBox_njc->setGeometry(QRect(60, 413, 70, 24));
-        label_nja = new QLabel(groupBox);
-        label_nja->setObjectName("label_nja");
-        label_nja->setGeometry(QRect(145, 415, 50, 20));
-        spinBox_nja = new QSpinBox(groupBox);
-        spinBox_nja->setObjectName("spinBox_nja");
-        spinBox_nja->setGeometry(QRect(200, 413, 70, 24));
-        label_hdt = new QLabel(groupBox);
-        label_hdt->setObjectName("label_hdt");
-        label_hdt->setGeometry(QRect(285, 415, 50, 20));
-        spinBox_hdt = new QDoubleSpinBox(groupBox);
-        spinBox_hdt->setObjectName("spinBox_hdt");
-        spinBox_hdt->setGeometry(QRect(340, 413, 85, 24));
-        spinBox_hdt->setMaximum(99999.990000000005239);
-        label_required = new QLabel(groupBox);
-        label_required->setObjectName("label_required");
-        label_required->setGeometry(QRect(10, 465, 300, 20));
-        pushButton_ajouter = new QPushButton(centralWidget);
-        pushButton_ajouter->setObjectName("pushButton_ajouter");
-        pushButton_ajouter->setGeometry(QRect(300, 535, 110, 32));
+        formLayout = new QFormLayout(groupBox);
+        formLayout->setObjectName("formLayout");
+        label = new QLabel(groupBox);
+        label->setObjectName("label");
+
+        formLayout->setWidget(0, QFormLayout::LabelRole, label);
+
+        lineEdit_id = new QLineEdit(groupBox);
+        lineEdit_id->setObjectName("lineEdit_id");
+
+        formLayout->setWidget(0, QFormLayout::FieldRole, lineEdit_id);
+
+        label1 = new QLabel(groupBox);
+        label1->setObjectName("label1");
+
+        formLayout->setWidget(1, QFormLayout::LabelRole, label1);
+
+        spinBox_montant = new QDoubleSpinBox(groupBox);
+        spinBox_montant->setObjectName("spinBox_montant");
+        spinBox_montant->setMaximum(999999999.000000000000000);
+
+        formLayout->setWidget(1, QFormLayout::FieldRole, spinBox_montant);
+
+        label2 = new QLabel(groupBox);
+        label2->setObjectName("label2");
+
+        formLayout->setWidget(2, QFormLayout::LabelRole, label2);
+
+        dateEdit_tran = new QDateEdit(groupBox);
+        dateEdit_tran->setObjectName("dateEdit_tran");
+        dateEdit_tran->setCalendarPopup(true);
+
+        formLayout->setWidget(2, QFormLayout::FieldRole, dateEdit_tran);
+
+        label3 = new QLabel(groupBox);
+        label3->setObjectName("label3");
+
+        formLayout->setWidget(3, QFormLayout::LabelRole, label3);
+
+        lineEdit_type = new QLineEdit(groupBox);
+        lineEdit_type->setObjectName("lineEdit_type");
+
+        formLayout->setWidget(3, QFormLayout::FieldRole, lineEdit_type);
+
+        label4 = new QLabel(groupBox);
+        label4->setObjectName("label4");
+
+        formLayout->setWidget(4, QFormLayout::LabelRole, label4);
+
+        lineEdit_mode = new QLineEdit(groupBox);
+        lineEdit_mode->setObjectName("lineEdit_mode");
+
+        formLayout->setWidget(4, QFormLayout::FieldRole, lineEdit_mode);
+
+        label5 = new QLabel(groupBox);
+        label5->setObjectName("label5");
+
+        formLayout->setWidget(5, QFormLayout::LabelRole, label5);
+
+        lineEdit_statut = new QLineEdit(groupBox);
+        lineEdit_statut->setObjectName("lineEdit_statut");
+
+        formLayout->setWidget(5, QFormLayout::FieldRole, lineEdit_statut);
+
+        label6 = new QLabel(groupBox);
+        label6->setObjectName("label6");
+
+        formLayout->setWidget(6, QFormLayout::LabelRole, label6);
+
+        lineEdit_categorie = new QLineEdit(groupBox);
+        lineEdit_categorie->setObjectName("lineEdit_categorie");
+
+        formLayout->setWidget(6, QFormLayout::FieldRole, lineEdit_categorie);
+
+        label7 = new QLabel(groupBox);
+        label7->setObjectName("label7");
+
+        formLayout->setWidget(7, QFormLayout::LabelRole, label7);
+
+        lineEdit_client = new QLineEdit(groupBox);
+        lineEdit_client->setObjectName("lineEdit_client");
+
+        formLayout->setWidget(7, QFormLayout::FieldRole, lineEdit_client);
+
+        label8 = new QLabel(groupBox);
+        label8->setObjectName("label8");
+
+        formLayout->setWidget(8, QFormLayout::LabelRole, label8);
+
+        textEdit_description = new QTextEdit(groupBox);
+        textEdit_description->setObjectName("textEdit_description");
+
+        formLayout->setWidget(8, QFormLayout::FieldRole, textEdit_description);
+
+
+        vboxLayout->addWidget(groupBox);
+
+        hboxLayout = new QHBoxLayout();
+        hboxLayout->setObjectName("hboxLayout");
+        horizontalSpacer = new QSpacerItem(0, 0, QSizePolicy::Policy::Expanding, QSizePolicy::Policy::Minimum);
+
+        hboxLayout->addItem(horizontalSpacer);
+
         pushButton_reset = new QPushButton(centralWidget);
         pushButton_reset->setObjectName("pushButton_reset");
-        pushButton_reset->setGeometry(QRect(170, 535, 110, 32));
+
+        hboxLayout->addWidget(pushButton_reset);
+
+        pushButton_ajouter = new QPushButton(centralWidget);
+        pushButton_ajouter->setObjectName("pushButton_ajouter");
+
+        hboxLayout->addWidget(pushButton_ajouter);
+
+
+        vboxLayout->addLayout(hboxLayout);
+
         MainWindow->setCentralWidget(centralWidget);
-        menuBar = new QMenuBar(MainWindow);
-        menuBar->setObjectName("menuBar");
-        menuBar->setGeometry(QRect(0, 0, 480, 21));
-        MainWindow->setMenuBar(menuBar);
         statusBar = new QStatusBar(MainWindow);
         statusBar->setObjectName("statusBar");
         MainWindow->setStatusBar(statusBar);
@@ -191,35 +204,23 @@ public:
 
     void retranslateUi(QMainWindow *MainWindow)
     {
-        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Ajouter un Employ\303\251", nullptr));
-        groupBox->setTitle(QCoreApplication::translate("MainWindow", "Informations de l'Employ\303\251", nullptr));
-        label_cin->setText(QCoreApplication::translate("MainWindow", "CIN *", nullptr));
-        lineEdit_cin->setPlaceholderText(QCoreApplication::translate("MainWindow", "ex: 12345678", nullptr));
-        label_nom->setText(QCoreApplication::translate("MainWindow", "Nom *", nullptr));
-        label_prenom->setText(QCoreApplication::translate("MainWindow", "Pr\303\251nom *", nullptr));
-        label_poste->setText(QCoreApplication::translate("MainWindow", "Poste", nullptr));
-        label_email->setText(QCoreApplication::translate("MainWindow", "Email", nullptr));
-        lineEdit_email->setPlaceholderText(QCoreApplication::translate("MainWindow", "ex: nom@email.com", nullptr));
-        label_tel->setText(QCoreApplication::translate("MainWindow", "Num\303\251ro T\303\251l", nullptr));
-        label_date->setText(QCoreApplication::translate("MainWindow", "Date d'embauche", nullptr));
-        dateEdit_embauche->setDisplayFormat(QCoreApplication::translate("MainWindow", "dd/MM/yyyy", nullptr));
-        label_salaire->setText(QCoreApplication::translate("MainWindow", "Salaire", nullptr));
-        spinBox_salaire->setSuffix(QCoreApplication::translate("MainWindow", " DT", nullptr));
-        label_dispo->setText(QCoreApplication::translate("MainWindow", "Disponibilit\303\251", nullptr));
-        comboBox_dispo->setItemText(0, QCoreApplication::translate("MainWindow", "Disponible", nullptr));
-        comboBox_dispo->setItemText(1, QCoreApplication::translate("MainWindow", "Indisponible", nullptr));
-        comboBox_dispo->setItemText(2, QCoreApplication::translate("MainWindow", "En conge", nullptr));
-
-        label_comp->setText(QCoreApplication::translate("MainWindow", "Comp\303\251tences", nullptr));
-        lineEdit_competences->setPlaceholderText(QCoreApplication::translate("MainWindow", "ex: C++, Qt, Oracle", nullptr));
-        label_perf->setText(QCoreApplication::translate("MainWindow", "Performance (0-10)", nullptr));
-        label_njc->setText(QCoreApplication::translate("MainWindow", "NJC", nullptr));
-        label_nja->setText(QCoreApplication::translate("MainWindow", "NJA", nullptr));
-        label_hdt->setText(QCoreApplication::translate("MainWindow", "HDT", nullptr));
-        label_required->setText(QCoreApplication::translate("MainWindow", "* Champs obligatoires", nullptr));
-        label_required->setStyleSheet(QCoreApplication::translate("MainWindow", "color: gray; font-size: 10px;", nullptr));
-        pushButton_ajouter->setText(QCoreApplication::translate("MainWindow", "Ajouter", nullptr));
+        MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "Gestion des Transactions", nullptr));
+        label_title->setText(QCoreApplication::translate("MainWindow", "Nouvelle Transaction", nullptr));
+        label_title->setStyleSheet(QCoreApplication::translate("MainWindow", "font-size:22px;font-weight:bold;margin-bottom:10px;", nullptr));
+        groupBox->setTitle(QCoreApplication::translate("MainWindow", "D\303\251tails de la transaction", nullptr));
+        label->setText(QCoreApplication::translate("MainWindow", "Id", nullptr));
+        label1->setText(QCoreApplication::translate("MainWindow", "Montant", nullptr));
+        spinBox_montant->setSuffix(QCoreApplication::translate("MainWindow", " DT", nullptr));
+        label2->setText(QCoreApplication::translate("MainWindow", "Date", nullptr));
+        label3->setText(QCoreApplication::translate("MainWindow", "Type", nullptr));
+        label4->setText(QCoreApplication::translate("MainWindow", "Mode paiement", nullptr));
+        label5->setText(QCoreApplication::translate("MainWindow", "Statut", nullptr));
+        label6->setText(QCoreApplication::translate("MainWindow", "Cat\303\251gorie", nullptr));
+        label7->setText(QCoreApplication::translate("MainWindow", "Client", nullptr));
+        label8->setText(QCoreApplication::translate("MainWindow", "Description", nullptr));
         pushButton_reset->setText(QCoreApplication::translate("MainWindow", "R\303\251initialiser", nullptr));
+        pushButton_ajouter->setText(QCoreApplication::translate("MainWindow", "Ajouter", nullptr));
+        pushButton_ajouter->setStyleSheet(QCoreApplication::translate("MainWindow", "background:#2ecc71;color:white;font-weight:bold;padding:6px 14px;", nullptr));
     } // retranslateUi
 
 };

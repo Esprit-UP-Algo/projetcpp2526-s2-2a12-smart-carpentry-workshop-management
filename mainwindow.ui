@@ -1,168 +1,139 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect><x>0</x><y>0</y><width>480</width><height>600</height></rect>
-  </property>
-  <property name="windowTitle">
-   <string>Ajouter un Employé</string>
-  </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect><x>20</x><y>10</y><width>440</width><height>510</height></rect>
-    </property>
-    <property name="title"><string>Informations de l'Employé</string></property>
+<class>MainWindow</class>
+<widget class="QMainWindow" name="MainWindow">
+ <property name="windowTitle">
+  <string>Gestion des Transactions</string>
+ </property>
 
-    <widget class="QLabel" name="label_cin">
-     <property name="geometry"><rect><x>10</x><y>30</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>CIN *</string></property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_cin">
-     <property name="geometry"><rect><x>160</x><y>28</y><width>260</width><height>24</height></rect></property>
-     <property name="placeholderText"><string>ex: 12345678</string></property>
-    </widget>
+ <widget class="QWidget" name="centralWidget">
+  <layout class="QVBoxLayout">
 
-    <widget class="QLabel" name="label_nom">
-     <property name="geometry"><rect><x>10</x><y>65</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Nom *</string></property>
+   <!-- TITLE -->
+   <item>
+    <widget class="QLabel" name="label_title">
+     <property name="text">
+      <string>Nouvelle Transaction</string>
+     </property>
+     <property name="styleSheet">
+      <string>font-size:22px;font-weight:bold;margin-bottom:10px;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
-    <widget class="QLineEdit" name="lineEdit_nom">
-     <property name="geometry"><rect><x>160</x><y>63</y><width>260</width><height>24</height></rect></property>
-    </widget>
+   </item>
 
-    <widget class="QLabel" name="label_prenom">
-     <property name="geometry"><rect><x>10</x><y>100</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Prénom *</string></property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_prenom">
-     <property name="geometry"><rect><x>160</x><y>98</y><width>260</width><height>24</height></rect></property>
-    </widget>
+   <!-- GROUP -->
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Détails de la transaction</string>
+     </property>
 
-    <widget class="QLabel" name="label_poste">
-     <property name="geometry"><rect><x>10</x><y>135</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Poste</string></property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_poste">
-     <property name="geometry"><rect><x>160</x><y>133</y><width>260</width><height>24</height></rect></property>
-    </widget>
+     <layout class="QFormLayout">
 
-    <widget class="QLabel" name="label_email">
-     <property name="geometry"><rect><x>10</x><y>170</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Email</string></property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_email">
-     <property name="geometry"><rect><x>160</x><y>168</y><width>260</width><height>24</height></rect></property>
-     <property name="placeholderText"><string>ex: nom@email.com</string></property>
-    </widget>
+      <item row="0" column="0">
+       <widget class="QLabel"><property name="text"><string>Id</string></property></widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_id"/>
+      </item>
 
-    <widget class="QLabel" name="label_tel">
-     <property name="geometry"><rect><x>10</x><y>205</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Numéro Tél</string></property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_tel">
-     <property name="geometry"><rect><x>160</x><y>203</y><width>260</width><height>24</height></rect></property>
-    </widget>
+      <item row="1" column="0">
+       <widget class="QLabel"><property name="text"><string>Montant</string></property></widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="spinBox_montant">
+        <property name="maximum"><double>999999999</double></property>
+        <property name="suffix"><string> DT</string></property>
+       </widget>
+      </item>
 
-    <widget class="QLabel" name="label_date">
-     <property name="geometry"><rect><x>10</x><y>240</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Date d'embauche</string></property>
-    </widget>
-    <widget class="QDateEdit" name="dateEdit_embauche">
-     <property name="geometry"><rect><x>160</x><y>238</y><width>160</width><height>24</height></rect></property>
-     <property name="calendarPopup"><bool>true</bool></property>
-     <property name="displayFormat"><string>dd/MM/yyyy</string></property>
-    </widget>
+      <item row="2" column="0">
+       <widget class="QLabel"><property name="text"><string>Date</string></property></widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDateEdit" name="dateEdit_tran">
+        <property name="calendarPopup"><bool>true</bool></property>
+       </widget>
+      </item>
 
-    <widget class="QLabel" name="label_salaire">
-     <property name="geometry"><rect><x>10</x><y>275</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Salaire</string></property>
-    </widget>
-    <widget class="QDoubleSpinBox" name="spinBox_salaire">
-     <property name="geometry"><rect><x>160</x><y>273</y><width>160</width><height>24</height></rect></property>
-     <property name="maximum"><double>999999.99</double></property>
-     <property name="suffix"><string> DT</string></property>
-    </widget>
+      <item row="3" column="0">
+       <widget class="QLabel"><property name="text"><string>Type</string></property></widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="lineEdit_type"/>
+      </item>
 
-    <widget class="QLabel" name="label_dispo">
-     <property name="geometry"><rect><x>10</x><y>310</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Disponibilité</string></property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_dispo">
-     <property name="geometry"><rect><x>160</x><y>308</y><width>180</width><height>24</height></rect></property>
-     <item><property name="text"><string>Disponible</string></property></item>
-     <item><property name="text"><string>Indisponible</string></property></item>
-     <item><property name="text"><string>En conge</string></property></item>
-    </widget>
+      <item row="4" column="0">
+       <widget class="QLabel"><property name="text"><string>Mode paiement</string></property></widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit_mode"/>
+      </item>
 
-    <widget class="QLabel" name="label_comp">
-     <property name="geometry"><rect><x>10</x><y>345</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Compétences</string></property>
-    </widget>
-    <widget class="QLineEdit" name="lineEdit_competences">
-     <property name="geometry"><rect><x>160</x><y>343</y><width>260</width><height>24</height></rect></property>
-     <property name="placeholderText"><string>ex: C++, Qt, Oracle</string></property>
-    </widget>
+      <item row="5" column="0">
+       <widget class="QLabel"><property name="text"><string>Statut</string></property></widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="lineEdit_statut"/>
+      </item>
 
-    <widget class="QLabel" name="label_perf">
-     <property name="geometry"><rect><x>10</x><y>380</y><width>140</width><height>20</height></rect></property>
-     <property name="text"><string>Performance (0-10)</string></property>
-    </widget>
-    <widget class="QDoubleSpinBox" name="spinBox_perf">
-     <property name="geometry"><rect><x>160</x><y>378</y><width>100</width><height>24</height></rect></property>
-     <property name="maximum"><double>10.00</double></property>
-    </widget>
+      <item row="6" column="0">
+       <widget class="QLabel"><property name="text"><string>Catégorie</string></property></widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLineEdit" name="lineEdit_categorie"/>
+      </item>
 
-    <widget class="QLabel" name="label_njc">
-     <property name="geometry"><rect><x>10</x><y>415</y><width>50</width><height>20</height></rect></property>
-     <property name="text"><string>NJC</string></property>
-    </widget>
-    <widget class="QSpinBox" name="spinBox_njc">
-     <property name="geometry"><rect><x>60</x><y>413</y><width>70</width><height>24</height></rect></property>
-    </widget>
+      <item row="7" column="0">
+       <widget class="QLabel"><property name="text"><string>Client</string></property></widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLineEdit" name="lineEdit_client"/>
+      </item>
 
-    <widget class="QLabel" name="label_nja">
-     <property name="geometry"><rect><x>145</x><y>415</y><width>50</width><height>20</height></rect></property>
-     <property name="text"><string>NJA</string></property>
-    </widget>
-    <widget class="QSpinBox" name="spinBox_nja">
-     <property name="geometry"><rect><x>200</x><y>413</y><width>70</width><height>24</height></rect></property>
-    </widget>
+      <item row="8" column="0">
+       <widget class="QLabel"><property name="text"><string>Description</string></property></widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QTextEdit" name="textEdit_description"/>
+      </item>
 
-    <widget class="QLabel" name="label_hdt">
-     <property name="geometry"><rect><x>285</x><y>415</y><width>50</width><height>20</height></rect></property>
-     <property name="text"><string>HDT</string></property>
+     </layout>
     </widget>
-    <widget class="QDoubleSpinBox" name="spinBox_hdt">
-     <property name="geometry"><rect><x>340</x><y>413</y><width>85</width><height>24</height></rect></property>
-     <property name="maximum"><double>99999.99</double></property>
-    </widget>
+   </item>
 
-    <widget class="QLabel" name="label_required">
-     <property name="geometry"><rect><x>10</x><y>465</y><width>300</width><height>20</height></rect></property>
-     <property name="text"><string>* Champs obligatoires</string></property>
-     <property name="styleSheet"><string>color: gray; font-size: 10px;</string></property>
-    </widget>
+   <!-- BUTTONS -->
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation"><enum>Qt::Horizontal</enum></property>
+      </spacer>
+     </item>
 
-   </widget>
+     <item>
+      <widget class="QPushButton" name="pushButton_reset">
+       <property name="text"><string>Réinitialiser</string></property>
+      </widget>
+     </item>
 
-   <widget class="QPushButton" name="pushButton_ajouter">
-    <property name="geometry"><rect><x>300</x><y>535</y><width>110</width><height>32</height></rect></property>
-    <property name="text"><string>Ajouter</string></property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_reset">
-    <property name="geometry"><rect><x>170</x><y>535</y><width>110</width><height>32</height></rect></property>
-    <property name="text"><string>Réinitialiser</string></property>
-   </widget>
+     <item>
+      <widget class="QPushButton" name="pushButton_ajouter">
+       <property name="text"><string>Ajouter</string></property>
+       <property name="styleSheet">
+        <string>background:#2ecc71;color:white;font-weight:bold;padding:6px 14px;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
 
-  </widget>
-  <widget class="QMenuBar" name="menuBar">
-   <property name="geometry"><rect><x>0</x><y>0</y><width>480</width><height>21</height></rect></property>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
- <resources/>
- <connections/>
+
+ <widget class="QStatusBar" name="statusBar"/>
+</widget>
 </ui>

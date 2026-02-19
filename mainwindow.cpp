@@ -8,13 +8,14 @@
 #include <QMessageBox>
 #include <QDate>
 #include <QDebug>
+#include <QInputDialog>
+#include <QLineEdit>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->dateEdit_embauche->setDate(QDate::currentDate());
 }
 
 MainWindow::~MainWindow()
@@ -24,58 +25,84 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_ajouter_clicked()
 {
-    if (ui->lineEdit_cin->text().trimmed().isEmpty() ||
-        ui->lineEdit_nom->text().trimmed().isEmpty() ||
-        ui->lineEdit_prenom->text().trimmed().isEmpty())
-    {
-        QMessageBox::warning(this, "Champs manquants",
-                             "CIN, Nom et Prénom sont obligatoires.");
+    bool ok;
+
+    QString ui_id = QInputDialog::getText(this, "Id_tran",
+        "Identifiant transaction:", QLineEdit::Normal, QString(), &ok);
+    if (!ok || ui_id.trimmed().isEmpty()) {
+        QMessageBox::warning(this, "Annulé", "Id_tran requis.");
         return;
     }
 
+    double ui_montant = QInputDialog::getDouble(this, "montant_tran",
+        "Montant:", 0.0, -1e12, 1e12, 2, &ok);
+    if (!ok) return;
+
+    QString ui_date = QInputDialog::getText(this, "date_tran",
+        "Date (YYYY-MM-DD):",
+        QLineEdit::Normal,
+        QDate::currentDate().toString("yyyy-MM-dd"),
+        &ok);
+
+    if (!ok || QDate::fromString(ui_date, "yyyy-MM-dd").isNull()) {
+        QMessageBox::warning(this, "Erreur date", "Date invalide.");
+        return;
+    }
+
+    QString ui_type = QInputDialog::getText(this, "type_tran",
+        "Type:", QLineEdit::Normal, QString(), &ok);
+    if (!ok) return;
+
+    QString ui_mode_paiement = QInputDialog::getText(this, "mode_paiement",
+        "Mode de paiement:", QLineEdit::Normal, QString(), &ok);
+    if (!ok) return;
+
+    QString ui_statut = QInputDialog::getText(this, "statut_tran",
+        "Statut:", QLineEdit::Normal, QString(), &ok);
+    if (!ok) return;
+
+    QString ui_categorie = QInputDialog::getText(this, "categorie_tran",
+        "Categorie:", QLineEdit::Normal, QString(), &ok);
+    if (!ok) return;
+
+    QString ui_description = QInputDialog::getText(this, "description",
+        "Description:", QLineEdit::Normal, QString(), &ok);
+    if (!ok) return;
+
+    QString ui_client = QInputDialog::getText(this, "client_tran",
+        "Client:", QLineEdit::Normal, QString(), &ok);
+    if (!ok) return;
+
     QSqlQuery query(QSqlDatabase::database(Connection::CONN_NAME));
+
     query.prepare(
-        "INSERT INTO EMPLOYE "
-        "(ID_EMP, CIN, NOM_EMP, PRENOM_EMP, POST_EMP, EMAIL_EMP, NUM_TEL, "
-        " DATE_EMBAUCHE, SALAIRE, COMPETENCES, DISPO_EMP, PERFORMANCE, NJC, NJA, HDT) "
+        "INSERT INTO TRANSACTIONS "
+        "(Id_tran, montant_tran, date_tran, type_tran, mode_paiement, statut_tran, categorie_tran, description, client_tran) "
         "VALUES "
-        "((SELECT NVL(MAX(ID_EMP),0)+1 FROM EMPLOYE), "
-        " :cin, :nom, :prenom, :poste, :email, :tel, "
-        " TO_DATE(:date_emb, 'YYYY-MM-DD'), :salaire, :competences, :dispo, :perf, :njc, :nja, :hdt)"
+        "(:id_tran, :montant_tran, TO_DATE(:date_tran, 'YYYY-MM-DD'), "
+        ":type_tran, :mode_paiement, :statut_tran, :categorie_tran, :description, :client_tran)"
     );
 
-    query.bindValue(":cin",         ui->lineEdit_cin->text().trimmed());
-    query.bindValue(":nom",         ui->lineEdit_nom->text().trimmed());
-    query.bindValue(":prenom",      ui->lineEdit_prenom->text().trimmed());
-    query.bindValue(":poste",       ui->lineEdit_poste->text().trimmed().isEmpty()
-                                        ? QVariant() : QVariant(ui->lineEdit_poste->text().trimmed()));
-    query.bindValue(":email",       ui->lineEdit_email->text().trimmed().isEmpty()
-                                        ? QVariant() : QVariant(ui->lineEdit_email->text().trimmed()));
-    query.bindValue(":tel",         ui->lineEdit_tel->text().trimmed().isEmpty()
-                                        ? QVariant() : QVariant(ui->lineEdit_tel->text().trimmed()));
-    query.bindValue(":date_emb",    ui->dateEdit_embauche->date().toString("yyyy-MM-dd"));
-    query.bindValue(":salaire",     ui->spinBox_salaire->value());
-    query.bindValue(":competences", ui->lineEdit_competences->text().trimmed().isEmpty()
-                                        ? QVariant() : QVariant(ui->lineEdit_competences->text().trimmed()));
-    query.bindValue(":dispo",       ui->comboBox_dispo->currentText());
-    query.bindValue(":perf",        ui->spinBox_perf->value());
-    query.bindValue(":njc",         ui->spinBox_njc->value());
-    query.bindValue(":nja",         ui->spinBox_nja->value());
-    query.bindValue(":hdt",         ui->spinBox_hdt->value());
+    query.bindValue(":id_tran", ui_id.trimmed());
+    query.bindValue(":montant_tran", ui_montant);
+    query.bindValue(":date_tran", ui_date);
+    query.bindValue(":type_tran", ui_type.trimmed().isEmpty() ? QVariant() : QVariant(ui_type.trimmed()));
+    query.bindValue(":mode_paiement", ui_mode_paiement.trimmed().isEmpty() ? QVariant() : QVariant(ui_mode_paiement.trimmed()));
+    query.bindValue(":statut_tran", ui_statut.trimmed().isEmpty() ? QVariant() : QVariant(ui_statut.trimmed()));
+    query.bindValue(":categorie_tran", ui_categorie.trimmed().isEmpty() ? QVariant() : QVariant(ui_categorie.trimmed()));
+    query.bindValue(":description", ui_description.trimmed().isEmpty() ? QVariant() : QVariant(ui_description.trimmed()));
+    query.bindValue(":client_tran", ui_client.trimmed().isEmpty() ? QVariant() : QVariant(ui_client.trimmed()));
 
     if (query.exec())
     {
         QMessageBox::information(this, "Succès",
-            QString("Employé %1 %2 ajouté avec succès.")
-                .arg(ui->lineEdit_prenom->text().trimmed())
-                .arg(ui->lineEdit_nom->text().trimmed()));
-        clearForm();
+            QString("Transaction %1 ajoutée avec succès.").arg(ui_id.trimmed()));
     }
     else
     {
-        qDebug() << "INSERT error:" << query.lastError().text();
+        qDebug() << "INSERT TRANSACTIONS error:" << query.lastError().text();
         QMessageBox::critical(this, "Erreur",
-            "Échec de l'ajout:\n" + query.lastError().text());
+            "Échec de l'ajout de la transaction:\n" + query.lastError().text());
     }
 }
 
@@ -86,18 +113,6 @@ void MainWindow::on_pushButton_reset_clicked()
 
 void MainWindow::clearForm()
 {
-    ui->lineEdit_cin->clear();
-    ui->lineEdit_nom->clear();
-    ui->lineEdit_prenom->clear();
-    ui->lineEdit_poste->clear();
-    ui->lineEdit_email->clear();
-    ui->lineEdit_tel->clear();
-    ui->lineEdit_competences->clear();
-    ui->dateEdit_embauche->setDate(QDate::currentDate());
-    ui->spinBox_salaire->setValue(0);
-    ui->comboBox_dispo->setCurrentIndex(0);
-    ui->spinBox_perf->setValue(0);
-    ui->spinBox_njc->setValue(0);
-    ui->spinBox_nja->setValue(0);
-    ui->spinBox_hdt->setValue(0);
+    QMessageBox::information(this, "Reset",
+        "Aucun champ à réinitialiser.\nLes données sont saisies via popup.");
 }
