@@ -1,5 +1,0 @@
-/home/lain/luck_dev/build/CMakeFiles/luck_dev.dir
-/home/lain/luck_dev/build/CMakeFiles/edit_cache.dir
-/home/lain/luck_dev/build/CMakeFiles/rebuild_cache.dir
-/home/lain/luck_dev/build/CMakeFiles/luck_dev_autogen_timestamp_deps.dir
-/home/lain/luck_dev/build/CMakeFiles/luck_dev_autogen.dir

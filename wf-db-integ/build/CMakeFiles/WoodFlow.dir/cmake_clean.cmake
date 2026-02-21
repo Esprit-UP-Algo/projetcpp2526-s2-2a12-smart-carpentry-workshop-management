@@ -1,0 +1,43 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/WoodFlow.dir/link.d"
+  "CMakeFiles/WoodFlow_autogen.dir/AutogenUsed.txt"
+  "CMakeFiles/WoodFlow_autogen.dir/ParseCache.txt"
+  "WoodFlow_autogen"
+  "CMakeFiles/WoodFlow.dir/WoodFlow_autogen/mocs_compilation.cpp.o"
+  "CMakeFiles/WoodFlow.dir/WoodFlow_autogen/mocs_compilation.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/main.cpp.o"
+  "CMakeFiles/WoodFlow.dir/main.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/mainwindow.cpp.o"
+  "CMakeFiles/WoodFlow.dir/mainwindow.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/common/validators.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/common/validators.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/core/session.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/core/session.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/database/connection.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/database/connection.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/database/employeedatabase.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/database/employeedatabase.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/models/employee.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/models/employee.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/loginpage.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/loginpage.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/registerpage.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/modules/auth/registerpage.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeedialog.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeedialog.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeemanagementpage.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/modules/employees/employeemanagementpage.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/src/modules/stock/stockpage.cpp.o"
+  "CMakeFiles/WoodFlow.dir/src/modules/stock/stockpage.cpp.o.d"
+  "CMakeFiles/WoodFlow.dir/toggleswitch.cpp.o"
+  "CMakeFiles/WoodFlow.dir/toggleswitch.cpp.o.d"
+  "WoodFlow"
+  "WoodFlow.pdb"
+  "WoodFlow_autogen/mocs_compilation.cpp"
+  "WoodFlow_autogen/timestamp"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang CXX)
+  include(CMakeFiles/WoodFlow.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

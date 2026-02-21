@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/lain/wf/wf-db-integ/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
