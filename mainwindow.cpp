@@ -359,15 +359,7 @@ void MainWindow::createNavbar()
     
     navbarLayout->addStretch();
     
-    // Search bar
-    QLineEdit *searchBar = new QLineEdit(navbar);
-    searchBar->setObjectName("searchBar");
-    searchBar->setPlaceholderText("Rechercher...");
-    searchBar->setMinimumWidth(260);
-    searchBar->setMaximumWidth(350);
-    searchBar->setFixedHeight(38);
-    connect(searchBar, &QLineEdit::textChanged, this, &MainWindow::onSearchTextChanged);
-    
+
     // Dark mode toggle switch
     QWidget *darkModeContainer = new QWidget(navbar);
     QHBoxLayout *darkModeLayout = new QHBoxLayout(darkModeContainer);
@@ -417,7 +409,6 @@ void MainWindow::createNavbar()
     
     connect(profileBtn, &QPushButton::clicked, this, &MainWindow::showProfileMenu);
     
-    navbarLayout->addWidget(searchBar);
     navbarLayout->addWidget(darkModeContainer);
     navbarLayout->addWidget(profileBtn);
 }
