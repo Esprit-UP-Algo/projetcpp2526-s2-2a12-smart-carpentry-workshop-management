@@ -154,6 +154,7 @@ void EmployeeManagementPage::createTable()
     m_table->setSelectionMode(QAbstractItemView::SingleSelection);
     m_table->setAlternatingRowColors(false);
     m_table->setShowGrid(false);
+    m_table->setColumnHidden(0, true);   // ID hidden — still used internally
 
     mainLayout->addWidget(m_table);
 }
