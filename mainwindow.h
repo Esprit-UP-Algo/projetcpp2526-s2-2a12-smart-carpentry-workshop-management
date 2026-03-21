@@ -52,6 +52,9 @@ private slots:
     // Auth slots
     void onLoginSuccess(const Employee& employee);
     void onLogout();
+    void onAddProductClicked();
+    void onEditProductClicked();
+    void onDeleteProductClicked();
 
 private:
     Ui::MainWindow *ui;
@@ -113,12 +116,15 @@ private:
     QWidget* createProjectsPage();
     QWidget* createEmployeesPage();
     QWidget* createFinancePage();
-    QWidget* createDesignsPage();
+     QWidget* createProductsPage();
 
     // CRUD operations for Employees
     void addEmployee();
     void editEmployee();
     void deleteEmployee();
+
+
+
 };
 
 #endif // MAINWINDOW_H

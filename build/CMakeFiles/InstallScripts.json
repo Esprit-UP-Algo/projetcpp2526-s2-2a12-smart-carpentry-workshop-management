@@ -1,0 +1,7 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/lain/wf/woodflow/build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

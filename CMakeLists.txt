@@ -14,9 +14,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set AUTOUIC search paths
 set(CMAKE_AUTOUIC_SEARCH_PATHS ui ui/modules/auth)
 
-find_package(Qt6 COMPONENTS Core Widgets PrintSupport QUIET)
+# ── Qt: find ONCE with ALL required modules ──────────────────────────────────
+find_package(Qt6 COMPONENTS Core Widgets PrintSupport Sql QUIET)
 if (NOT Qt6_FOUND)
-    find_package(Qt5 5.15 REQUIRED COMPONENTS Core Widgets PrintSupport)
+    find_package(Qt5 5.15 REQUIRED COMPONENTS Core Widgets PrintSupport Sql)
 endif()
 
 set(PROJECT_SOURCES
@@ -26,35 +27,37 @@ set(PROJECT_SOURCES
     mainwindow.ui
     toggleswitch.cpp
     toggleswitch.h
-    
+
     # Models
     src/models/employee.cpp
     src/models/employee.h
-    
+
     # Database
+    src/database/connection.cpp
+    src/database/connection.h
     src/database/employeedatabase.cpp
     src/database/employeedatabase.h
-    
+
     # Core
     src/core/session.cpp
     src/core/session.h
-    
+
     # Common
     src/common/validators.cpp
     src/common/validators.h
-    
+
     # Auth Module
     src/modules/auth/loginpage.cpp
     src/modules/auth/loginpage.h
     src/modules/auth/registerpage.cpp
     src/modules/auth/registerpage.h
-    
+
     # Employee Module
     src/modules/employees/employeemanagementpage.cpp
     src/modules/employees/employeemanagementpage.h
     src/modules/employees/employeedialog.cpp
     src/modules/employees/employeedialog.h
-    
+
     # UI Files
     ui/modules/auth/loginpage.ui
     ui/modules/auth/registerpage.ui
@@ -62,7 +65,10 @@ set(PROJECT_SOURCES
 
 if(Qt6_FOUND)
     qt_add_executable(WoodFlow ${PROJECT_SOURCES}
-        src/modules/stock/stockpage.h src/modules/stock/stockpage.cpp)
+        src/modules/stock/stockpage.h src/modules/stock/stockpage.cpp
+        src/database/stockdatabase.h src/database/stockdatabase.cpp
+        src/models/stockmaterial.h src/models/stockmaterial.cpp
+    )
 else()
     add_executable(WoodFlow ${PROJECT_SOURCES})
 endif()
@@ -73,10 +79,11 @@ target_include_directories(WoodFlow PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+# ── Link ALL Qt modules ───────────────────────────────────────────────────────
 if(Qt6_FOUND)
-    target_link_libraries(WoodFlow PRIVATE Qt6::Core Qt6::Widgets Qt6::PrintSupport)
+    target_link_libraries(WoodFlow PRIVATE Qt6::Core Qt6::Widgets Qt6::PrintSupport Qt6::Sql)
 else()
-    target_link_libraries(WoodFlow PRIVATE Qt5::Core Qt5::Widgets Qt5::PrintSupport)
+    target_link_libraries(WoodFlow PRIVATE Qt5::Core Qt5::Widgets Qt5::PrintSupport Qt5::Sql)
 endif()
 
 # Copy stylesheet and images to build directory
@@ -86,7 +93,6 @@ configure_file(${CMAKE_SOURCE_DIR}/style-dark.qss ${CMAKE_BINARY_DIR}/style-dark
 # Create assets directory in build
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/src/assets/icons)
 
-# Copy images if they exist
 if(EXISTS ${CMAKE_SOURCE_DIR}/src/assets/icons/icon.jpeg)
     configure_file(${CMAKE_SOURCE_DIR}/src/assets/icons/icon.jpeg ${CMAKE_BINARY_DIR}/src/assets/icons/icon.jpeg COPYONLY)
 endif()

@@ -6,47 +6,51 @@
 #include <QMap>
 #include <QString>
 
+/**
+ * EmployeeDatabase — thin Oracle DB wrapper (singleton).
+ * All operations use the named connection "oracle_conn" (Connection::CONN_NAME).
+ */
 class EmployeeDatabase {
 public:
     static EmployeeDatabase& instance();
-    
-    // CRUD operations
+
+    // CRUD
     bool addEmployee(const Employee& employee);
     bool updateEmployee(const Employee& employee);
     bool deleteEmployee(const QString& id);
     Employee getEmployee(const QString& id) const;
     QList<Employee> getAllEmployees() const;
-    
-    // Search and filter
+
+    // Auth
+    Employee authenticate(const QString& cin, const QString& plainPassword) const;
+
+    // Search
+    QList<Employee> searchByName(const QString& name) const;
     QList<Employee> searchByCin(const QString& cin) const;
     QList<Employee> searchByPoste(const QString& poste) const;
-    QList<Employee> searchByName(const QString& name) const;
-    
-    // Sorting
+
+    // Sort (fetched + sorted in memory — small dataset)
     QList<Employee> sortBySalaire(bool ascending = true) const;
     QList<Employee> sortByDateEmbauche(bool ascending = true) const;
     QList<Employee> sortByPerformance(bool ascending = false) const;
-    
-    // Statistics
+
+    // Stats
     double getAverageSalary() const;
     double getAveragePerformance() const;
-    int getTotalEmployees() const { return m_employees.size(); }
+    int    getTotalEmployees() const;
     QMap<QString, int> getEmployeeCountByPoste() const;
-    
+
     // Utility
-    QString generateNextId() const;
-    void loadSampleData();
-    void clearAll();
-    
+    QString generateNextId() const;   // returns "EMP0007" style string (unused for Oracle auto-ID)
+
 private:
-    EmployeeDatabase();
+    EmployeeDatabase() = default;
     ~EmployeeDatabase() = default;
-    
-    // Prevent copying
     EmployeeDatabase(const EmployeeDatabase&) = delete;
     EmployeeDatabase& operator=(const EmployeeDatabase&) = delete;
-    
-    QMap<QString, Employee> m_employees;
+
+    // Helpers
+    Employee rowToEmployee(const class QSqlQuery& q) const;
 };
 
 #endif // EMPLOYEEDATABASE_H

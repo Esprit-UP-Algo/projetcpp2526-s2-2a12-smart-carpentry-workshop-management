@@ -27,11 +27,11 @@
       <item><widget class="QLabel" name="auth_title"><property name="text"><string>Créer un compte</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item>
       <item><widget class="QLabel" name="auth_subtitle"><property name="text"><string>Inscrivez-vous pour commencer</string></property><property name="alignment"><set>Qt::AlignCenter</set></property></widget></item>
       <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>26</height></size></property></spacer></item>
-      <item><widget class="QLabel"><property name="text"><string>Nom d'utilisateur</string></property></widget></item>
-      <item><widget class="QLineEdit" name="usernameInput"><property name="placeholderText"><string>Choisissez un nom d'utilisateur</string></property></widget></item>
+      <item><widget class="QLabel"><property name="text"><string>CIN</string></property></widget></item>
+      <item><widget class="QLineEdit" name="usernameInput"><property name="placeholderText"><string>Entrez votre CIN (8 chiffres)</string></property></widget></item>
       <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item>
       <item><widget class="QLabel"><property name="text"><string>Email</string></property></widget></item>
-      <item><widget class="QLineEdit" name="emailInput"><property name="placeholderText"><string>Entrez votre email</string></property></widget></item>
+      <item><widget class="QLineEdit" name="emailInput"><property name="placeholderText"><string>prenom.nom@domaine.com</string></property></widget></item>
       <item><spacer><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>12</height></size></property></spacer></item>
       <item><widget class="QLabel"><property name="text"><string>Mot de passe</string></property></widget></item>
       <item><widget class="QLineEdit" name="passwordInput"><property name="echoMode"><enum>QLineEdit::Password</enum></property><property name="placeholderText"><string>Créez un mot de passe</string></property></widget></item>

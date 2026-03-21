@@ -1,120 +1,142 @@
 #include "stockpage.h"
-#include <QFormLayout>
-#include <QMessageBox>
-#include <QHeaderView>
-#include <QDate>
-#include <QTableWidgetSelectionRange>
+#include "src/database/stockdatabase.h"
 
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPushButton>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QDialog>
+#include <QFormLayout>
+#include <QLineEdit>
+#include <QDoubleSpinBox>
+#include <QDateEdit>
+#include <QDialogButtonBox>
+#include <QFileDialog>
+#include <QPrinter>
+#include <QPainter>
+#include <QTextDocument>
+#include <QFrame>
+#include <QDebug>
+
+// ---------------------------------------------------------------------------
+// Constructor
+// ---------------------------------------------------------------------------
 StockPage::StockPage(QWidget *parent)
     : QWidget(parent)
-    , currentRow(-1)
 {
     setupUI();
+    refreshStats();
+    refreshTable(StockDatabase::instance().getAllMaterials());
 }
 
+// ---------------------------------------------------------------------------
+// UI Setup
+// ---------------------------------------------------------------------------
 void StockPage::setupUI()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
+    mainLayout->setContentsMargins(25, 25, 25, 25);
+    mainLayout->setSpacing(18);
 
-    stackedWidget = new QStackedWidget(this);
-    stackedWidget->setObjectName("stockStackedWidget");
-
-    // Add pages in order
-    stackedWidget->addWidget(createStockListPage());  // index 0
-    stackedWidget->addWidget(createAddPage());        // index 1
-    stackedWidget->addWidget(createEditPage());       // index 2
-    stackedWidget->addWidget(createViewPage());       // index 3
-
-    mainLayout->addWidget(stackedWidget);
-}
-
-// ------------------------------------------------------------------
-// Page 0 : Stock List
-// ------------------------------------------------------------------
-QWidget* StockPage::createStockListPage()
-{
-    QWidget *page = new QWidget();
-    page->setObjectName("stockListPage");
-
-    QVBoxLayout *layout = new QVBoxLayout(page);
-    layout->setSpacing(18);
-    layout->setContentsMargins(25, 25, 25, 25);
-
-    // ---------- Statistics ----------
+    // ── Stat cards ──────────────────────────────────────────────────────────
     QHBoxLayout *statsLayout = new QHBoxLayout();
     statsLayout->setSpacing(15);
 
-    struct StatData { QString title; QString value; QString type; };
-    QList<StatData> stats = {
-        {"VALEUR TOTALE", "45 280 DT", "value"},
-        {"ARTICLES EN STOCK", "156", "items"},
-        {"ALERTES STOCK", "8", "alerts"}
+    struct StatCard { QString title; QLabel** labelPtr; QString type; };
+    QList<StatCard> cards = {
+        {"VALEUR TOTALE",            &totalValueLabel,  "value"},
+        {"ARTICLES EN STOCK",        &totalCountLabel,  "items"},
+        {"ALERTES STOCK",            &alertCountLabel,  "alerts"},
+        {"CONSOMMATION MOYS / MOIS", &renewalRateLabel, "renew"}
     };
 
-    for (const auto& stat : stats) {
-        QFrame *card = new QFrame(page);
-        card->setObjectName("statCard");
-        card->setProperty("type", stat.type);
+    for (auto& card : cards) {
+        QFrame *frame = new QFrame(this);
+        frame->setObjectName("statCard");
+        frame->setProperty("type", card.type);
 
-        QVBoxLayout *cardLayout = new QVBoxLayout(card);
-        cardLayout->setSpacing(10);
-        cardLayout->setContentsMargins(20, 20, 20, 20);
+        QVBoxLayout *cl = new QVBoxLayout(frame);
+        cl->setSpacing(10);
+        cl->setContentsMargins(20, 20, 20, 20);
 
-        QLabel *title = new QLabel(stat.title, card);
-        title->setObjectName("statTitle");
+        QLabel *titleLbl = new QLabel(card.title, frame);
+        titleLbl->setObjectName("statTitle");
 
-        QLabel *value = new QLabel(stat.value, card);
-        value->setObjectName("statValue");
+        *card.labelPtr = new QLabel("—", frame);
+        (*card.labelPtr)->setObjectName("statValue");
 
-        cardLayout->addWidget(title);
-        cardLayout->addWidget(value);
-        cardLayout->addStretch();
-        statsLayout->addWidget(card);
+        cl->addWidget(titleLbl);
+        cl->addWidget(*card.labelPtr);
+        cl->addStretch();
+        statsLayout->addWidget(frame);
     }
 
-    layout->addLayout(statsLayout);
+    mainLayout->addLayout(statsLayout);
 
-    // ---------- Action Buttons ----------
+    // ── Search + Sort bar ───────────────────────────────────────────────────
+    QHBoxLayout *searchSortLayout = new QHBoxLayout();
+    searchSortLayout->setSpacing(12);
+
+    searchEdit = new QLineEdit(this);
+    searchEdit->setPlaceholderText("Rechercher par nom ou type...");
+    searchEdit->setFixedHeight(35);
+    connect(searchEdit, &QLineEdit::textChanged, this, &StockPage::onSearchTextChanged);
+
+    sortCombo = new QComboBox(this);
+    sortCombo->addItems({
+        "Tri par défaut",
+        "Nom (A → Z)",
+        "Nom (Z → A)",
+        "Conso. mensuelle ↑",
+        "Conso. mensuelle ↓"
+    });
+    sortCombo->setFixedHeight(35);
+    connect(sortCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &StockPage::onSortChanged);
+
+    searchSortLayout->addWidget(searchEdit, 3);
+    searchSortLayout->addWidget(sortCombo, 1);
+    searchSortLayout->addStretch();
+    mainLayout->addLayout(searchSortLayout);
+
+    // ── Action buttons ──────────────────────────────────────────────────────
     QHBoxLayout *actionsLayout = new QHBoxLayout();
-    QPushButton *addBtn    = new QPushButton("+ Ajouter un matériau", page);
-    QPushButton *editBtn   = new QPushButton("Modifier", page);
-    QPushButton *deleteBtn = new QPushButton("Supprimer", page);
-    QPushButton *alertBtn  = new QPushButton("Alertes Stock", page);
+    actionsLayout->setSpacing(12);
 
-    addBtn->setObjectName("actionButton");
-    editBtn->setObjectName("actionButton");
-    deleteBtn->setObjectName("actionButton");
-    alertBtn->setObjectName("actionButton");
+    QPushButton *addBtn       = new QPushButton("+ Ajouter un matériau", this);
+    QPushButton *editBtn      = new QPushButton("Modifier", this);
+    QPushButton *deleteBtn    = new QPushButton("Supprimer", this);
+    QPushButton *alertBtn     = new QPushButton("Voir alertes", this);
+    QPushButton *exportPdfBtn = new QPushButton("Exporter alertes PDF", this);
 
-    addBtn->setCursor(Qt::PointingHandCursor);
-    editBtn->setCursor(Qt::PointingHandCursor);
-    deleteBtn->setCursor(Qt::PointingHandCursor);
-    alertBtn->setCursor(Qt::PointingHandCursor);
+    for (auto btn : {addBtn, editBtn, deleteBtn, alertBtn, exportPdfBtn}) {
+        btn->setObjectName("actionButton");
+        btn->setCursor(Qt::PointingHandCursor);
+    }
 
-    connect(addBtn, &QPushButton::clicked, this, &StockPage::onAddButtonClicked);
-    connect(editBtn, &QPushButton::clicked, this, &StockPage::onEditButtonClicked);
-    connect(deleteBtn, &QPushButton::clicked, this, &StockPage::onDeleteButtonClicked);
-    // alertBtn : no action (visual only)
+    connect(addBtn,       &QPushButton::clicked, this, &StockPage::onAddButtonClicked);
+    connect(editBtn,      &QPushButton::clicked, this, &StockPage::onEditButtonClicked);
+    connect(deleteBtn,    &QPushButton::clicked, this, &StockPage::onDeleteButtonClicked);
+    connect(alertBtn,     &QPushButton::clicked, this, &StockPage::onShowAlertsClicked);
+    connect(exportPdfBtn, &QPushButton::clicked, this, &StockPage::onExportAlertPdfClicked);
 
     actionsLayout->addWidget(addBtn);
     actionsLayout->addWidget(editBtn);
     actionsLayout->addWidget(deleteBtn);
+    actionsLayout->addWidget(exportPdfBtn);
     actionsLayout->addWidget(alertBtn);
     actionsLayout->addStretch();
+    mainLayout->addLayout(actionsLayout);
 
-    layout->addLayout(actionsLayout);
-
-    // ---------- Table with 9 columns ----------
-    stockTable = new QTableWidget(page);
+    // ── Table ───────────────────────────────────────────────────────────────
+    stockTable = new QTableWidget(this);
     stockTable->setObjectName("dataTable");
-    stockTable->setColumnCount(9);
+    stockTable->setColumnCount(10);
     stockTable->setHorizontalHeaderLabels({
-        "ID", "Nom", "Type",
-        "Quantité en stock", "Prix unitaire",
-        "Fournisseur", "Seuil alerte",
-        "Date dernière commande", "Consommation mensuelle"
+        "ID", "Nom", "Type", "Quantité", "Prix unit. (DT)",
+        "Fournisseur", "Seuil alerte", "Dernière commande", "Conso. mensuelle", "Unité"
     });
     stockTable->horizontalHeader()->setStretchLastSection(true);
     stockTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -124,484 +146,425 @@ QWidget* StockPage::createStockListPage()
     stockTable->setAlternatingRowColors(true);
     stockTable->setShowGrid(false);
     stockTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    // Hide ID column — kept for internal use
+    stockTable->setColumnHidden(0, true);
 
-    // Sample data
-    stockTable->setRowCount(4);
-    QStringList row1 = {"M001", "Chêne massif", "Bois", "120 m²", "45.50 DT", "Bois & Cie", "20", "12/02/2026", "8 m²"};
-    QStringList row2 = {"M002", "Contreplaqué", "Panneau", "85 feuilles", "28.00 DT", "Matériaux Moderne", "15", "05/02/2026", "12 feuilles"};
-    QStringList row3 = {"M003", "Vis à bois", "Quincaillerie", "2500 unités", "0.12 DT", "Fixation Pro", "500", "20/01/2026", "350 unités"};
-    QStringList row4 = {"M004", "Vernis mat", "Finition", "18 L", "32.80 DT", "Peinture Plus", "5", "15/02/2026", "2.5 L"};
-
-    for (int row = 0; row < 4; ++row) {
-        for (int col = 0; col < 9; ++col) {
-            QTableWidgetItem *item = new QTableWidgetItem();
-            if (row == 0) item->setText(row1[col]);
-            else if (row == 1) item->setText(row2[col]);
-            else if (row == 2) item->setText(row3[col]);
-            else if (row == 3) item->setText(row4[col]);
-            stockTable->setItem(row, col, item);
-        }
-        stockTable->setRowHeight(row, 50);
-    }
-
-    // Double-click -> view details
     connect(stockTable, &QTableWidget::cellDoubleClicked,
             this, &StockPage::onViewTriggered);
 
-    layout->addWidget(stockTable);
-    layout->addStretch();
-
-    return page;
+    mainLayout->addWidget(stockTable);
 }
 
-// ------------------------------------------------------------------
-// Page 1 : Add Material (empty form)
-// ------------------------------------------------------------------
-QWidget* StockPage::createAddPage()
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+void StockPage::refreshTable(const QList<StockMaterial>& materials)
 {
-    QWidget *page = new QWidget();
-    page->setObjectName("addMaterialPage");
+    stockTable->setRowCount(materials.size());
+    for (int i = 0; i < materials.size(); ++i) {
+        const StockMaterial& m = materials[i];
 
-    QVBoxLayout *pageLayout = new QVBoxLayout(page);
-    pageLayout->setContentsMargins(0, 0, 0, 0);
-    pageLayout->setSpacing(0);
+        auto item = [](const QString& text) {
+            return new QTableWidgetItem(text);
+        };
 
-    // ---------- Carte encadrée centrée ----------
-    QFrame *formCard = new QFrame(page);
-    formCard->setObjectName("formCard");
-    formCard->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+        stockTable->setItem(i, 0, item(QString::number(m.getId())));
+        stockTable->setItem(i, 1, item(m.getNom()));
+        stockTable->setItem(i, 2, item(m.getType()));
+        stockTable->setItem(i, 3, item(QString::number(m.getQuantite(), 'f', 2)));
+        stockTable->setItem(i, 4, item(QString::number(m.getPrixUnitaire(), 'f', 2)));
+        stockTable->setItem(i, 5, item(m.getFournisseur()));
+        stockTable->setItem(i, 6, item(QString::number(m.getSeuilAlerte(), 'f', 2)));
+        stockTable->setItem(i, 7, item(m.getLastOrder().toString("dd/MM/yyyy")));
+        stockTable->setItem(i, 8, item(QString::number(m.getConsoMensuelle(), 'f', 2)));
+        stockTable->setItem(i, 9, item(m.getUnite()));
 
-    QVBoxLayout *cardLayout = new QVBoxLayout(formCard);
-    cardLayout->setContentsMargins(36, 32, 36, 32);
-    cardLayout->setSpacing(24);
+        stockTable->setRowHeight(i, 48);
 
-    // Titre
-    QLabel *title = new QLabel("Ajouter un matériau", formCard);
-    title->setObjectName("pageTitle");
-    title->setAlignment(Qt::AlignCenter);
-    cardLayout->addWidget(title);
-
-    // Formulaire
-    QFormLayout *form = new QFormLayout();
-    form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-    form->setLabelAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    form->setSpacing(16);
-
-    // Champs (inchangés)
-    addId                = new QLineEdit(formCard);
-    addNom               = new QLineEdit(formCard);
-    addType              = new QLineEdit(formCard);
-    addQuantite          = new QSpinBox(formCard);
-    addQuantite->setRange(0, 999999);
-    addPrixUnitaire      = new QDoubleSpinBox(formCard);
-    addPrixUnitaire->setRange(0, 999999);
-    addPrixUnitaire->setPrefix("DT ");
-    addFournisseur       = new QLineEdit(formCard);
-    addSeuilAlerte       = new QSpinBox(formCard);
-    addSeuilAlerte->setRange(0, 999999);
-    addDateCommande      = new QDateEdit(formCard);
-    addDateCommande->setDate(QDate::currentDate());
-    addDateCommande->setCalendarPopup(true);
-    addConsoMensuelle    = new QLineEdit(formCard);
-    addConsoMensuelle->setPlaceholderText("ex: 8 m²");
-
-    // Ajout au formulaire
-    form->addRow("ID :", addId);
-    form->addRow("Nom :", addNom);
-    form->addRow("Type :", addType);
-    form->addRow("Quantité en stock :", addQuantite);
-    form->addRow("Prix unitaire :", addPrixUnitaire);
-    form->addRow("Fournisseur :", addFournisseur);
-    form->addRow("Seuil alerte :", addSeuilAlerte);
-    form->addRow("Date dernière commande :", addDateCommande);
-    form->addRow("Consommation mensuelle :", addConsoMensuelle);
-
-    cardLayout->addLayout(form);
-
-    // Boutons
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->setSpacing(16);
-    buttonLayout->setAlignment(Qt::AlignCenter);
-
-    QPushButton *saveBtn = new QPushButton("Enregistrer", formCard);
-    saveBtn->setObjectName("saveButton");
-    saveBtn->setCursor(Qt::PointingHandCursor);
-    connect(saveBtn, &QPushButton::clicked, this, &StockPage::onSaveAddButtonClicked);
-
-    QPushButton *backBtn = new QPushButton("← Retour à la liste", formCard);
-    backBtn->setObjectName("backButton");
-    backBtn->setCursor(Qt::PointingHandCursor);
-    connect(backBtn, &QPushButton::clicked, this, &StockPage::onBackToList);
-
-    buttonLayout->addWidget(saveBtn);
-    buttonLayout->addWidget(backBtn);
-    cardLayout->addLayout(buttonLayout);
-    cardLayout->addStretch();
-
-    // Centrer la carte dans la page
-    pageLayout->addWidget(formCard, 0, Qt::AlignCenter);
-    pageLayout->addStretch();
-
-    return page;
-}
-// ------------------------------------------------------------------
-// Page 2 : Edit Material (pre-filled with selected row)
-// ------------------------------------------------------------------
-QWidget* StockPage::createEditPage()
-{
-    QWidget *page = new QWidget();
-    page->setObjectName("editMaterialPage");
-
-    QVBoxLayout *pageLayout = new QVBoxLayout(page);
-    pageLayout->setContentsMargins(0, 0, 0, 0);
-    pageLayout->setSpacing(0);
-
-    // ---------- Carte encadrée centrée ----------
-    QFrame *formCard = new QFrame(page);
-    formCard->setObjectName("formCard");
-    formCard->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-
-    QVBoxLayout *cardLayout = new QVBoxLayout(formCard);
-    cardLayout->setContentsMargins(36, 32, 36, 32);
-    cardLayout->setSpacing(24);
-
-    // Titre
-    QLabel *title = new QLabel("Modifier un matériau", formCard);
-    title->setObjectName("pageTitle");
-    title->setAlignment(Qt::AlignCenter);
-    cardLayout->addWidget(title);
-
-    // Formulaire
-    QFormLayout *form = new QFormLayout();
-    form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-    form->setLabelAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    form->setSpacing(16);
-
-    // Champs (inchangés)
-    editId                = new QLineEdit(formCard);
-    editNom               = new QLineEdit(formCard);
-    editType              = new QLineEdit(formCard);
-    editQuantite          = new QSpinBox(formCard);
-    editQuantite->setRange(0, 999999);
-    editPrixUnitaire      = new QDoubleSpinBox(formCard);
-    editPrixUnitaire->setRange(0, 999999);
-    editPrixUnitaire->setPrefix("DT ");
-    editFournisseur       = new QLineEdit(formCard);
-    editSeuilAlerte       = new QSpinBox(formCard);
-    editSeuilAlerte->setRange(0, 999999);
-    editDateCommande      = new QDateEdit(formCard);
-    editDateCommande->setCalendarPopup(true);
-    editConsoMensuelle    = new QLineEdit(formCard);
-    editConsoMensuelle->setPlaceholderText("ex: 8 m²");
-
-    form->addRow("ID :", editId);
-    form->addRow("Nom :", editNom);
-    form->addRow("Type :", editType);
-    form->addRow("Quantité en stock :", editQuantite);
-    form->addRow("Prix unitaire :", editPrixUnitaire);
-    form->addRow("Fournisseur :", editFournisseur);
-    form->addRow("Seuil alerte :", editSeuilAlerte);
-    form->addRow("Date dernière commande :", editDateCommande);
-    form->addRow("Consommation mensuelle :", editConsoMensuelle);
-
-    cardLayout->addLayout(form);
-
-    // Boutons
-    QHBoxLayout *buttonLayout = new QHBoxLayout();
-    buttonLayout->setSpacing(16);
-    buttonLayout->setAlignment(Qt::AlignCenter);
-
-    QPushButton *saveBtn = new QPushButton("Mettre à jour", formCard);
-    saveBtn->setObjectName("saveButton");
-    saveBtn->setCursor(Qt::PointingHandCursor);
-    connect(saveBtn, &QPushButton::clicked, this, &StockPage::onSaveEditButtonClicked);
-
-    QPushButton *backBtn = new QPushButton("← Retour à la liste", formCard);
-    backBtn->setObjectName("backButton");
-    backBtn->setCursor(Qt::PointingHandCursor);
-    connect(backBtn, &QPushButton::clicked, this, &StockPage::onBackToList);
-
-    buttonLayout->addWidget(saveBtn);
-    buttonLayout->addWidget(backBtn);
-    cardLayout->addLayout(buttonLayout);
-    cardLayout->addStretch();
-
-    pageLayout->addWidget(formCard, 0, Qt::AlignCenter);
-    pageLayout->addStretch();
-
-    return page;
-}
-
-// ------------------------------------------------------------------
-// Page 3 : View Material (read-only labels)
-// ------------------------------------------------------------------
-QWidget* StockPage::createViewPage()
-{
-    QWidget *page = new QWidget();
-    page->setObjectName("viewMaterialPage");
-
-    QVBoxLayout *pageLayout = new QVBoxLayout(page);
-    pageLayout->setContentsMargins(0, 0, 0, 0);
-    pageLayout->setSpacing(0);
-
-    // ---------- Carte encadrée centrée, version "premium" ----------
-    QFrame *formCard = new QFrame(page);
-    formCard->setObjectName("formCard");
-    formCard->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-
-    QVBoxLayout *cardLayout = new QVBoxLayout(formCard);
-    cardLayout->setContentsMargins(40, 36, 40, 36);
-    cardLayout->setSpacing(28);
-
-    // --- En-tête avec icône et titre ---
-    QHBoxLayout *headerLayout = new QHBoxLayout();
-    headerLayout->setAlignment(Qt::AlignCenter);
-    headerLayout->setSpacing(12);
-
-
-
-    QLabel *title = new QLabel("Détails du matériau", formCard);
-    title->setObjectName("pageTitle");
-    title->setAlignment(Qt::AlignCenter);
-
-
-    headerLayout->addWidget(title);
-    cardLayout->addLayout(headerLayout);
-
-    // --- Séparateur décoratif ---
-    QFrame *separator = new QFrame(formCard);
-    separator->setFrameShape(QFrame::HLine);
-    separator->setObjectName("viewSeparator");
-    separator->setStyleSheet("#viewSeparator { background-color: #E8E4DC; max-height: 1px; margin: 8px 0; }");
-    cardLayout->addWidget(separator);
-
-    // --- Formulaire en lecture seule (valeurs sous forme de "badges") ---
-    QFormLayout *form = new QFormLayout();
-    form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-    form->setLabelAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    form->setSpacing(20);
-
-    viewId              = new QLabel(formCard);
-    viewNom             = new QLabel(formCard);
-    viewType            = new QLabel(formCard);
-    viewQuantite        = new QLabel(formCard);
-    viewPrixUnitaire    = new QLabel(formCard);
-    viewFournisseur     = new QLabel(formCard);
-    viewSeuilAlerte     = new QLabel(formCard);
-    viewDateCommande    = new QLabel(formCard);
-    viewConsoMensuelle  = new QLabel(formCard);
-
-    // Ajout d'un rendu "badge" via CSS (voir QSS plus bas)
-    QList<QLabel*> allLabels = {viewId, viewNom, viewType, viewQuantite,
-                                 viewPrixUnitaire, viewFournisseur, viewSeuilAlerte,
-                                 viewDateCommande, viewConsoMensuelle};
-    for (QLabel *lbl : allLabels) {
-        lbl->setObjectName("viewValue");
-        lbl->setTextFormat(Qt::RichText);  // permet d'intégrer des icônes si souhaité
+        // Highlight rows below alert threshold in light red
+        if (m.isBelowAlert()) {
+            for (int c = 0; c < 10; ++c) {
+                if (stockTable->item(i, c))
+                    stockTable->item(i, c)->setBackground(QColor(255, 220, 220));
+            }
+        }
     }
-
-    form->addRow("ID :", viewId);
-    form->addRow("Nom :", viewNom);
-    form->addRow("Type :", viewType);
-    form->addRow("Quantité en stock :", viewQuantite);
-    form->addRow("Prix unitaire :", viewPrixUnitaire);
-    form->addRow("Fournisseur :", viewFournisseur);
-    form->addRow("Seuil alerte :", viewSeuilAlerte);
-    form->addRow("Date dernière commande :", viewDateCommande);
-    form->addRow("Consommation mensuelle :", viewConsoMensuelle);
-
-    cardLayout->addLayout(form);
-
-    // --- Bouton retour centré ---
-    QPushButton *backBtn = new QPushButton("← Retour à la liste", formCard);
-    backBtn->setObjectName("backButton");
-    backBtn->setCursor(Qt::PointingHandCursor);
-    backBtn->setStyleSheet("min-width: 180px;"); // un peu plus large pour équilibrer
-    connect(backBtn, &QPushButton::clicked, this, &StockPage::onBackToList);
-
-    cardLayout->addWidget(backBtn, 0, Qt::AlignCenter);
-    cardLayout->addStretch();
-
-    pageLayout->addWidget(formCard, 0, Qt::AlignCenter);
-    pageLayout->addStretch();
-
-    return page;
 }
 
-// ------------------------------------------------------------------
-// Helper : populate edit form from row data
-// ------------------------------------------------------------------
-void StockPage::populateEditForm(int row)
+void StockPage::refreshStats()
 {
-    if (!stockTable || row < 0 || row >= stockTable->rowCount())
-        return;
-
-    editId->setText(stockTable->item(row, 0)->text());
-    editNom->setText(stockTable->item(row, 1)->text());
-    editType->setText(stockTable->item(row, 2)->text());
-
-    QString qty = stockTable->item(row, 3)->text();
-    qty.remove(" m²").remove(" feuilles").remove(" unités").remove(" L").remove(" DT");
-    editQuantite->setValue(qty.toInt());
-
-    QString price = stockTable->item(row, 4)->text();
-    price.remove(" DT");
-    editPrixUnitaire->setValue(price.toDouble());
-
-    editFournisseur->setText(stockTable->item(row, 5)->text());
-
-    QString seuil = stockTable->item(row, 6)->text();
-    editSeuilAlerte->setValue(seuil.toInt());
-
-    QDate date = QDate::fromString(stockTable->item(row, 7)->text(), "dd/MM/yyyy");
-    editDateCommande->setDate(date);
-
-    editConsoMensuelle->setText(stockTable->item(row, 8)->text());
+    StockDatabase& db = StockDatabase::instance();
+    totalValueLabel ->setText(QString("%1 DT").arg(db.getTotalValue(),  0, 'f', 2));
+    totalCountLabel ->setText(QString::number(db.getTotalCount()));
+    alertCountLabel ->setText(QString::number(db.getAlertCount()));
+    renewalRateLabel->setText(QString("%1").arg(db.getAverageRenewalRate(), 0, 'f', 2));
 }
 
-// ------------------------------------------------------------------
-// Helper : populate view form from row data
-// ------------------------------------------------------------------
-void StockPage::populateViewForm(int row)
+StockMaterial StockPage::materialFromCurrentRow() const
 {
-    if (!stockTable || row < 0 || row >= stockTable->rowCount())
-        return;
+    int row = stockTable->currentRow();
+    if (row < 0) return StockMaterial();
 
-    viewId->setText(stockTable->item(row, 0)->text());
-    viewNom->setText(stockTable->item(row, 1)->text());
-    viewType->setText(stockTable->item(row, 2)->text());
-    viewQuantite->setText(stockTable->item(row, 3)->text());
-    viewPrixUnitaire->setText(stockTable->item(row, 4)->text());
-    viewFournisseur->setText(stockTable->item(row, 5)->text());
-    viewSeuilAlerte->setText(stockTable->item(row, 6)->text());
-    viewDateCommande->setText(stockTable->item(row, 7)->text());
-    viewConsoMensuelle->setText(stockTable->item(row, 8)->text());
+    StockMaterial m;
+    m.setId(stockTable->item(row, 0)->text().toInt());
+    m.setNom(stockTable->item(row, 1)->text());
+    m.setType(stockTable->item(row, 2)->text());
+    m.setQuantite(stockTable->item(row, 3)->text().toDouble());
+    m.setPrixUnitaire(stockTable->item(row, 4)->text().toDouble());
+    m.setFournisseur(stockTable->item(row, 5)->text());
+    m.setSeuilAlerte(stockTable->item(row, 6)->text().toDouble());
+    m.setLastOrder(QDate::fromString(stockTable->item(row, 7)->text(), "dd/MM/yyyy"));
+    m.setConsoMensuelle(stockTable->item(row, 8)->text().toDouble());
+    m.setUnite(stockTable->item(row, 9)->text());
+    return m;
 }
 
-// ------------------------------------------------------------------
-// Helper : clear add form
-// ------------------------------------------------------------------
-void StockPage::clearAddForm()
+// Helper: build the form fields and return the dialog pointer
+// Used by Add and Edit to avoid code duplication
+static QDialog* buildMaterialDialog(QWidget* parent, const QString& windowTitle,
+                                    QLineEdit*& nomEdit, QLineEdit*& typeEdit,
+                                    QDoubleSpinBox*& qteEdit, QDoubleSpinBox*& prixEdit,
+                                    QLineEdit*& fournEdit, QDoubleSpinBox*& seuilEdit,
+                                    QDateEdit*& dateEdit, QDoubleSpinBox*& consoEdit,
+                                    QLineEdit*& uniteEdit)
 {
-    addId->clear();
-    addNom->clear();
-    addType->clear();
-    addQuantite->setValue(0);
-    addPrixUnitaire->setValue(0.0);
-    addFournisseur->clear();
-    addSeuilAlerte->setValue(0);
-    addDateCommande->setDate(QDate::currentDate());
-    addConsoMensuelle->clear();
+    QDialog* dialog = new QDialog(parent);
+    dialog->setObjectName("stockDialog");
+    dialog->setWindowTitle(windowTitle);
+    dialog->setMinimumWidth(520);
+    dialog->setModal(true);
+
+    QVBoxLayout* mainLayout = new QVBoxLayout(dialog);
+    mainLayout->setContentsMargins(30, 30, 30, 30);
+    mainLayout->setSpacing(20);
+
+    QLabel* title = new QLabel(windowTitle, dialog);
+    title->setObjectName("dialogTitle");
+    title->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(title);
+
+    QFormLayout* form = new QFormLayout();
+    form->setLabelAlignment(Qt::AlignRight);
+    form->setSpacing(14);
+
+    nomEdit   = new QLineEdit(dialog);
+    typeEdit  = new QLineEdit(dialog);
+    qteEdit   = new QDoubleSpinBox(dialog);   qteEdit->setRange(0, 9999999); qteEdit->setDecimals(2);
+    prixEdit  = new QDoubleSpinBox(dialog);   prixEdit->setRange(0, 9999999); prixEdit->setDecimals(2); prixEdit->setSuffix(" DT");
+    fournEdit = new QLineEdit(dialog);
+    seuilEdit = new QDoubleSpinBox(dialog);   seuilEdit->setRange(0, 9999999); seuilEdit->setDecimals(2);
+    dateEdit  = new QDateEdit(dialog);        dateEdit->setDate(QDate::currentDate()); dateEdit->setCalendarPopup(true); dateEdit->setDisplayFormat("dd/MM/yyyy");
+    consoEdit = new QDoubleSpinBox(dialog);   consoEdit->setRange(0, 9999999); consoEdit->setDecimals(2);
+    uniteEdit = new QLineEdit(dialog);
+
+    form->addRow("Nom *",                   nomEdit);
+    form->addRow("Type",                    typeEdit);
+    form->addRow("Quantité en stock",       qteEdit);
+    form->addRow("Prix unitaire",           prixEdit);
+    form->addRow("Fournisseur",             fournEdit);
+    form->addRow("Seuil d'alerte",          seuilEdit);
+    form->addRow("Date dernière commande",  dateEdit);
+    form->addRow("Consommation mensuelle",  consoEdit);
+     form->addRow("Unité", uniteEdit);
+
+    mainLayout->addLayout(form);
+
+    QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
+    buttons->button(QDialogButtonBox::Ok)->setText("Enregistrer");
+    buttons->button(QDialogButtonBox::Ok)->setObjectName("saveButton");
+    buttons->button(QDialogButtonBox::Cancel)->setText("Annuler");
+    buttons->button(QDialogButtonBox::Cancel)->setObjectName("cancelButton");
+    QObject::connect(buttons, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
+    mainLayout->addWidget(buttons, 0, Qt::AlignCenter);
+
+    return dialog;
 }
 
-// ------------------------------------------------------------------
-// Slots Implementation
-// ------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// CRUD slots
+// ---------------------------------------------------------------------------
 void StockPage::onAddButtonClicked()
 {
-    clearAddForm();
-    stackedWidget->setCurrentIndex(1); // Add page
+    QLineEdit *nomEdit, *typeEdit, *fournEdit, *uniteEdit;;
+    QDoubleSpinBox *qteEdit, *prixEdit, *seuilEdit, *consoEdit;
+    QDateEdit *dateEdit;
+
+    QDialog* dialog = buildMaterialDialog(this, "Ajouter un matériau",
+                                          nomEdit, typeEdit, qteEdit, prixEdit,
+                                          fournEdit, seuilEdit, dateEdit, consoEdit, uniteEdit);
+
+    if (dialog->exec() == QDialog::Accepted) {
+        if (nomEdit->text().trimmed().isEmpty()) {
+            QMessageBox::warning(this, "Champ obligatoire", "Le nom du matériau est obligatoire.");
+            delete dialog;
+            return;
+        }
+
+        StockMaterial mat;
+        mat.setNom(nomEdit->text().trimmed());
+        mat.setType(typeEdit->text().trimmed());
+        mat.setQuantite(qteEdit->value());
+        mat.setPrixUnitaire(prixEdit->value());
+        mat.setFournisseur(fournEdit->text().trimmed());
+        mat.setSeuilAlerte(seuilEdit->value());
+        mat.setLastOrder(dateEdit->date());
+        mat.setConsoMensuelle(consoEdit->value());
+        mat.setUnite(uniteEdit->text().trimmed());
+
+        if (StockDatabase::instance().addMaterial(mat)) {
+            QMessageBox::information(this, "Succès", "Matériau ajouté avec succès.");
+            refreshStats();
+            refreshTable(StockDatabase::instance().getAllMaterials());
+        } else {
+            QMessageBox::critical(this, "Erreur", "Impossible d'ajouter le matériau. Vérifiez la connexion.");
+        }
+    }
+    delete dialog;
 }
 
 void StockPage::onEditButtonClicked()
 {
-    QList<QTableWidgetItem*> selected = stockTable->selectedItems();
-    if (selected.isEmpty()) {
-        QMessageBox::warning(this, "Aucune sélection",
-                             "Veuillez sélectionner un matériau à modifier.");
+    if (stockTable->currentRow() < 0) {
+        QMessageBox::warning(this, "Aucune sélection", "Veuillez sélectionner un matériau à modifier.");
         return;
     }
-    currentRow = stockTable->currentRow();
-    populateEditForm(currentRow);
-    stackedWidget->setCurrentIndex(2); // Edit page
+
+    StockMaterial current = materialFromCurrentRow();
+
+    QLineEdit *nomEdit, *typeEdit, *fournEdit , *uniteEdit ;
+    QDoubleSpinBox *qteEdit, *prixEdit, *seuilEdit, *consoEdit;
+    QDateEdit *dateEdit;
+
+    QDialog* dialog = buildMaterialDialog(this, "Modifier un matériau",
+                                          nomEdit, typeEdit, qteEdit, prixEdit,
+                                          fournEdit, seuilEdit, dateEdit, consoEdit,
+                                          uniteEdit);
+
+    // Pre-fill with current values
+    nomEdit->setText(current.getNom());
+    typeEdit->setText(current.getType());
+    qteEdit->setValue(current.getQuantite());
+    prixEdit->setValue(current.getPrixUnitaire());
+    fournEdit->setText(current.getFournisseur());
+    seuilEdit->setValue(current.getSeuilAlerte());
+    if (!current.getLastOrder().isNull())
+        dateEdit->setDate(current.getLastOrder());
+    consoEdit->setValue(current.getConsoMensuelle());
+
+    if (dialog->exec() == QDialog::Accepted) {
+        if (nomEdit->text().trimmed().isEmpty()) {
+            QMessageBox::warning(this, "Champ obligatoire", "Le nom du matériau est obligatoire.");
+            delete dialog;
+            return;
+        }
+
+        current.setNom(nomEdit->text().trimmed());
+        current.setType(typeEdit->text().trimmed());
+        current.setQuantite(qteEdit->value());
+        current.setPrixUnitaire(prixEdit->value());
+        current.setFournisseur(fournEdit->text().trimmed());
+        current.setSeuilAlerte(seuilEdit->value());
+        current.setLastOrder(dateEdit->date());
+        current.setConsoMensuelle(consoEdit->value());
+        current.setUnite(uniteEdit->text().trimmed());
+
+        if (StockDatabase::instance().updateMaterial(current)) {
+            QMessageBox::information(this, "Succès", "Matériau mis à jour avec succès.");
+            refreshStats();
+            refreshTable(StockDatabase::instance().getAllMaterials());
+        } else {
+            QMessageBox::critical(this, "Erreur", "Impossible de mettre à jour le matériau.");
+        }
+    }
+    delete dialog;
 }
 
 void StockPage::onDeleteButtonClicked()
 {
-    QList<QTableWidgetItem*> selected = stockTable->selectedItems();
-    if (selected.isEmpty()) {
-        QMessageBox::warning(this, "Aucune sélection",
-                             "Veuillez sélectionner un matériau à supprimer.");
+    if (stockTable->currentRow() < 0) {
+        QMessageBox::warning(this, "Aucune sélection", "Veuillez sélectionner un matériau à supprimer.");
         return;
     }
 
-    int row = stockTable->currentRow();
-    QString name = stockTable->item(row, 1)->text();
+    StockMaterial current = materialFromCurrentRow();
 
-    QMessageBox::StandardButton reply = QMessageBox::question(
+    auto reply = QMessageBox::question(
         this,
         "Confirmer la suppression",
-        QString("Êtes-vous sûr de vouloir supprimer « %1 » ?").arg(name),
+        QString("Êtes-vous sûr de vouloir supprimer « %1 » ?").arg(current.getNom()),
         QMessageBox::Yes | QMessageBox::No
         );
 
     if (reply == QMessageBox::Yes) {
-        stockTable->removeRow(row);
-        // If table becomes empty, reset currentRow
-        if (stockTable->rowCount() == 0)
-            currentRow = -1;
+        if (StockDatabase::instance().deleteMaterial(current.getId())) {
+            QMessageBox::information(this, "Succès", "Matériau supprimé avec succès.");
+            refreshStats();
+            refreshTable(StockDatabase::instance().getAllMaterials());
+        } else {
+            QMessageBox::critical(this, "Erreur", "Impossible de supprimer le matériau.");
+        }
     }
 }
 
-void StockPage::onViewTriggered()
+void StockPage::onViewTriggered(int row, int)
 {
-    int row = stockTable->currentRow();
     if (row < 0) return;
-    currentRow = row;
-    populateViewForm(row);
-    stackedWidget->setCurrentIndex(3); // View page
+
+    QStringList labels = {
+        "ID", "Nom", "Type", "Quantité en stock", "Prix unitaire (DT)",
+        "Fournisseur", "Seuil alerte", "Dernière commande", "Conso. mensuelle","Unité"
+    };
+
+    QDialog dialog(this);
+    dialog.setObjectName("stockViewDialog");
+    dialog.setWindowTitle("Détails du matériau");
+    dialog.setMinimumWidth(460);
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+    mainLayout->setContentsMargins(30, 30, 30, 30);
+    mainLayout->setSpacing(20);
+
+    QLabel *title = new QLabel("Détails du matériau", &dialog);
+    title->setObjectName("dialogTitle");
+    title->setAlignment(Qt::AlignCenter);
+    mainLayout->addWidget(title);
+
+    QFormLayout *form = new QFormLayout();
+    form->setLabelAlignment(Qt::AlignRight);
+    form->setSpacing(12);
+
+    for (int i = 1; i < stockTable->columnCount(); ++i) {  // skip hidden ID col 0
+        QLabel *val = new QLabel(stockTable->item(row, i)->text(), &dialog);
+        val->setObjectName("viewValue");
+        form->addRow(labels[i] + " :", val);
+    }
+    mainLayout->addLayout(form);
+
+    QPushButton *closeBtn = new QPushButton("Fermer", &dialog);
+    closeBtn->setObjectName("backButton");
+    closeBtn->setCursor(Qt::PointingHandCursor);
+    connect(closeBtn, &QPushButton::clicked, &dialog, &QDialog::accept);
+    mainLayout->addWidget(closeBtn, 0, Qt::AlignCenter);
+
+    dialog.exec();
 }
 
-void StockPage::onBackToList()
+void StockPage::onShowAlertsClicked()
 {
-    stackedWidget->setCurrentIndex(0); // List page
+    QList<StockMaterial> all = StockDatabase::instance().getAllMaterials();
+    QStringList alertLines;
+    for (const auto& m : all) {
+        if (m.isBelowAlert())
+            alertLines << QString("• %1 — stock: %2 (seuil: %3)")
+                              .arg(m.getNom())
+                              .arg(m.getQuantite())
+                              .arg(m.getSeuilAlerte());
+    }
+
+    if (alertLines.isEmpty()) {
+        QMessageBox::information(this, "Alertes Stock", "Aucun matériau en dessous du seuil d'alerte.");
+    } else {
+        QMessageBox::warning(this, "Alertes Stock",
+                             QString("%1 matériau(x) en alerte :\n\n").arg(alertLines.size())
+                                 + alertLines.join("\n"));
+    }
 }
 
-void StockPage::onSaveAddButtonClicked()
+void StockPage::onExportAlertPdfClicked()
 {
-    // --- SIMPLE ADD (visual demonstration) ---
-    int newRow = stockTable->rowCount();
-    stockTable->insertRow(newRow);
+    QString fileName = QFileDialog::getSaveFileName(
+        this, "Exporter les alertes en PDF", "alertes_stock.pdf", "Fichiers PDF (*.pdf)");
+    if (fileName.isEmpty()) return;
 
-    // Create items with formatted text
-    QString qtyStr = QString::number(addQuantite->value()) + " m²"; // simplified
-    QString priceStr = QString::number(addPrixUnitaire->value(), 'f', 2) + " DT";
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(fileName);
+    printer.setPageOrientation(QPageLayout::Landscape);
 
-    stockTable->setItem(newRow, 0, new QTableWidgetItem(addId->text()));
-    stockTable->setItem(newRow, 1, new QTableWidgetItem(addNom->text()));
-    stockTable->setItem(newRow, 2, new QTableWidgetItem(addType->text()));
-    stockTable->setItem(newRow, 3, new QTableWidgetItem(qtyStr));
-    stockTable->setItem(newRow, 4, new QTableWidgetItem(priceStr));
-    stockTable->setItem(newRow, 5, new QTableWidgetItem(addFournisseur->text()));
-    stockTable->setItem(newRow, 6, new QTableWidgetItem(QString::number(addSeuilAlerte->value())));
-    stockTable->setItem(newRow, 7, new QTableWidgetItem(addDateCommande->date().toString("dd/MM/yyyy")));
-    stockTable->setItem(newRow, 8, new QTableWidgetItem(addConsoMensuelle->text()));
+    QList<StockMaterial> all = StockDatabase::instance().getAllMaterials();
+    QString html = "<html><body style='font-family:Arial;'>";
+    html += "<h2 style='color:#c0392b;'>Rapport d'alertes Stock — WoodFlow</h2>";
+    html += "<p>Date : " + QDate::currentDate().toString("dd/MM/yyyy") + "</p>";
+    html += "<table border='1' cellspacing='0' cellpadding='5' width='100%'>";
+    html += "<tr style='background:#c0392b;color:white;'>"
+            "<th>Nom</th><th>Type</th><th>Quantité</th>"
+            "<th>Seuil</th><th>Fournisseur</th><th>Conso. mensuelle</th></tr>";
 
-    stockTable->setRowHeight(newRow, 50);
+    bool hasAlerts = false;
+    for (const auto& m : all) {
+        if (m.isBelowAlert()) {
+            hasAlerts = true;
+            html += QString("<tr style='background:#ffd5d5;'>"
+                            "<td>%1</td><td>%2</td><td>%3</td>"
+                            "<td>%4</td><td>%5</td><td>%6</td></tr>")
+                        .arg(m.getNom()).arg(m.getType())
+                        .arg(m.getQuantite()).arg(m.getSeuilAlerte())
+                        .arg(m.getFournisseur()).arg(m.getConsoMensuelle());
+        }
+    }
 
-    // Return to list
-    stackedWidget->setCurrentIndex(0);
+    if (!hasAlerts)
+        html += "<tr><td colspan='6'>Aucun article en alerte.</td></tr>";
+
+    html += "</table></body></html>";
+
+    QTextDocument doc;
+    doc.setHtml(html);
+    doc.print(&printer);
+
+    QMessageBox::information(this, "Export PDF",
+                             "Rapport d'alertes exporté avec succès :\n" + fileName);
 }
 
-void StockPage::onSaveEditButtonClicked()
+// ---------------------------------------------------------------------------
+// Search & Sort
+// ---------------------------------------------------------------------------
+void StockPage::onSearchTextChanged(const QString& text)
 {
-    if (currentRow < 0 || currentRow >= stockTable->rowCount())
+    if (text.trimmed().isEmpty()) {
+        // Re-apply current sort instead of bare getAllMaterials
+        onSortChanged(sortCombo->currentIndex());
         return;
+    }
+    QList<StockMaterial> results = StockDatabase::instance().searchByNomOrType(text.trimmed());
+    refreshTable(results);
+}
 
-    // Update the selected row with edited values
-    QString qtyStr = QString::number(editQuantite->value()) + " m²"; // simplified
-    QString priceStr = QString::number(editPrixUnitaire->value(), 'f', 2) + " DT";
+void StockPage::onSortChanged(int index)
+{
+    // If search is active, filter first then sort in memory
+    QString searchText = searchEdit->text().trimmed();
+    QList<StockMaterial> base = searchText.isEmpty()
+                                    ? StockDatabase::instance().getAllMaterials()
+                                    : StockDatabase::instance().searchByNomOrType(searchText);
 
-    stockTable->item(currentRow, 0)->setText(editId->text());
-    stockTable->item(currentRow, 1)->setText(editNom->text());
-    stockTable->item(currentRow, 2)->setText(editType->text());
-    stockTable->item(currentRow, 3)->setText(qtyStr);
-    stockTable->item(currentRow, 4)->setText(priceStr);
-    stockTable->item(currentRow, 5)->setText(editFournisseur->text());
-    stockTable->item(currentRow, 6)->setText(QString::number(editSeuilAlerte->value()));
-    stockTable->item(currentRow, 7)->setText(editDateCommande->date().toString("dd/MM/yyyy"));
-    stockTable->item(currentRow, 8)->setText(editConsoMensuelle->text());
+    switch (index) {
+    case 0: // Default (ID order, already from getAllMaterials)
+        break;
+    case 1: // Nom A→Z
+        std::sort(base.begin(), base.end(), [](const StockMaterial& a, const StockMaterial& b){
+            return a.getNom() < b.getNom();
+        });
+        break;
+    case 2: // Nom Z→A
+        std::sort(base.begin(), base.end(), [](const StockMaterial& a, const StockMaterial& b){
+            return a.getNom() > b.getNom();
+        });
+        break;
+    case 3: // Conso mensuelle ↑
+        std::sort(base.begin(), base.end(), [](const StockMaterial& a, const StockMaterial& b){
+            return a.getConsoMensuelle() < b.getConsoMensuelle();
+        });
+        break;
+    case 4: // Conso mensuelle ↓
+        std::sort(base.begin(), base.end(), [](const StockMaterial& a, const StockMaterial& b){
+            return a.getConsoMensuelle() > b.getConsoMensuelle();
+        });
+        break;
+    default:
+        break;
+    }
 
-    // Return to list
-    stackedWidget->setCurrentIndex(0);
+    refreshTable(base);
 }
