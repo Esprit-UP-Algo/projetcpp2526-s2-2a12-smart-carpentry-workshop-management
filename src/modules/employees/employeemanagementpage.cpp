@@ -33,7 +33,6 @@ void EmployeeManagementPage::createToolbar()
 {
     QVBoxLayout *mainLayout = qobject_cast<QVBoxLayout*>(layout());
 
-    // Toolbar wrapper — objectName is the QSS anchor
     QFrame *toolbar = new QFrame(this);
     toolbar->setObjectName("empToolbar");
 
@@ -56,10 +55,7 @@ void EmployeeManagementPage::createToolbar()
 
     m_filterCombo = new QComboBox(toolbar);
     m_filterCombo->setObjectName("empFilterCombo");
-    m_filterCombo->addItem("Tous les postes", "all");
-    m_filterCombo->addItem("Menuisier", "Menuisier");
-    m_filterCombo->addItem("Chef d'equipe", "Chef d'equipe");
-    m_filterCombo->addItem("Apprenti", "Apprenti");
+    m_filterCombo->addItem("Tous les postes", "all");  // base item only; rest populated from DB
     m_filterCombo->setMinimumWidth(180);
     m_filterCombo->setFixedHeight(38);
 
@@ -122,6 +118,9 @@ void EmployeeManagementPage::createToolbar()
     toolbarLayout->addLayout(buttonLayout);
 
     mainLayout->addWidget(toolbar);
+
+    // Populate filter combo from DB after widgets are created
+    populateFilterCombo();
 }
 
 void EmployeeManagementPage::createTable()
@@ -173,6 +172,40 @@ void EmployeeManagementPage::setupConnections()
     connect(m_table, &QTableWidget::doubleClicked, this, &EmployeeManagementPage::onEditEmployee);
 }
 
+// ---------------------------------------------------------------------------
+// populateFilterCombo — fetches distinct postes from the DB
+// ---------------------------------------------------------------------------
+void EmployeeManagementPage::populateFilterCombo()
+{
+    // Remember current selection so we can restore it
+    QString current = m_filterCombo->currentData().toString();
+
+    m_filterCombo->blockSignals(true);
+
+    // Remove everything except the "all" entry at index 0
+    while (m_filterCombo->count() > 1)
+        m_filterCombo->removeItem(1);
+
+    // Fetch distinct postes with their employee counts from DB
+    QMap<QString, int> byPoste = EmployeeDatabase::instance().getEmployeeCountByPoste();
+    for (auto it = byPoste.constBegin(); it != byPoste.constEnd(); ++it) {
+        if (!it.key().isEmpty())
+            m_filterCombo->addItem(
+                QString("%1 (%2)").arg(it.key()).arg(it.value()),
+                it.key()   // store raw poste as item data for filtering
+            );
+    }
+
+    // Restore previous selection if it still exists, otherwise reset to "all"
+    int idx = m_filterCombo->findData(current);
+    m_filterCombo->setCurrentIndex(idx >= 0 ? idx : 0);
+
+    m_filterCombo->blockSignals(false);
+}
+
+// ---------------------------------------------------------------------------
+// Data loading
+// ---------------------------------------------------------------------------
 void EmployeeManagementPage::loadEmployees()
 {
     loadEmployees(EmployeeDatabase::instance().getAllEmployees());
@@ -243,6 +276,9 @@ QString EmployeeManagementPage::getDisponibiliteBadgeColor(const QString& dispon
     return "#F3EFE0";
 }
 
+// ---------------------------------------------------------------------------
+// CRUD slots — repopulate filter after any change
+// ---------------------------------------------------------------------------
 void EmployeeManagementPage::onAddEmployee()
 {
     EmployeeDialog dialog(this);
@@ -250,10 +286,13 @@ void EmployeeManagementPage::onAddEmployee()
     if (dialog.exec() == QDialog::Accepted) {
         Employee e = dialog.getEmployee();
         e.setId(EmployeeDatabase::instance().generateNextId());
-        if (EmployeeDatabase::instance().addEmployee(e))
-            { loadEmployees(); QMessageBox::information(this, "Succes", "Employe ajoute!"); }
-        else
+        if (EmployeeDatabase::instance().addEmployee(e)) {
+            loadEmployees();
+            populateFilterCombo();   // keep filter in sync
+            QMessageBox::information(this, "Succes", "Employe ajoute!");
+        } else {
             QMessageBox::warning(this, "Erreur", "Impossible d'ajouter l'employe.");
+        }
     }
 }
 
@@ -267,10 +306,13 @@ void EmployeeManagementPage::onEditEmployee()
     if (dialog.exec() == QDialog::Accepted) {
         Employee updated = dialog.getEmployee();
         updated.setId(e.getId());
-        if (EmployeeDatabase::instance().updateEmployee(updated))
-            { loadEmployees(); QMessageBox::information(this, "Succes", "Employe modifie!"); }
-        else
+        if (EmployeeDatabase::instance().updateEmployee(updated)) {
+            loadEmployees();
+            populateFilterCombo();   // poste may have changed
+            QMessageBox::information(this, "Succes", "Employe modifie!");
+        } else {
             QMessageBox::warning(this, "Erreur", "Impossible de modifier l'employe.");
+        }
     }
 }
 
@@ -281,13 +323,19 @@ void EmployeeManagementPage::onDeleteEmployee()
     auto r = QMessageBox::question(this, "Confirmer",
         QString("Supprimer %1 ?").arg(e.getFullName()), QMessageBox::Yes | QMessageBox::No);
     if (r == QMessageBox::Yes) {
-        if (EmployeeDatabase::instance().deleteEmployee(e.getId()))
-            { loadEmployees(); QMessageBox::information(this, "Succes", "Employe supprime!"); }
-        else
+        if (EmployeeDatabase::instance().deleteEmployee(e.getId())) {
+            loadEmployees();
+            populateFilterCombo();   // a poste may have disappeared
+            QMessageBox::information(this, "Succes", "Employe supprime!");
+        } else {
             QMessageBox::warning(this, "Erreur", "Impossible de supprimer l'employe.");
+        }
     }
 }
 
+// ---------------------------------------------------------------------------
+// Search / filter / sort
+// ---------------------------------------------------------------------------
 void EmployeeManagementPage::onSearchTextChanged(const QString& text)
 {
     if (text.isEmpty()) { onRefreshTable(); return; }
@@ -329,6 +377,7 @@ void EmployeeManagementPage::onRefreshTable()
     m_filterCombo->setCurrentIndex(0);
     m_sortCombo->setCurrentIndex(0);
     loadEmployees();
+    populateFilterCombo();   // re-sync on manual refresh too
 }
 
 void EmployeeManagementPage::onTableSelectionChanged()

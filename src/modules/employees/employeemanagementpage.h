@@ -40,19 +40,20 @@ private:
     QPushButton *m_deleteButton;
     QPushButton *m_exportButton;
     QPushButton *m_refreshButton;
-    
+
     // Layout methods
     void setupUI();
     void createToolbar();
     void createTable();
     void setupConnections();
-    
+
     // Data methods
     void loadEmployees();
     void loadEmployees(const QList<Employee>& employees);
     void addEmployeeToTable(const Employee& employee, int row);
     Employee getSelectedEmployee() const;
-    
+    void populateFilterCombo();   // <-- NEW: fetches postes from DB
+
     // Utility methods
     void updateButtonStates();
     QString getPosteBadgeColor(const QString& poste) const;

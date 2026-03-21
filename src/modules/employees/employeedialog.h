@@ -9,6 +9,7 @@
 #include <QSpinBox>
 #include <QTextEdit>
 #include <QCheckBox>
+#include <QLabel>
 #include "../../models/employee.h"
 
 class EmployeeDialog : public QDialog
@@ -49,6 +50,14 @@ private:
     // Auth
     QLineEdit      *m_passwordInput;
     QCheckBox      *m_showPasswordCheck;
+
+    // Permissions
+    QCheckBox      *m_permEmployeCheck      = nullptr;
+    QCheckBox      *m_permMateriauCheck     = nullptr;
+    QCheckBox      *m_permProduitCheck      = nullptr;
+    QCheckBox      *m_permProjetCheck       = nullptr;
+    QCheckBox      *m_permTransactionsCheck = nullptr;
+    QLabel         *m_permBinaryLabel       = nullptr;
 
     bool m_editMode = false;
 

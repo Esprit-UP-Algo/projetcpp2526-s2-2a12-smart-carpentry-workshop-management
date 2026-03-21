@@ -1,4 +1,5 @@
 #include "employeedialog.h"
+#include "../../models/employee.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>
@@ -161,6 +162,71 @@ void EmployeeDialog::setupUI()
     passHint->setWordWrap(true);
     authForm->addRow("", passHint);
     scrollLayout->addWidget(authGroup);
+
+    // ── Permissions ───────────────────────────────────────────────────────
+    QGroupBox *permGroup = makeGroup("Permissions d'acces");
+    QVBoxLayout *permLayout = new QVBoxLayout(permGroup);
+    permLayout->setContentsMargins(16, 14, 16, 14);
+    permLayout->setSpacing(10);
+
+    QLabel *permHint = new QLabel("Selectionnez les modules auxquels cet employe peut acceder.");
+    permHint->setWordWrap(true);
+    permLayout->addWidget(permHint);
+
+    QHBoxLayout *permRow = new QHBoxLayout();
+    permRow->setSpacing(16);
+
+    m_permEmployeCheck     = new QCheckBox("Employes");
+    m_permMateriauCheck    = new QCheckBox("Materiaux");
+    m_permProduitCheck     = new QCheckBox("Produits");
+    m_permProjetCheck      = new QCheckBox("Projets");
+    m_permTransactionsCheck= new QCheckBox("Transactions");
+
+    // Default: all checked
+    m_permEmployeCheck->setChecked(true);
+    m_permMateriauCheck->setChecked(true);
+    m_permProduitCheck->setChecked(true);
+    m_permProjetCheck->setChecked(true);
+    m_permTransactionsCheck->setChecked(true);
+
+
+    permRow->addWidget(m_permProjetCheck);
+    permRow->addWidget(m_permEmployeCheck);
+    permRow->addWidget(m_permMateriauCheck);
+    permRow->addWidget(m_permProduitCheck);
+    permRow->addWidget(m_permTransactionsCheck);
+    permRow->addStretch();
+    permLayout->addLayout(permRow);
+
+    // Binary preview label
+    QHBoxLayout *binaryRow = new QHBoxLayout();
+    QLabel *binaryLbl = new QLabel("Valeur binaire :");
+    m_permBinaryLabel = new QLabel("11111 = 31");
+    m_permBinaryLabel->setStyleSheet("font-family: monospace; font-weight: bold; color: #8A9A5B;");
+    binaryRow->addWidget(binaryLbl);
+    binaryRow->addWidget(m_permBinaryLabel);
+    binaryRow->addStretch();
+    permLayout->addLayout(binaryRow);
+
+    // Update binary label whenever a checkbox changes
+    auto updateBinaryLabel = [this]() {
+        int val = 0;
+        if (m_permEmployeCheck->isChecked())      val |= Employee::PERM_EMPLOYE;
+        if (m_permMateriauCheck->isChecked())     val |= Employee::PERM_MATERIAU;
+        if (m_permProduitCheck->isChecked())      val |= Employee::PERM_PRODUIT;
+        if (m_permProjetCheck->isChecked())       val |= Employee::PERM_PROJET;
+        if (m_permTransactionsCheck->isChecked()) val |= Employee::PERM_TRANSACTIONS;
+        QString binary = QString("%1").arg(val, 5, 2, QChar('0'));
+        m_permBinaryLabel->setText(QString("%1 = %2").arg(binary).arg(val));
+    };
+
+    connect(m_permEmployeCheck,      &QCheckBox::toggled, updateBinaryLabel);
+    connect(m_permMateriauCheck,     &QCheckBox::toggled, updateBinaryLabel);
+    connect(m_permProduitCheck,      &QCheckBox::toggled, updateBinaryLabel);
+    connect(m_permProjetCheck,       &QCheckBox::toggled, updateBinaryLabel);
+    connect(m_permTransactionsCheck, &QCheckBox::toggled, updateBinaryLabel);
+
+    scrollLayout->addWidget(permGroup);
     scrollLayout->addStretch();
 
     scroll->setWidget(scrollContent);
@@ -183,8 +249,119 @@ void EmployeeDialog::setupUI()
     footerLayout->addStretch(); footerLayout->addWidget(cancelBtn); footerLayout->addWidget(saveBtn);
     outerLayout->addWidget(footer);
 
-    // ── Stylesheet — hardcoded light/dark values, no %arg placeholders ────────
-    // Using explicit color strings avoids any Qt string formatting issues.
+    applyTheme(dark);
+
+}
+
+void EmployeeDialog::togglePasswordVisibility(bool checked) {
+    m_passwordInput->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
+}
+
+Employee EmployeeDialog::getEmployee() const {
+    Employee e;
+    e.setCin(m_cinInput->text().trimmed());
+    e.setNom(m_nomInput->text().trimmed());
+    e.setPrenom(m_prenomInput->text().trimmed());
+    e.setPoste(m_posteCombo->currentText());
+    e.setEmail(m_emailInput->text().trimmed());
+    e.setTelephone(m_telephoneInput->text().trimmed());
+    e.setDateEmbauche(QDateTime(m_dateEmbaucheInput->date(), QTime(0,0,0)));
+    e.setSalaire(m_salaireInput->value());
+    QString compText = m_competencesInput->toPlainText();
+    QStringList comps = compText.split(',', Qt::SkipEmptyParts);
+    for (QString& c : comps) c = c.trimmed();
+    e.setCompetences(comps);
+    e.setDisponibilite(m_disponibiliteCombo->currentText());
+    e.setPerformance(m_performanceInput->value());
+    e.setNbJoursConges(m_nbJoursCongesInput->value());
+    e.setNbJoursAbsence(m_nbJoursAbsenceInput->value());
+    e.setHeuresTravail(m_heuresTravailInput->value());
+    e.setMotDePasse(m_passwordInput->text());
+    int perms = 0;
+    if (m_permEmployeCheck->isChecked())      perms |= Employee::PERM_EMPLOYE;
+    if (m_permMateriauCheck->isChecked())     perms |= Employee::PERM_MATERIAU;
+    if (m_permProduitCheck->isChecked())      perms |= Employee::PERM_PRODUIT;
+    if (m_permProjetCheck->isChecked())       perms |= Employee::PERM_PROJET;
+    if (m_permTransactionsCheck->isChecked()) perms |= Employee::PERM_TRANSACTIONS;
+    e.setPermissions(perms);
+    return e;
+}
+
+void EmployeeDialog::setEmployee(const Employee& employee) {
+    m_editMode = true;
+    m_cinInput->setText(employee.getCin());
+    m_nomInput->setText(employee.getNom());
+    m_prenomInput->setText(employee.getPrenom());
+    int idx = m_posteCombo->findText(employee.getPoste());
+    if (idx >= 0) m_posteCombo->setCurrentIndex(idx);
+    m_emailInput->setText(employee.getEmail());
+    m_telephoneInput->setText(employee.getTelephone());
+    m_dateEmbaucheInput->setDate(employee.getDateEmbauche().date());
+    m_salaireInput->setValue(employee.getSalaire());
+    m_competencesInput->setPlainText(employee.getCompetencesString());
+    idx = m_disponibiliteCombo->findText(employee.getDisponibilite());
+    if (idx >= 0) m_disponibiliteCombo->setCurrentIndex(idx);
+    m_performanceInput->setValue(employee.getPerformance());
+    m_nbJoursCongesInput->setValue(employee.getNbJoursConges());
+    m_nbJoursAbsenceInput->setValue(employee.getNbJoursAbsence());
+    m_heuresTravailInput->setValue(employee.getHeuresTravail());
+    m_passwordInput->setText(employee.getMotDePasse());
+    int p = employee.getPermissions();
+    m_permEmployeCheck->setChecked(p & Employee::PERM_EMPLOYE);
+    m_permMateriauCheck->setChecked(p & Employee::PERM_MATERIAU);
+    m_permProduitCheck->setChecked(p & Employee::PERM_PRODUIT);
+    m_permProjetCheck->setChecked(p & Employee::PERM_PROJET);
+    m_permTransactionsCheck->setChecked(p & Employee::PERM_TRANSACTIONS);
+    // Trigger binary label update
+    QString binary = QString("%1").arg(p, 5, 2, QChar('0'));
+    m_permBinaryLabel->setText(QString("%1 = %2").arg(binary).arg(p));
+}
+
+bool EmployeeDialog::validateInput() {
+    if (m_cinInput->text().trimmed().isEmpty()) { QMessageBox::warning(this,"Validation","Le CIN est obligatoire."); m_cinInput->setFocus(); return false; }
+    if (m_cinInput->text().trimmed().length() != 8) { QMessageBox::warning(this,"Validation","Le CIN doit contenir exactement 8 chiffres."); m_cinInput->setFocus(); return false; }
+    if (m_nomInput->text().trimmed().isEmpty()) { QMessageBox::warning(this,"Validation","Le nom est obligatoire."); m_nomInput->setFocus(); return false; }
+    if (m_prenomInput->text().trimmed().isEmpty()) { QMessageBox::warning(this,"Validation","Le prenom est obligatoire."); m_prenomInput->setFocus(); return false; }
+    if (!m_editMode && m_passwordInput->text().isEmpty()) { QMessageBox::warning(this,"Validation","Un mot de passe est obligatoire pour un nouvel employe."); m_passwordInput->setFocus(); return false; }
+    return true;
+}
+
+void EmployeeDialog::onAccepted() { if (validateInput()) accept(); }
+void EmployeeDialog::onRejected() { reject(); }
+
+
+void EmployeeDialog::applyTheme(bool dark)
+{
+    // Redefine palette here so this method is self-contained and callable any time
+    QString bg       = dark ? "#111111" : "#F3EFE0";
+    QString card     = dark ? "#1e1e1e" : "#FFFFFF";
+    QString border   = dark ? "#2e2e2e" : "#E8E4DC";
+    QString inputBg  = dark ? "#2a2a2a" : "#FFFFFF";
+    QString inputBrd = dark ? "#3a3a3a" : "#e2ddd6";
+    QString inputBrdH= dark ? "#8A9A5B" : "#BDB5AD";
+    QString text     = dark ? "#f0f0f0" : "#1f2937";
+    QString label    = dark ? "#9ca3af" : "#6b7280";
+    QString green    = "#8A9A5B";
+    QString greenH   = "#9aaa6b";
+    QString titleBg  = dark ? "#2e2e2e" : "#F5F0E8";
+    QString titleFg  = dark ? "#9aaa6b" : "#4D362D";
+    QString footerBg = dark ? "#1a1a1a" : "#F9F7F4";
+    QString saveFg   = "#FFFFFF";
+
+    // Update checkbox palette — guard against being called before widgets are created
+    if (m_permEmployeCheck) {
+        QPalette pal;
+        pal.setColor(QPalette::Base,       QColor(inputBg));
+        pal.setColor(QPalette::Window,     QColor(inputBg));
+        pal.setColor(QPalette::Text,       QColor(text));
+        pal.setColor(QPalette::ButtonText, Qt::white);
+        for (QCheckBox* cb : {m_permEmployeCheck, m_permMateriauCheck,
+                              m_permProduitCheck, m_permProjetCheck,
+                              m_permTransactionsCheck}) {
+            cb->setPalette(pal);
+        }
+    }
+
     QString ss;
     ss += QString("#employeeDialog { background-color: %1; }").arg(bg);
     ss += QString("#employeeDialog > QWidget { background-color: %1; }").arg(bg);
@@ -373,65 +550,41 @@ void EmployeeDialog::setupUI()
         #dlgSaveBtn:pressed { background-color: #7a8a4b; }
     )").arg(green, saveFg, greenH);
 
+    // Checkbox styling — light/dark aware, no external image needed
+    // Checked state uses a green fill; the checkmark is painted by Qt's style engine
+    // but we override the palette so it draws white on green instead of black on black.
+    QString checkOn  = dark ? "#8A9A5B" : "#8A9A5B";   // green fill when checked
+    QString checkBrd = dark ? "#3a3a3a" : "#c8c2ba";   // border when unchecked
+    QString checkBg  = dark ? "#2a2a2a" : "#ffffff";   // bg when unchecked
+    ss += QString(R"(
+        #employeeDialog QCheckBox {
+            color: %1;
+            font-size: 13px;
+            font-weight: 500;
+            spacing: 8px;
+            background: transparent;
+        }
+        #employeeDialog QCheckBox::indicator {
+            width: 18px;
+            height: 18px;
+            border: 2px solid %2;
+            border-radius: 5px;
+            background-color: %3;
+        }
+        #employeeDialog QCheckBox::indicator:hover {
+            border-color: %4;
+        }
+        #employeeDialog QCheckBox::indicator:checked {
+            background-color: %4;
+            border-color: %4;
+            /* Qt will draw its own checkmark glyph — we just ensure it's visible
+               by setting a contrasting background. The glyph color follows QPalette. */
+        }
+        #employeeDialog QCheckBox::indicator:unchecked {
+            background-color: %3;
+            border: 2px solid %2;
+        }
+    )").arg(text, checkBrd, checkBg, checkOn);
+
     setStyleSheet(ss);
 }
-
-void EmployeeDialog::togglePasswordVisibility(bool checked) {
-    m_passwordInput->setEchoMode(checked ? QLineEdit::Normal : QLineEdit::Password);
-}
-
-Employee EmployeeDialog::getEmployee() const {
-    Employee e;
-    e.setCin(m_cinInput->text().trimmed());
-    e.setNom(m_nomInput->text().trimmed());
-    e.setPrenom(m_prenomInput->text().trimmed());
-    e.setPoste(m_posteCombo->currentText());
-    e.setEmail(m_emailInput->text().trimmed());
-    e.setTelephone(m_telephoneInput->text().trimmed());
-    e.setDateEmbauche(QDateTime(m_dateEmbaucheInput->date(), QTime(0,0,0)));
-    e.setSalaire(m_salaireInput->value());
-    QString compText = m_competencesInput->toPlainText();
-    QStringList comps = compText.split(',', Qt::SkipEmptyParts);
-    for (QString& c : comps) c = c.trimmed();
-    e.setCompetences(comps);
-    e.setDisponibilite(m_disponibiliteCombo->currentText());
-    e.setPerformance(m_performanceInput->value());
-    e.setNbJoursConges(m_nbJoursCongesInput->value());
-    e.setNbJoursAbsence(m_nbJoursAbsenceInput->value());
-    e.setHeuresTravail(m_heuresTravailInput->value());
-    e.setMotDePasse(m_passwordInput->text());
-    return e;
-}
-
-void EmployeeDialog::setEmployee(const Employee& employee) {
-    m_editMode = true;
-    m_cinInput->setText(employee.getCin());
-    m_nomInput->setText(employee.getNom());
-    m_prenomInput->setText(employee.getPrenom());
-    int idx = m_posteCombo->findText(employee.getPoste());
-    if (idx >= 0) m_posteCombo->setCurrentIndex(idx);
-    m_emailInput->setText(employee.getEmail());
-    m_telephoneInput->setText(employee.getTelephone());
-    m_dateEmbaucheInput->setDate(employee.getDateEmbauche().date());
-    m_salaireInput->setValue(employee.getSalaire());
-    m_competencesInput->setPlainText(employee.getCompetencesString());
-    idx = m_disponibiliteCombo->findText(employee.getDisponibilite());
-    if (idx >= 0) m_disponibiliteCombo->setCurrentIndex(idx);
-    m_performanceInput->setValue(employee.getPerformance());
-    m_nbJoursCongesInput->setValue(employee.getNbJoursConges());
-    m_nbJoursAbsenceInput->setValue(employee.getNbJoursAbsence());
-    m_heuresTravailInput->setValue(employee.getHeuresTravail());
-    m_passwordInput->setText(employee.getMotDePasse());
-}
-
-bool EmployeeDialog::validateInput() {
-    if (m_cinInput->text().trimmed().isEmpty()) { QMessageBox::warning(this,"Validation","Le CIN est obligatoire."); m_cinInput->setFocus(); return false; }
-    if (m_cinInput->text().trimmed().length() != 8) { QMessageBox::warning(this,"Validation","Le CIN doit contenir exactement 8 chiffres."); m_cinInput->setFocus(); return false; }
-    if (m_nomInput->text().trimmed().isEmpty()) { QMessageBox::warning(this,"Validation","Le nom est obligatoire."); m_nomInput->setFocus(); return false; }
-    if (m_prenomInput->text().trimmed().isEmpty()) { QMessageBox::warning(this,"Validation","Le prenom est obligatoire."); m_prenomInput->setFocus(); return false; }
-    if (!m_editMode && m_passwordInput->text().isEmpty()) { QMessageBox::warning(this,"Validation","Un mot de passe est obligatoire pour un nouvel employe."); m_passwordInput->setFocus(); return false; }
-    return true;
-}
-
-void EmployeeDialog::onAccepted() { if (validateInput()) accept(); }
-void EmployeeDialog::onRejected() { reject(); }

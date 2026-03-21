@@ -14,7 +14,7 @@ LoginPage::LoginPage(QWidget *parent)
         ui->logoLabel->setPixmap(logo.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
     connect(ui->loginButton,  &QPushButton::clicked, this, &LoginPage::onLoginClicked);
-    connect(ui->registerLink, &QPushButton::clicked, this, &LoginPage::switchToRegister);
+    connect(ui->registerLink, &QPushButton::clicked, this, &LoginPage::switchToForgotPassword);
 
     connect(ui->usernameInput, &QLineEdit::returnPressed, [this]() { ui->passwordInput->setFocus(); });
     connect(ui->passwordInput, &QLineEdit::returnPressed, this, &LoginPage::onLoginClicked);
@@ -27,7 +27,6 @@ void LoginPage::onLoginClicked()
     QString cin      = ui->usernameInput->text().trimmed();
     QString password = ui->passwordInput->text();
 
-    // Basic validation
     if (cin.isEmpty()) {
         QMessageBox::warning(this, "Échec de connexion", "Le CIN est requis.");
         return;
@@ -41,13 +40,12 @@ void LoginPage::onLoginClicked()
         return;
     }
 
-    // Authenticate against DB (CIN + MOT_DE_PASSE, plain text)
     Employee employee = EmployeeDatabase::instance().authenticate(cin, password);
 
     if (!employee.isValid()) {
         QMessageBox::warning(this, "Échec de connexion",
             "CIN ou mot de passe incorrect.\n"
-            "Vérifiez vos identifiants ou créez un compte.");
+            "Vérifiez vos identifiants ou utilisez 'Mot de passe oublié'.");
         return;
     }
 

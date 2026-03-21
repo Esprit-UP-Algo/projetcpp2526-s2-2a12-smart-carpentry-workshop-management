@@ -6,10 +6,6 @@
 #include <QMap>
 #include <QString>
 
-/**
- * EmployeeDatabase — thin Oracle DB wrapper (singleton).
- * All operations use the named connection "oracle_conn" (Connection::CONN_NAME).
- */
 class EmployeeDatabase {
 public:
     static EmployeeDatabase& instance();
@@ -24,12 +20,16 @@ public:
     // Auth
     Employee authenticate(const QString& cin, const QString& plainPassword) const;
 
+    // 2FA secret management
+    bool saveTotpSecret(const QString& employeeId, const QString& secret);
+    bool clearTotpSecret(const QString& employeeId);
+
     // Search
     QList<Employee> searchByName(const QString& name) const;
     QList<Employee> searchByCin(const QString& cin) const;
     QList<Employee> searchByPoste(const QString& poste) const;
 
-    // Sort (fetched + sorted in memory — small dataset)
+    // Sort
     QList<Employee> sortBySalaire(bool ascending = true) const;
     QList<Employee> sortByDateEmbauche(bool ascending = true) const;
     QList<Employee> sortByPerformance(bool ascending = false) const;
@@ -40,8 +40,7 @@ public:
     int    getTotalEmployees() const;
     QMap<QString, int> getEmployeeCountByPoste() const;
 
-    // Utility
-    QString generateNextId() const;   // returns "EMP0007" style string (unused for Oracle auto-ID)
+    QString generateNextId() const;
 
 private:
     EmployeeDatabase() = default;
@@ -49,7 +48,6 @@ private:
     EmployeeDatabase(const EmployeeDatabase&) = delete;
     EmployeeDatabase& operator=(const EmployeeDatabase&) = delete;
 
-    // Helpers
     Employee rowToEmployee(const class QSqlQuery& q) const;
 };
 

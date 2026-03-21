@@ -18,7 +18,6 @@
 #include "src/models/employee.h"
 #include "toggleswitch.h"
 
-// Forward declaration (IMPORTANT : pas d'include .cpp ici)
 class StockPage;
 
 QT_BEGIN_NAMESPACE
@@ -48,7 +47,6 @@ private slots:
     void onScaleDown();
     void onScaleReset();
 
-
     // Auth slots
     void onLoginSuccess(const Employee& employee);
     void onLogout();
@@ -60,6 +58,7 @@ private:
     Ui::MainWindow *ui;
     QFrame* createSeparator();
     QTableWidget *financeTable;
+
     // Layout components
     QWidget *centralWidget;
     QHBoxLayout *mainLayout;
@@ -116,15 +115,12 @@ private:
     QWidget* createProjectsPage();
     QWidget* createEmployeesPage();
     QWidget* createFinancePage();
-     QWidget* createProductsPage();
+    QWidget* createProductsPage();
 
-    // CRUD operations for Employees
+    // CRUD operations (legacy stubs)
     void addEmployee();
     void editEmployee();
     void deleteEmployee();
-
-
-
 };
 
 #endif // MAINWINDOW_H

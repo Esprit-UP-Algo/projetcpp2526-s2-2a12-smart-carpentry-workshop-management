@@ -8,18 +8,18 @@ namespace Ui { class LoginPage; }
 
 class LoginPage : public QWidget {
     Q_OBJECT
-    
+
 public:
     explicit LoginPage(QWidget *parent = nullptr);
     ~LoginPage();
-    
+
 signals:
     void loginSuccess(const Employee& employee);
-    void switchToRegister();
-    
+    void switchToForgotPassword();   // replaces switchToRegister
+
 private slots:
     void onLoginClicked();
-    
+
 private:
     Ui::LoginPage *ui;
 };
