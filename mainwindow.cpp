@@ -291,7 +291,7 @@ void MainWindow::createSidebar()
 
     QStringList menuItems = {
         "Gestion des Projets",
-        "Gestion des Employes", 
+        "Gestion des Employes",
         "Gestion des Stocks",
         "Gestion Financiere",
         "Gestion des Designs"

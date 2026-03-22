@@ -1390,3 +1390,47 @@ QDateEdit QCalendarWidget QWidget#qt_calendar_navigationbar {
 }
 #empTable QScrollBar::add-line:vertical,
 #empTable QScrollBar::sub-line:vertical { height: 0; }
+
+/* ========================================
+   EMPLOYEE PAGE TABS
+   ======================================== */
+#empTabs,
+#empTabs > QWidget,
+#empTabs > QStackedWidget,
+#empTabs > QStackedWidget > QWidget {
+    background-color: #F3EFE0;
+    border: none;
+}
+#empTabs::pane {
+    border: none;
+    background-color: #F3EFE0;
+    padding-top: 0px;
+}
+#empTabs QTabBar {
+    background-color: #F3EFE0;
+    border: none;
+}
+#empTabs QTabBar::tab {
+    background-color: #F3EFE0;
+    color: #6b7280;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 4px;
+}
+#empTabs QTabBar::tab:selected {
+    color: #8A9A5B;
+    border-bottom: 3px solid #8A9A5B;
+    background-color: #F3EFE0;
+}
+#empTabs QTabBar::tab:hover:!selected {
+    color: #374151;
+    border-bottom: 3px solid #e5e7eb;
+    background-color: #F3EFE0;
+}
+#empToolbar {
+    background: transparent;
+    border: none;
+}
