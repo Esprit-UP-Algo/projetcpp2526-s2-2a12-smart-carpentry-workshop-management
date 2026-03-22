@@ -51,6 +51,11 @@ Employee EmployeeDatabase::rowToEmployee(const QSqlQuery& q) const
     QVariant permVal = q.value("PERMISSIONS");
     e.setPermissions((!permVal.isValid() || permVal.isNull()) ? Employee::PERM_ALL : permVal.toInt());
 
+    // PHOTO — BLOB, may be null
+    QVariant photoVal = q.value("PHOTO");
+    if (!photoVal.isNull() && photoVal.isValid())
+        e.setPhoto(photoVal.toByteArray());
+
     // TOTP_SECRET — NULL means 2FA not yet set up
     QVariant totpVal = q.value("TOTP_SECRET");
     if (!totpVal.isNull())
@@ -70,12 +75,12 @@ bool EmployeeDatabase::addEmployee(const Employee& employee)
     q.prepare(
         "INSERT INTO EMPLOYE "
         "(ID_EMP, CIN, NOM_EMP, PRENOM_EMP, POST_EMP, EMAIL_EMP, NUM_TEL, "
-        " DATE_EMBAUCHE, SALAIRE, COMPETENCES, DISPO_EMP, PERFORMANCE, NJC, NJA, HDT, MOT_DE_PASSE, PERMISSIONS) "
+        " DATE_EMBAUCHE, SALAIRE, COMPETENCES, DISPO_EMP, PERFORMANCE, NJC, NJA, HDT, MOT_DE_PASSE, PERMISSIONS, PHOTO) "
         "VALUES "
         "((SELECT NVL(MAX(ID_EMP),0)+1 FROM EMPLOYE), "
         " :cin, :nom, :prenom, :poste, :email, :tel, "
         " TO_DATE(:date_emb,'YYYY-MM-DD'), :salaire, :competences, "
-        " :dispo, :perf, :njc, :nja, :hdt, :pwd, :perms)"
+        " :dispo, :perf, :njc, :nja, :hdt, :pwd, :perms, :photo)"
     );
 
     q.bindValue(":cin",        employee.getCin());
@@ -96,6 +101,7 @@ bool EmployeeDatabase::addEmployee(const Employee& employee)
     q.bindValue(":hdt",        employee.getHeuresTravail());
     q.bindValue(":pwd",        employee.getMotDePasse().isEmpty() ? "test123" : employee.getMotDePasse());
     q.bindValue(":perms",      employee.getPermissions());
+    q.bindValue(":photo",      employee.hasPhoto() ? QVariant(employee.getPhoto()) : QVariant());
 
     if (!q.exec()) {
         qWarning() << "[EmployeeDatabase] addEmployee error:" << q.lastError().text();
@@ -116,7 +122,7 @@ bool EmployeeDatabase::updateEmployee(const Employee& employee)
         "  DATE_EMBAUCHE=TO_DATE(:date_emb,'YYYY-MM-DD'), SALAIRE=:salaire, "
         "  COMPETENCES=:competences, DISPO_EMP=:dispo, PERFORMANCE=:perf, "
         "  NJC=:njc, NJA=:nja, HDT=:hdt, MOT_DE_PASSE=:pwd, "
-        "  PERMISSIONS=:perms "
+        "  PERMISSIONS=:perms, PHOTO=:photo "
         "WHERE ID_EMP=:id"
     );
 
@@ -139,6 +145,7 @@ bool EmployeeDatabase::updateEmployee(const Employee& employee)
     q.bindValue(":pwd",        employee.getMotDePasse().isEmpty() ? "test123" : employee.getMotDePasse());
     q.bindValue(":id",         employee.getId());
     q.bindValue(":perms",      employee.getPermissions());
+    q.bindValue(":photo",      employee.hasPhoto() ? QVariant(employee.getPhoto()) : QVariant());
 
     if (!q.exec()) {
         qWarning() << "[EmployeeDatabase] updateEmployee error:" << q.lastError().text();

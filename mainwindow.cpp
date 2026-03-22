@@ -145,37 +145,48 @@ void MainWindow::showMainApp()
         profileName->setText(currentEmployee.getFullName());
 
     for (QLabel* lbl : profileBtn->findChildren<QLabel*>()) {
-        if (lbl->width() == 32 && lbl->height() == 32) {
-            QString initial = currentEmployee.getPrenom().isEmpty()
-                ? "?" : QString(currentEmployee.getPrenom().at(0).toUpper());
-            int size = 32;
+        if (lbl->width() == 38 && lbl->height() == 38) {
+            int size = 38;
             QPixmap avatar(size, size);
             avatar.fill(Qt::transparent);
-            QPainter painter(&avatar);
-            painter.setRenderHint(QPainter::Antialiasing);
-            QLinearGradient g(0, 0, size, size);
-            g.setColorAt(0, QColor("#8A9A5B"));
-            g.setColorAt(1, QColor("#6a8040"));
-            painter.setBrush(g);
-            painter.setPen(Qt::NoPen);
-            painter.drawEllipse(0, 0, size, size);
-            painter.setPen(Qt::white);
-            QFont font = painter.font();
-            font.setPixelSize(size / 2);
-            font.setBold(true);
-            painter.setFont(font);
-            painter.drawText(QRect(0, 0, size, size), Qt::AlignCenter, initial);
+
+            if (currentEmployee.hasPhoto()) {
+                // Use employee photo — clip to circle
+                QPixmap src;
+                src.loadFromData(currentEmployee.getPhoto());
+                QPixmap scaled = src.scaled(size, size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+                QPainter painter(&avatar);
+                painter.setRenderHint(QPainter::Antialiasing);
+                QPainterPath path;
+                path.addEllipse(0, 0, size, size);
+                painter.setClipPath(path);
+                painter.drawPixmap(0, 0, scaled);
+            } else {
+                // Fallback: initial letter on green gradient
+                QString initial = currentEmployee.getPrenom().isEmpty()
+                    ? "?" : QString(currentEmployee.getPrenom().at(0).toUpper());
+                QPainter painter(&avatar);
+                painter.setRenderHint(QPainter::Antialiasing);
+                QLinearGradient g(0, 0, size, size);
+                g.setColorAt(0, QColor("#8A9A5B"));
+                g.setColorAt(1, QColor("#6a8040"));
+                painter.setBrush(g);
+                painter.setPen(Qt::NoPen);
+                painter.drawEllipse(0, 0, size, size);
+                painter.setPen(Qt::white);
+                QFont font = painter.font();
+                font.setPixelSize(size / 2);
+                font.setBold(true);
+                painter.setFont(font);
+                painter.drawText(QRect(0, 0, size, size), Qt::AlignCenter, initial);
+            }
+
             lbl->setPixmap(avatar);
             break;
         }
     }
 
-    for (QLabel* lbl : sidebar->findChildren<QLabel*>()) {
-        if (lbl->styleSheet().contains("font-weight: 600") && lbl->styleSheet().contains("13px"))
-            lbl->setText(currentEmployee.getFullName());
-        if (lbl->styleSheet().contains("font-weight: 400") && lbl->styleSheet().contains("11px"))
-            lbl->setText(currentEmployee.getPoste().isEmpty() ? "Employe" : currentEmployee.getPoste());
-    }
+    // Sidebar bottom shows logo only — no name/role labels
 
     authStack->setCurrentIndex(1);
 
@@ -268,20 +279,16 @@ void MainWindow::createSidebar()
     sidebarLayout = new QVBoxLayout(sidebar);
     sidebarLayout->setContentsMargins(0, 0, 0, 0);
     sidebarLayout->setSpacing(0);
-    
-    QFrame *logoFrame = new QFrame(sidebar);
-    logoFrame->setObjectName("logoFrame");
-    logoFrame->setFixedHeight(120);
-    
-    QVBoxLayout *logoLayout = new QVBoxLayout(logoFrame);
-    logoLayout->setContentsMargins(15, 20, 15, 20);
-    logoLayout->setAlignment(Qt::AlignCenter);
-    
-    logoLabel = createRoundedAvatar("src/assets/icons/logo1.png", 70);
-    logoLayout->addWidget(logoLabel, 0, Qt::AlignCenter);
-    
-    sidebarLayout->addWidget(logoFrame);
-    
+
+    // Logo at the top
+    QLabel *sidebarLogo = new QLabel(sidebar);
+    QPixmap logoPixmap("src/assets/icons/logo1.png");
+    if (!logoPixmap.isNull())
+        sidebarLogo->setPixmap(logoPixmap.scaled(150, 150, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    sidebarLogo->setAlignment(Qt::AlignCenter);
+    sidebarLogo->setContentsMargins(0, 16, 0, 8);
+    sidebarLayout->addWidget(sidebarLogo, 0, Qt::AlignCenter);
+
     QStringList menuItems = {
         "Gestion des Projets",
         "Gestion des Employes", 
@@ -313,40 +320,11 @@ void MainWindow::createSidebar()
     }
     
     sidebarLayout->addStretch();
-    
-    QFrame *profileFrame = new QFrame(sidebar);
-    profileFrame->setObjectName("profileFrame");
-    QVBoxLayout *profileLayout = new QVBoxLayout(profileFrame);
-    profileLayout->setContentsMargins(12, 12, 12, 12);
-    profileLayout->setSpacing(6);
-    
-    QLabel *avatarLabel = createRoundedAvatar("src/assets/icons/pfp.jpeg", 50);
-    
-    QLabel *userNameLabel = new QLabel("Employé");
-    userNameLabel->setStyleSheet("font-weight: 600; font-size: 13px; background: transparent;");
-    userNameLabel->setAlignment(Qt::AlignCenter);
-    
-    QLabel *userRoleLabel = new QLabel("En attente");
-    userRoleLabel->setStyleSheet("font-weight: 400; font-size: 11px; color: #888; background: transparent;");
-    userRoleLabel->setAlignment(Qt::AlignCenter);
-    
-    QPushButton *logoutBtn = new QPushButton("Se déconnecter");
-    logoutBtn->setObjectName("logoutButton");
-    logoutBtn->setCursor(Qt::PointingHandCursor);
-    logoutBtn->setFixedHeight(32);
-    connect(logoutBtn, &QPushButton::clicked, this, &MainWindow::onLogout);
-    
-    profileLayout->addWidget(avatarLabel, 0, Qt::AlignCenter);
-    profileLayout->addWidget(userNameLabel);
-    profileLayout->addWidget(userRoleLabel);
-    profileLayout->addSpacing(6);
-    profileLayout->addWidget(logoutBtn);
-    sidebarLayout->addWidget(profileFrame);
-    
+
     QLabel *footer = new QLabel("Version 1.0.0", sidebar);
     footer->setObjectName("sidebarFooter");
     footer->setAlignment(Qt::AlignCenter);
-    footer->setFixedHeight(32);
+    footer->setFixedHeight(24);
     sidebarLayout->addWidget(footer);
 }
 
@@ -388,30 +366,27 @@ void MainWindow::createNavbar()
     darkModeLayout->addWidget(darkModeLabel);
     darkModeLayout->addWidget(darkModeToggle);
     
+    // Profile button — circular avatar only, click opens dropdown with logout
     profileBtn = new QPushButton(navbar);
     profileBtn->setObjectName("profileButton");
     profileBtn->setCursor(Qt::PointingHandCursor);
-    profileBtn->setFixedSize(150, 42);
-    
+    profileBtn->setFixedSize(42, 42);
+    profileBtn->setStyleSheet(
+        "QPushButton#profileButton { border-radius: 21px; border: 2px solid #8A9A5B; "
+        "background: transparent; padding: 0; }"
+        "QPushButton#profileButton:hover { border-color: #9aaa6b; }"
+    );
+
     QHBoxLayout *profileLayout = new QHBoxLayout(profileBtn);
-    profileLayout->setContentsMargins(6, 3, 6, 3);
-    profileLayout->setSpacing(8);
-    
-    QLabel *profilePhoto = createRoundedAvatar("src/assets/icons/pfp.jpeg", 32);
-    
-    profileName = new QLabel("Admin", profileBtn);
-    profileName->setObjectName("profileName");
-    
-    QLabel *arrow = new QLabel("▼", profileBtn);
-    arrow->setObjectName("dropdownArrow");
-    
-    profileLayout->addWidget(profilePhoto);
-    profileLayout->addWidget(profileName);
-    profileLayout->addWidget(arrow);
-    profileLayout->addStretch();
-    
+    profileLayout->setContentsMargins(0, 0, 0, 0);
+
+    QLabel *profilePhoto = createRoundedAvatar("src/assets/icons/pfp.jpeg", 38);
+    profileName = new QLabel("", profileBtn); // kept for showMainApp compatibility
+    profileName->hide();
+    profileLayout->addWidget(profilePhoto, 0, Qt::AlignCenter);
+
     connect(profileBtn, &QPushButton::clicked, this, &MainWindow::showProfileMenu);
-    
+
     navbarLayout->addWidget(darkModeContainer);
     navbarLayout->addWidget(profileBtn);
 }
@@ -420,23 +395,20 @@ void MainWindow::showProfileMenu()
 {
     QMenu *menu = new QMenu(this);
     menu->setObjectName("dropdownMenu");
-    
-    QAction *profileAction = menu->addAction("Mon Profil");
-    QAction *settingsAction = menu->addAction("Parametres");
+
+    // Header — show employee name
+    QAction *nameAction = menu->addAction(currentEmployee.getFullName());
+    nameAction->setEnabled(false);
+    QFont f = nameAction->font(); f.setBold(true); nameAction->setFont(f);
     menu->addSeparator();
-    QAction *logoutAction = menu->addAction("Deconnexion");
-    
-    connect(profileAction, &QAction::triggered, [this]() {
-        QMessageBox::information(this, "Profil", "Ouvrir le profil utilisateur");
-    });
-    
-    connect(settingsAction, &QAction::triggered, [this]() {
-        QMessageBox::information(this, "Parametres", "Ouvrir les parametres");
-    });
-    
+    QAction *logoutAction = menu->addAction("Se deconnecter");
+
     connect(logoutAction, &QAction::triggered, this, &MainWindow::onLogout);
-    
-    menu->exec(profileBtn->mapToGlobal(QPoint(0, profileBtn->height())));
+
+    // Position menu below the button, aligned to its right edge — stays inside window
+    QPoint pos = profileBtn->mapToGlobal(QPoint(profileBtn->width(), profileBtn->height() + 4));
+    pos.setX(pos.x() - menu->sizeHint().width());
+    menu->exec(pos);
 }
 
 void MainWindow::createContainer()

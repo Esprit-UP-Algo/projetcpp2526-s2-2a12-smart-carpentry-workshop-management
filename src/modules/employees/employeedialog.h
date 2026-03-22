@@ -10,6 +10,7 @@
 #include <QTextEdit>
 #include <QCheckBox>
 #include <QLabel>
+#include <QByteArray>
 #include "../../models/employee.h"
 
 class EmployeeDialog : public QDialog
@@ -50,6 +51,10 @@ private:
     // Auth
     QLineEdit      *m_passwordInput;
     QCheckBox      *m_showPasswordCheck;
+
+    // Photo
+    QLabel         *m_photoLabel   = nullptr;
+    QByteArray      m_photoData;
 
     // Permissions
     QCheckBox      *m_permEmployeCheck      = nullptr;

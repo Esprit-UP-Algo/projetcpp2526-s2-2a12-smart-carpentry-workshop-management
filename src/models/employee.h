@@ -4,6 +4,7 @@
 #include <QString>
 #include <QStringList>
 #include <QDateTime>
+#include <QByteArray>
 
 class Employee {
 public:
@@ -36,6 +37,8 @@ public:
     int       getNbJoursAbsence() const { return m_nbJoursAbsence; }
     double    getHeuresTravail()  const { return m_heuresTravail; }
     QString   getMotDePasse()     const { return m_motDePasse; }
+    QByteArray getPhoto()          const { return m_photo; }
+    bool      hasPhoto()           const { return !m_photo.isEmpty(); }
     QString   getTotpSecret()     const { return m_totpSecret; }
     bool      hasTwoFactor()      const { return !m_totpSecret.isEmpty(); }
     int       getPermissions()    const { return m_permissions; }
@@ -65,6 +68,7 @@ public:
     void setNbJoursAbsence(int v)            { m_nbJoursAbsence = v; }
     void setHeuresTravail(double v)          { m_heuresTravail = v; }
     void setMotDePasse(const QString& v)     { m_motDePasse = v; }
+    void setPhoto(const QByteArray& v)       { m_photo = v; }
     void setTotpSecret(const QString& v)     { m_totpSecret = v; }
     void setPermissions(int v)               { m_permissions = v; }
 
@@ -92,6 +96,7 @@ private:
     int         m_nbJoursAbsence = 0;
     double      m_heuresTravail  = 0.0;
     QString     m_motDePasse;
+    QByteArray  m_photo;
     QString     m_totpSecret;
     int         m_permissions    = PERM_ALL; // default: full access
 };
