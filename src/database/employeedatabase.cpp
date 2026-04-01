@@ -45,6 +45,22 @@ Employee EmployeeDatabase::rowToEmployee(const QSqlQuery& q) const
     e.setNbJoursAbsence(q.value("NJA").toInt());
     e.setHeuresTravail(q.value("HDT").toDouble());
     e.setMotDePasse(q.value("MOT_DE_PASSE").toString());
+
+    // PERMISSIONS — default PERM_ALL (31) if column missing or NULL
+    // q.value() returns an invalid QVariant if the column doesn't exist
+    QVariant permVal = q.value("PERMISSIONS");
+    e.setPermissions((!permVal.isValid() || permVal.isNull()) ? Employee::PERM_ALL : permVal.toInt());
+
+    // PHOTO — BLOB, may be null
+    QVariant photoVal = q.value("PHOTO");
+    if (!photoVal.isNull() && photoVal.isValid())
+        e.setPhoto(photoVal.toByteArray());
+
+    // TOTP_SECRET — NULL means 2FA not yet set up
+    QVariant totpVal = q.value("TOTP_SECRET");
+    if (!totpVal.isNull())
+        e.setTotpSecret(totpVal.toString());
+
     return e;
 }
 
@@ -59,31 +75,33 @@ bool EmployeeDatabase::addEmployee(const Employee& employee)
     q.prepare(
         "INSERT INTO EMPLOYE "
         "(ID_EMP, CIN, NOM_EMP, PRENOM_EMP, POST_EMP, EMAIL_EMP, NUM_TEL, "
-        " DATE_EMBAUCHE, SALAIRE, COMPETENCES, DISPO_EMP, PERFORMANCE, NJC, NJA, HDT, MOT_DE_PASSE) "
+        " DATE_EMBAUCHE, SALAIRE, COMPETENCES, DISPO_EMP, PERFORMANCE, NJC, NJA, HDT, MOT_DE_PASSE, PERMISSIONS, PHOTO) "
         "VALUES "
         "((SELECT NVL(MAX(ID_EMP),0)+1 FROM EMPLOYE), "
         " :cin, :nom, :prenom, :poste, :email, :tel, "
         " TO_DATE(:date_emb,'YYYY-MM-DD'), :salaire, :competences, "
-        " :dispo, :perf, :njc, :nja, :hdt, :pwd)"
+        " :dispo, :perf, :njc, :nja, :hdt, :pwd, :perms, :photo)"
     );
 
     q.bindValue(":cin",        employee.getCin());
     q.bindValue(":nom",        employee.getNom());
     q.bindValue(":prenom",     employee.getPrenom());
-    q.bindValue(":poste",      employee.getPoste().isEmpty()           ? QVariant() : QVariant(employee.getPoste()));
-    q.bindValue(":email",      employee.getEmail().isEmpty()           ? QVariant() : QVariant(employee.getEmail()));
-    q.bindValue(":tel",        employee.getTelephone().isEmpty()       ? QVariant() : QVariant(employee.getTelephone()));
+    q.bindValue(":poste",      employee.getPoste().isEmpty()             ? QVariant() : QVariant(employee.getPoste()));
+    q.bindValue(":email",      employee.getEmail().isEmpty()             ? QVariant() : QVariant(employee.getEmail()));
+    q.bindValue(":tel",        employee.getTelephone().isEmpty()         ? QVariant() : QVariant(employee.getTelephone()));
     q.bindValue(":date_emb",   employee.getDateEmbauche().isNull()
                                    ? QDate::currentDate().toString("yyyy-MM-dd")
                                    : employee.getDateEmbauche().toString("yyyy-MM-dd"));
     q.bindValue(":salaire",    employee.getSalaire());
     q.bindValue(":competences",employee.getCompetencesString().isEmpty() ? QVariant() : QVariant(employee.getCompetencesString()));
-    q.bindValue(":dispo",      employee.getDisponibilite().isEmpty()   ? QVariant() : QVariant(employee.getDisponibilite()));
+    q.bindValue(":dispo",      employee.getDisponibilite().isEmpty()     ? QVariant() : QVariant(employee.getDisponibilite()));
     q.bindValue(":perf",       employee.getPerformance());
     q.bindValue(":njc",        employee.getNbJoursConges());
     q.bindValue(":nja",        employee.getNbJoursAbsence());
     q.bindValue(":hdt",        employee.getHeuresTravail());
     q.bindValue(":pwd",        employee.getMotDePasse().isEmpty() ? "test123" : employee.getMotDePasse());
+    q.bindValue(":perms",      employee.getPermissions());
+    q.bindValue(":photo",      employee.hasPhoto() ? QVariant(employee.getPhoto()) : QVariant());
 
     if (!q.exec()) {
         qWarning() << "[EmployeeDatabase] addEmployee error:" << q.lastError().text();
@@ -103,7 +121,8 @@ bool EmployeeDatabase::updateEmployee(const Employee& employee)
         "  EMAIL_EMP=:email, NUM_TEL=:tel, "
         "  DATE_EMBAUCHE=TO_DATE(:date_emb,'YYYY-MM-DD'), SALAIRE=:salaire, "
         "  COMPETENCES=:competences, DISPO_EMP=:dispo, PERFORMANCE=:perf, "
-        "  NJC=:njc, NJA=:nja, HDT=:hdt, MOT_DE_PASSE=:pwd "
+        "  NJC=:njc, NJA=:nja, HDT=:hdt, MOT_DE_PASSE=:pwd, "
+        "  PERMISSIONS=:perms, PHOTO=:photo "
         "WHERE ID_EMP=:id"
     );
 
@@ -125,6 +144,8 @@ bool EmployeeDatabase::updateEmployee(const Employee& employee)
     q.bindValue(":hdt",        employee.getHeuresTravail());
     q.bindValue(":pwd",        employee.getMotDePasse().isEmpty() ? "test123" : employee.getMotDePasse());
     q.bindValue(":id",         employee.getId());
+    q.bindValue(":perms",      employee.getPermissions());
+    q.bindValue(":photo",      employee.hasPhoto() ? QVariant(employee.getPhoto()) : QVariant());
 
     if (!q.exec()) {
         qWarning() << "[EmployeeDatabase] updateEmployee error:" << q.lastError().text();
@@ -133,13 +154,31 @@ bool EmployeeDatabase::updateEmployee(const Employee& employee)
     return q.numRowsAffected() > 0;
 }
 
+bool EmployeeDatabase::saveTotpSecret(const QString& employeeId, const QString& secret)
+{
+    QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
+    QSqlQuery q(db);
+    q.prepare("UPDATE EMPLOYE SET TOTP_SECRET=:secret WHERE ID_EMP=:id");
+    q.bindValue(":secret", secret.isEmpty() ? QVariant() : QVariant(secret));
+    q.bindValue(":id",     employeeId);
+    if (!q.exec()) {
+        qWarning() << "[EmployeeDatabase] saveTotpSecret error:" << q.lastError().text();
+        return false;
+    }
+    return q.numRowsAffected() > 0;
+}
+
+bool EmployeeDatabase::clearTotpSecret(const QString& employeeId)
+{
+    return saveTotpSecret(employeeId, QString());
+}
+
 bool EmployeeDatabase::deleteEmployee(const QString& id)
 {
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
     q.prepare("DELETE FROM EMPLOYE WHERE ID_EMP=:id");
     q.bindValue(":id", id);
-
     if (!q.exec()) {
         qWarning() << "[EmployeeDatabase] deleteEmployee error:" << q.lastError().text();
         return false;
@@ -153,10 +192,8 @@ Employee EmployeeDatabase::getEmployee(const QString& id) const
     QSqlQuery q(db);
     q.prepare("SELECT * FROM EMPLOYE WHERE ID_EMP=:id");
     q.bindValue(":id", id);
-
     if (q.exec() && q.next())
         return rowToEmployee(q);
-
     qWarning() << "[EmployeeDatabase] getEmployee(" << id << ") failed:" << q.lastError().text();
     return Employee();
 }
@@ -166,38 +203,26 @@ QList<Employee> EmployeeDatabase::getAllEmployees() const
     QList<Employee> list;
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
-
     if (!q.exec("SELECT * FROM EMPLOYE ORDER BY ID_EMP")) {
         qWarning() << "[EmployeeDatabase] getAllEmployees error:" << q.lastError().text();
         return list;
     }
-
-    while (q.next())
-        list.append(rowToEmployee(q));
-
+    while (q.next()) list.append(rowToEmployee(q));
     return list;
 }
 
-// ---------------------------------------------------------------------------
-// Authentication — plain text comparison
-// ---------------------------------------------------------------------------
 Employee EmployeeDatabase::authenticate(const QString& cin, const QString& password) const
 {
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
     q.prepare("SELECT * FROM EMPLOYE WHERE CIN=:cin AND MOT_DE_PASSE=:pwd");
     q.bindValue(":cin", cin.trimmed());
-    q.bindValue(":pwd", password);   // plain text, no hashing
-
+    q.bindValue(":pwd", password);
     if (q.exec() && q.next())
         return rowToEmployee(q);
-
     return Employee();
 }
 
-// ---------------------------------------------------------------------------
-// Search
-// ---------------------------------------------------------------------------
 QList<Employee> EmployeeDatabase::searchByName(const QString& name) const
 {
     QList<Employee> list;
@@ -211,8 +236,7 @@ QList<Employee> EmployeeDatabase::searchByName(const QString& name) const
         "   OR UPPER(PRENOM_EMP||' '||NOM_EMP) LIKE :p"
     );
     q.bindValue(":p", p);
-    if (q.exec())
-        while (q.next()) list.append(rowToEmployee(q));
+    if (q.exec()) while (q.next()) list.append(rowToEmployee(q));
     return list;
 }
 
@@ -223,8 +247,7 @@ QList<Employee> EmployeeDatabase::searchByCin(const QString& cin) const
     QSqlQuery q(db);
     q.prepare("SELECT * FROM EMPLOYE WHERE CIN LIKE :p");
     q.bindValue(":p", "%" + cin + "%");
-    if (q.exec())
-        while (q.next()) list.append(rowToEmployee(q));
+    if (q.exec()) while (q.next()) list.append(rowToEmployee(q));
     return list;
 }
 
@@ -235,14 +258,10 @@ QList<Employee> EmployeeDatabase::searchByPoste(const QString& poste) const
     QSqlQuery q(db);
     q.prepare("SELECT * FROM EMPLOYE WHERE UPPER(POST_EMP) LIKE :p");
     q.bindValue(":p", "%" + poste.toUpper() + "%");
-    if (q.exec())
-        while (q.next()) list.append(rowToEmployee(q));
+    if (q.exec()) while (q.next()) list.append(rowToEmployee(q));
     return list;
 }
 
-// ---------------------------------------------------------------------------
-// Sort
-// ---------------------------------------------------------------------------
 QList<Employee> EmployeeDatabase::sortBySalaire(bool ascending) const
 {
     QList<Employee> list = getAllEmployees();
@@ -272,15 +291,11 @@ QList<Employee> EmployeeDatabase::sortByPerformance(bool ascending) const
     return list;
 }
 
-// ---------------------------------------------------------------------------
-// Statistics
-// ---------------------------------------------------------------------------
 double EmployeeDatabase::getAverageSalary() const
 {
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
-    if (q.exec("SELECT AVG(SALAIRE) FROM EMPLOYE") && q.next())
-        return q.value(0).toDouble();
+    if (q.exec("SELECT AVG(SALAIRE) FROM EMPLOYE") && q.next()) return q.value(0).toDouble();
     return 0.0;
 }
 
@@ -288,8 +303,7 @@ double EmployeeDatabase::getAveragePerformance() const
 {
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
-    if (q.exec("SELECT AVG(PERFORMANCE) FROM EMPLOYE") && q.next())
-        return q.value(0).toDouble();
+    if (q.exec("SELECT AVG(PERFORMANCE) FROM EMPLOYE") && q.next()) return q.value(0).toDouble();
     return 0.0;
 }
 
@@ -297,8 +311,7 @@ int EmployeeDatabase::getTotalEmployees() const
 {
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
-    if (q.exec("SELECT COUNT(*) FROM EMPLOYE") && q.next())
-        return q.value(0).toInt();
+    if (q.exec("SELECT COUNT(*) FROM EMPLOYE") && q.next()) return q.value(0).toInt();
     return 0;
 }
 
@@ -308,8 +321,7 @@ QMap<QString, int> EmployeeDatabase::getEmployeeCountByPoste() const
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
     if (q.exec("SELECT POST_EMP, COUNT(*) FROM EMPLOYE GROUP BY POST_EMP"))
-        while (q.next())
-            map[q.value(0).toString()] = q.value(1).toInt();
+        while (q.next()) map[q.value(0).toString()] = q.value(1).toInt();
     return map;
 }
 

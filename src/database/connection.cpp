@@ -4,7 +4,7 @@
 static constexpr char DB_USER[]     = "CPP_PROJECT";
 static constexpr char DB_PASS[]     = "Eoseos69";
 static constexpr char DB_HOST[]     = "localhost";
-static constexpr int  DB_PORT       = 1521;
+static constexpr int  DB_PORT       = 1522;
 static constexpr char DB_SID[]      = "XE";
 static constexpr char DB_ODBC_DSN[] = "CPP_PROJECT_WS";
 

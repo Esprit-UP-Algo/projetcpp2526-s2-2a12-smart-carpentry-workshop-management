@@ -15,9 +15,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_AUTOUIC_SEARCH_PATHS ui ui/modules/auth)
 
 # ── Qt: find ONCE with ALL required modules ──────────────────────────────────
-find_package(Qt6 COMPONENTS Core Widgets PrintSupport Sql QUIET)
+find_package(Qt6 COMPONENTS Core Widgets PrintSupport Sql Network QUIET)
 if (NOT Qt6_FOUND)
-    find_package(Qt5 5.15 REQUIRED COMPONENTS Core Widgets PrintSupport Sql)
+    find_package(Qt5 5.15 REQUIRED COMPONENTS Core Widgets PrintSupport Sql Network)
 endif()
 
 set(PROJECT_SOURCES
@@ -49,8 +49,8 @@ set(PROJECT_SOURCES
     # Auth Module
     src/modules/auth/loginpage.cpp
     src/modules/auth/loginpage.h
-    src/modules/auth/registerpage.cpp
-    src/modules/auth/registerpage.h
+    src/modules/auth/forgotpasswordpage.cpp
+    src/modules/auth/forgotpasswordpage.h
 
     # Employee Module
     src/modules/employees/employeemanagementpage.cpp
@@ -60,7 +60,6 @@ set(PROJECT_SOURCES
 
     # UI Files
     ui/modules/auth/loginpage.ui
-    ui/modules/auth/registerpage.ui
 )
 
 if(Qt6_FOUND)
@@ -81,9 +80,9 @@ target_include_directories(WoodFlow PRIVATE
 
 # ── Link ALL Qt modules ───────────────────────────────────────────────────────
 if(Qt6_FOUND)
-    target_link_libraries(WoodFlow PRIVATE Qt6::Core Qt6::Widgets Qt6::PrintSupport Qt6::Sql)
+    target_link_libraries(WoodFlow PRIVATE Qt6::Core Qt6::Widgets Qt6::PrintSupport Qt6::Sql Qt6::Network)
 else()
-    target_link_libraries(WoodFlow PRIVATE Qt5::Core Qt5::Widgets Qt5::PrintSupport Qt5::Sql)
+    target_link_libraries(WoodFlow PRIVATE Qt5::Core Qt5::Widgets Qt5::PrintSupport Qt5::Sql Qt5::Network)
 endif()
 
 # Copy stylesheet and images to build directory

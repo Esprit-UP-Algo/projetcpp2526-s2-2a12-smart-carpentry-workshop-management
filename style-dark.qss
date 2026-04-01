@@ -1252,3 +1252,47 @@ QLabel {
 }
 #empTable QScrollBar::add-line:vertical,
 #empTable QScrollBar::sub-line:vertical { height: 0; }
+
+/* ========================================
+   EMPLOYEE PAGE TABS — DARK MODE
+   ======================================== */
+#empTabs,
+#empTabs > QWidget,
+#empTabs > QStackedWidget,
+#empTabs > QStackedWidget > QWidget {
+    background-color: #111111;
+    border: none;
+}
+#empTabs::pane {
+    border: none;
+    background-color: #111111;
+    padding-top: 0px;
+}
+#empTabs QTabBar {
+    background-color: #111111;
+    border: none;
+}
+#empTabs QTabBar::tab {
+    background-color: #111111;
+    color: #9ca3af;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 10px 24px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 4px;
+}
+#empTabs QTabBar::tab:selected {
+    color: #9aaa6b;
+    border-bottom: 3px solid #9aaa6b;
+    background-color: #111111;
+}
+#empTabs QTabBar::tab:hover:!selected {
+    color: #e5e7eb;
+    border-bottom: 3px solid #374151;
+    background-color: #111111;
+}
+#empToolbar {
+    background: transparent;
+    border: none;
+}

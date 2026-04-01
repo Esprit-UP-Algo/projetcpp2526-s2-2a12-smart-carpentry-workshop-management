@@ -1,43 +1,114 @@
-# Build & Run (Windows — MinGW via Qt)
+# WoodFlow — Smart Carpentry Management
 
-Quick steps to configure, build and run this project using the MinGW toolchain bundled with Qt.
+A Qt/C++ desktop application for managing a carpentry workshop, backed by Oracle 11g XE running in Docker.
 
-Configure (use the MinGW compiler provided by your Qt installation):
+---
 
-```powershell
-cmake -S . -B build -G "MinGW Makefiles" \
-  -DCMAKE_C_COMPILER="C:/Qt/Tools/mingw1120_64/bin/gcc.exe" \
-  -DCMAKE_CXX_COMPILER="C:/Qt/Tools/mingw1120_64/bin/g++.exe" \
-  -DCMAKE_MAKE_PROGRAM="C:/Qt/Tools/mingw1120_64/bin/mingw32-make.exe" \
-  -DCMAKE_PREFIX_PATH="C:/Qt/6.7.3/mingw_64/lib/cmake"
+## Prerequisites
+
+| Tool | Purpose |
+|------|---------|
+| Qt 6 (or Qt 5.15+) | Build the app |
+| CMake 3.16+ | Build system |
+| Docker | Run the Oracle database |
+| Git | Version control |
+
+---
+
+## 1. Start the Database
+
+```bash
+# First time — pull and run
+docker pull lain456/oracle-cpp-project:v1
+docker run -d --name oracle11g \
+  -p 1522:1521 \
+  -p 8081:8080 \
+  lain456/oracle-cpp-project:v1
 ```
 
-Build:
+- **Oracle APEX** (web UI): http://localhost:8081/apex
+  - Workspace: `INTERNAL` → User: `ADMIN`
+- **ODBC/Qt connection**: `localhost:1522`, SID `XE`, user `CPP_PROJECT`, password `Eoseos69`
 
-```powershell
-cmake --build build --config Debug
+---
+
+## 2. Build & Run the App
+
+```bash
+git clone <repo-url>
+cd woodflow
+
+cmake -B build
+cmake --build build
+
+# Run
+./build/WoodFlow
 ```
 
-Run (example paths):
+Or use the `qtbuild` / `qtrun` aliases if configured.
 
-```powershell
-# If using a config: .\build\Debug\WoodFlow.exe
-# Otherwise: .\build\WoodFlow.exe
+---
+
+## 3. Edit the Code
+
+```bash
+# Make your changes, then build
+cmake --build build
+
+# Run to test
+./build/WoodFlow
 ```
 
-Make PATH persistent (optional — adds Qt's MinGW bin to your user PATH):
 
-```powershell
-$new = [Environment]::GetEnvironmentVariable('Path','User')
-if ($new -notmatch 'C:\\Qt\\Tools\\mingw1120_64\\bin') {
-  [Environment]::SetEnvironmentVariable('Path', $new + ';C:\Qt\Tools\mingw1120_64\bin', 'User')
-}
-# Then restart your terminal/VS Code/Qt Creator to pick up the change.
+---
+
+## 4. Save DB Changes
+
+Any `ALTER TABLE`, `INSERT`, or data changes made in Oracle APEX are only in the **running container**, not in the image. Save them before stopping:
+
+```bash
+docker commit oracle11g lain456/oracle-cpp-project:v1
+docker push lain456/oracle-cpp-project:v1
 ```
 
-Qt Creator notes:
-- Open the folder and select `CMakeLists.txt`.
-- In Tools → Options → Kits: ensure the Compiler points to `C:/Qt/Tools/mingw1120_64/bin/g++.exe` and the Qt version points to `C:/Qt/6.7.3/mingw_64`.
+---
 
-Files changed by the workspace helper:
-- [.vscode/settings.json](.vscode/settings.json) (forced `MinGW Makefiles` generator)
+## 5. Sync Code to GitHub
+
+```bash
+git add .
+git commit -m "your message"
+git push origin employer-wf
+```
+
+If the push is rejected due to history conflicts:
+```bash
+git push origin employer-wf --force-with-lease
+```
+
+---
+
+
+## 6. Restart with Updated Image
+
+```bash
+# Stop and remove old container
+docker stop oracle11g
+docker rm oracle11g
+
+# Pull latest image
+docker pull lain456/oracle-cpp-project:v1
+
+# Start fresh
+docker run -d --name oracle11g \
+  -p 1522:1521 \
+  -p 8081:8080 \
+  lain456/oracle-cpp-project:v1
+```
+---
+
+## Docker Hub
+
+Image: **`lain456/oracle-cpp-project:v1`**
+
+Contains Oracle XE 11g with the `CPP_PROJECT` schema, all tables, and sample data.

@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
             "• Le conteneur Docker Oracle est démarré\n"
             "• La source ODBC 'CPP_PROJECT_WS' est configurée\n"
             "• Les pilotes Qt SQL sont installés");
+
         return 1;
     }
 
