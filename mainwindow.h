@@ -37,10 +37,7 @@ protected:
 
 private slots:
     void onSidebarButtonClicked(int index);
-    void onAddButtonClicked();
-    void onEditButtonClicked();
-    void onDeleteButtonClicked();
-    void onSearchTextChanged(const QString &text);
+
     void showProfileMenu();
     void toggleDarkMode();
     void onScaleUp();

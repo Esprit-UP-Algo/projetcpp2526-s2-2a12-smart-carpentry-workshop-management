@@ -1,5 +1,5 @@
 #include "stockdatabase.h"
-#include "connection.h"   // same connection header as EmployeeDatabase
+#include "connection.h"
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -15,7 +15,7 @@ StockDatabase& StockDatabase::instance()
 }
 
 // ---------------------------------------------------------------------------
-// Helper
+// Helper : convertit une ligne SQL en StockMaterial
 // ---------------------------------------------------------------------------
 StockMaterial StockDatabase::rowToMaterial(const QSqlQuery& q) const
 {
@@ -34,6 +34,11 @@ StockMaterial StockDatabase::rowToMaterial(const QSqlQuery& q) const
 
     m.setConsoMensuelle(q.value("CONSO_MENSUELLE").toDouble());
     m.setUnite(q.value("UNITE").toString());
+
+    // FK → PRODUIT : NULL en DB devient 0 dans le modèle (0 = aucun produit)
+    QVariant idProd = q.value("ID_PRODUIT");
+    m.setIdProduit(idProd.isNull() ? 0 : idProd.toInt());
+
     return m;
 }
 
@@ -45,14 +50,22 @@ bool StockDatabase::addMaterial(const StockMaterial& mat)
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
 
-    q.prepare(
-        "INSERT INTO MATERIAU "
-        "(NOM_MAT, TYPE_MAT, QUANTITE_MAT, PRIX_UNITAIRE, "
-        " FOURNISSEUR, SEUIL_ALERTE, LAST_ORDER, CONSO_MENSUELLE, UNITE) "
-        "VALUES "
-        "(:nom, :type, :qte, :prix, :fourn, :seuil, "
-        " TO_DATE(:last_order, 'YYYY-MM-DD'), :conso, :unite)"
-        );
+    // Construire la requête en fonction de l'ID produit
+    QString sql = "INSERT INTO MATERIAU "
+                  "(NOM_MAT, TYPE_MAT, QUANTITE_MAT, PRIX_UNITAIRE, "
+                  " FOURNISSEUR, SEUIL_ALERTE, LAST_ORDER, CONSO_MENSUELLE, UNITE, ID_PRODUIT) "
+                  "VALUES "
+                  "(:nom, :type, :qte, :prix, :fourn, :seuil, "
+                  " TO_DATE(:last_order, 'YYYY-MM-DD'), :conso, :unite, ";
+
+    if (mat.getIdProduit() == 0) {
+        sql += "NULL";          // Valeur NULL explicite
+    } else {
+        sql += ":id_produit";
+    }
+    sql += ")";
+
+    q.prepare(sql);
 
     q.bindValue(":nom",        mat.getNom());
     q.bindValue(":type",       mat.getType().isEmpty()        ? QVariant() : QVariant(mat.getType()));
@@ -66,6 +79,11 @@ bool StockDatabase::addMaterial(const StockMaterial& mat)
     q.bindValue(":conso",      mat.getConsoMensuelle());
     q.bindValue(":unite",      mat.getUnite().isEmpty()       ? QVariant() : QVariant(mat.getUnite()));
 
+    // Lier l'ID produit seulement s'il est différent de 0
+    if (mat.getIdProduit() != 0) {
+        q.bindValue(":id_produit", mat.getIdProduit());
+    }
+
     if (!q.exec()) {
         qWarning() << "[StockDatabase] addMaterial error:" << q.lastError().text();
         return false;
@@ -78,26 +96,38 @@ bool StockDatabase::updateMaterial(const StockMaterial& mat)
     QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
     QSqlQuery q(db);
 
-    q.prepare(
-        "UPDATE MATERIAU SET "
-        "  NOM_MAT=:nom, TYPE_MAT=:type, QUANTITE_MAT=:qte, "
-        "  PRIX_UNITAIRE=:prix, FOURNISSEUR=:fourn, "
-        "  SEUIL_ALERTE=:seuil, LAST_ORDER=TO_DATE(:last_order,'YYYY-MM-DD'), "
-        "  CONSO_MENSUELLE=:conso, UNITE=:unite "   // ← ajout
-        "WHERE ID_MAT=:id"
-        );
+    // Construire la requête en fonction de l'ID produit
+    QString sql = "UPDATE MATERIAU SET "
+                  "  NOM_MAT=:nom, TYPE_MAT=:type, QUANTITE_MAT=:qte, "
+                  "  PRIX_UNITAIRE=:prix, FOURNISSEUR=:fourn, "
+                  "  SEUIL_ALERTE=:seuil, LAST_ORDER=TO_DATE(:last_order,'YYYY-MM-DD'), "
+                  "  CONSO_MENSUELLE=:conso, UNITE=:unite, ";
+
+    if (mat.getIdProduit() == 0) {
+        sql += "ID_PRODUIT = NULL ";
+    } else {
+        sql += "ID_PRODUIT = :id_produit ";
+    }
+    sql += "WHERE ID_MAT=:id";
+
+    q.prepare(sql);
 
     q.bindValue(":nom",        mat.getNom());
-    q.bindValue(":type",       mat.getType());
+    q.bindValue(":type",       mat.getType().isEmpty()        ? QVariant() : QVariant(mat.getType()));
     q.bindValue(":qte",        mat.getQuantite());
     q.bindValue(":prix",       mat.getPrixUnitaire());
-    q.bindValue(":fourn",      mat.getFournisseur());
+    q.bindValue(":fourn",      mat.getFournisseur().isEmpty() ? QVariant() : QVariant(mat.getFournisseur()));
     q.bindValue(":seuil",      mat.getSeuilAlerte());
     q.bindValue(":last_order", mat.getLastOrder().isNull()
                                    ? QDate::currentDate().toString("yyyy-MM-dd")
                                    : mat.getLastOrder().toString("yyyy-MM-dd"));
     q.bindValue(":conso",      mat.getConsoMensuelle());
-    q.bindValue(":id",         mat.getId());  q.bindValue(":unite", mat.getUnite().isEmpty() ? QVariant() : QVariant(mat.getUnite()));
+    q.bindValue(":unite",      mat.getUnite().isEmpty()       ? QVariant() : QVariant(mat.getUnite()));
+    q.bindValue(":id",         mat.getId());
+
+    if (mat.getIdProduit() != 0) {
+        q.bindValue(":id_produit", mat.getIdProduit());
+    }
 
     if (!q.exec()) {
         qWarning() << "[StockDatabase] updateMaterial error:" << q.lastError().text();
@@ -152,6 +182,25 @@ QList<StockMaterial> StockDatabase::getAllMaterials() const
 }
 
 // ---------------------------------------------------------------------------
+// Recherche par produit associé (FK)
+// ---------------------------------------------------------------------------
+QList<StockMaterial> StockDatabase::getMaterialsByProduit(int idProduit) const
+{
+    QList<StockMaterial> list;
+    QSqlDatabase db = QSqlDatabase::database(Connection::CONN_NAME);
+    QSqlQuery q(db);
+    q.prepare("SELECT * FROM MATERIAU WHERE ID_PRODUIT = :id ORDER BY ID_MAT");
+    q.bindValue(":id", idProduit);
+
+    if (q.exec())
+        while (q.next()) list.append(rowToMaterial(q));
+    else
+        qWarning() << "[StockDatabase] getMaterialsByProduit error:" << q.lastError().text();
+
+    return list;
+}
+
+// ---------------------------------------------------------------------------
 // Search
 // ---------------------------------------------------------------------------
 QList<StockMaterial> StockDatabase::searchByNom(const QString& nom) const
@@ -196,12 +245,12 @@ QList<StockMaterial> StockDatabase::searchByNomOrType(const QString& text) const
 }
 
 // ---------------------------------------------------------------------------
-// Sort (in-memory, consistent with EmployeeDatabase approach)
+// Sort (en mémoire)
 // ---------------------------------------------------------------------------
 QList<StockMaterial> StockDatabase::sortByNom(bool ascending) const
 {
     QList<StockMaterial> list = getAllMaterials();
-    std::sort(list.begin(), list.end(), [ascending](const StockMaterial& a, const StockMaterial& b){
+    std::sort(list.begin(), list.end(), [ascending](const StockMaterial& a, const StockMaterial& b) {
         return ascending ? a.getNom() < b.getNom() : a.getNom() > b.getNom();
     });
     return list;
@@ -210,7 +259,7 @@ QList<StockMaterial> StockDatabase::sortByNom(bool ascending) const
 QList<StockMaterial> StockDatabase::sortByConsoMensuelle(bool ascending) const
 {
     QList<StockMaterial> list = getAllMaterials();
-    std::sort(list.begin(), list.end(), [ascending](const StockMaterial& a, const StockMaterial& b){
+    std::sort(list.begin(), list.end(), [ascending](const StockMaterial& a, const StockMaterial& b) {
         return ascending ? a.getConsoMensuelle() < b.getConsoMensuelle()
                          : a.getConsoMensuelle() > b.getConsoMensuelle();
     });

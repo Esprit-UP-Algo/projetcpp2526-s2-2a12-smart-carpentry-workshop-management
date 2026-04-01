@@ -954,7 +954,7 @@ void EmployeeManagementPage::refreshStats()
     // ── Gauge ─────────────────────────────────────────────────────────────────
     m_perfGauge->setValue(avgPerf,10);
     m_absLabel->setText(QString("Absences moyennes : %1 j / employe")
-                            .arg(totalAbs/total,'f',1));
+                            .arg(totalAbs / total, 0, 'f', 1));
 
     // ── Salary bars ───────────────────────────────────────────────────────────
     QList<BarChartWidget::Bar> salBars;

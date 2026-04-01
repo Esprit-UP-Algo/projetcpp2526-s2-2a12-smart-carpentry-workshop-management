@@ -22,44 +22,62 @@ endif()
 
 set(PROJECT_SOURCES
     main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    mainwindow.ui
-    toggleswitch.cpp
-    toggleswitch.h
+       mainwindow.cpp
+       mainwindow.h
+       mainwindow.ui
+       toggleswitch.cpp
+       toggleswitch.h
 
-    # Models
-    src/models/employee.cpp
-    src/models/employee.h
+       # Models
+       src/models/employee.cpp
+       src/models/employee.h
+       src/models/projet.h
+       src/models/projet.cpp
 
-    # Database
-    src/database/connection.cpp
-    src/database/connection.h
-    src/database/employeedatabase.cpp
-    src/database/employeedatabase.h
+       # Database
+       src/database/connection.cpp
+       src/database/connection.h
+       src/database/employeedatabase.cpp
+       src/database/employeedatabase.h
+       src/database/stockdatabase.h
+       src/database/stockdatabase.cpp
+       src/database/projectdatabase.h
+       src/database/projectdatabase.cpp
 
-    # Core
-    src/core/session.cpp
-    src/core/session.h
+       # Core
+       src/core/session.cpp
+       src/core/session.h
 
-    # Common
-    src/common/validators.cpp
-    src/common/validators.h
+       # Common
+       src/common/validators.cpp
+       src/common/validators.h
 
-    # Auth Module
-    src/modules/auth/loginpage.cpp
-    src/modules/auth/loginpage.h
-    src/modules/auth/forgotpasswordpage.cpp
-    src/modules/auth/forgotpasswordpage.h
+       # Auth Module
+       src/modules/auth/loginpage.cpp
+       src/modules/auth/loginpage.h
+       src/modules/auth/forgotpasswordpage.cpp
+       src/modules/auth/forgotpasswordpage.h
 
-    # Employee Module
-    src/modules/employees/employeemanagementpage.cpp
-    src/modules/employees/employeemanagementpage.h
-    src/modules/employees/employeedialog.cpp
-    src/modules/employees/employeedialog.h
+       # Employee Module
+       src/modules/employees/employeemanagementpage.cpp
+       src/modules/employees/employeemanagementpage.h
+       src/modules/employees/employeedialog.cpp
+       src/modules/employees/employeedialog.h
 
-    # UI Files
-    ui/modules/auth/loginpage.ui
+       # Stock Module
+       src/models/stockmaterial.h
+       src/models/stockmaterial.cpp
+       src/modules/stock/stockpage.h
+       src/modules/stock/stockpage.cpp
+
+       # Projects Module
+       src/modules/projects/projectmanagementpage.h
+       src/modules/projects/projectmanagementpage.cpp
+       src/modules/projects/projectstatspage.h
+       src/modules/projects/projectstatspage.cpp
+
+       # UI Files
+       ui/modules/auth/loginpage.ui
 )
 
 if(Qt6_FOUND)
@@ -67,6 +85,12 @@ if(Qt6_FOUND)
         src/modules/stock/stockpage.h src/modules/stock/stockpage.cpp
         src/database/stockdatabase.h src/database/stockdatabase.cpp
         src/models/stockmaterial.h src/models/stockmaterial.cpp
+        src/modules/projects/projectmanagementpage.h src/modules/projects/projectmanagementpage.cpp
+        src/models/projet.h src/models/projet.cpp
+        src/database/projectdatabase.h src/database/projectdatabase.cpp
+        src/modules/projects/projectstatspage.h src/modules/projects/projectstatspage.cpp
+        src/common/projectvalidators.h src/common/projectvalidators.cpp
+
     )
 else()
     add_executable(WoodFlow ${PROJECT_SOURCES})

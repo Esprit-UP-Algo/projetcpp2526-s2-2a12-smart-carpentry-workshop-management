@@ -7,6 +7,7 @@ StockMaterial::StockMaterial()
     , m_seuilAlerte(0.0)
     , m_consoMensuelle(0.0)
     , m_unite("")
+    , m_idProduit(0)
 {
 }
 
@@ -14,7 +15,7 @@ StockMaterial::StockMaterial(const QString& nom, const QString& type,
                              double quantite, double prixUnitaire,
                              const QString& fournisseur, double seuilAlerte,
                              const QDate& lastOrder, double consoMensuelle,
-                             const QString& unite)
+                             const QString& unite, int idProduit)
     : m_id(0)
     , m_nomMat(nom)
     , m_typeMat(type)
@@ -25,6 +26,7 @@ StockMaterial::StockMaterial(const QString& nom, const QString& type,
     , m_lastOrder(lastOrder)
     , m_consoMensuelle(consoMensuelle)
     , m_unite(unite)
+    , m_idProduit(idProduit)
 {
 }
 

@@ -5,6 +5,7 @@
 #include "src/modules/employees/employeemanagementpage.h"
 #include "src/core/session.h"
 #include "src/modules/stock/stockpage.h"
+#include "src/modules/projects/projectmanagementpage.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
@@ -64,42 +65,42 @@ void MainWindow::setupUI()
     setMaximumSize(2000, 900);
     centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
-    
+
     mainLayout = new QHBoxLayout(centralWidget);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-    
+
     authStack = new QStackedWidget(centralWidget);
     mainLayout->addWidget(authStack);
-    
+
     setupAuth();
-    
+
     mainAppPage = new QWidget();
     QHBoxLayout *appLayout = new QHBoxLayout(mainAppPage);
     appLayout->setContentsMargins(0, 0, 0, 0);
     appLayout->setSpacing(0);
-    
+
     createSidebar();
-    
+
     contentArea = new QFrame(mainAppPage);
     contentArea->setObjectName("contentArea");
     contentLayout = new QVBoxLayout(contentArea);
     contentLayout->setContentsMargins(0, 0, 0, 0);
     contentLayout->setSpacing(0);
-    
+
     createNavbar();
     createContainer();
     createPages();
-    
+
     contentLayout->addWidget(navbar);
     contentLayout->addWidget(container);
-    
+
     appLayout->addWidget(sidebar);
     appLayout->addWidget(contentArea);
-    
+
     authStack->addWidget(authPage);
     authStack->addWidget(mainAppPage);
-    
+
     authStack->setCurrentIndex(0);
 }
 
@@ -164,7 +165,7 @@ void MainWindow::showMainApp()
             } else {
                 // Fallback: initial letter on green gradient
                 QString initial = currentEmployee.getPrenom().isEmpty()
-                    ? "?" : QString(currentEmployee.getPrenom().at(0).toUpper());
+                                      ? "?" : QString(currentEmployee.getPrenom().at(0).toUpper());
                 QPainter painter(&avatar);
                 painter.setRenderHint(QPainter::Antialiasing);
                 QLinearGradient g(0, 0, size, size);
@@ -193,12 +194,12 @@ void MainWindow::showMainApp()
     // Apply permissions — hide sidebar buttons the employee cannot access
     // Sidebar order: 0=Projets, 1=Employes, 2=Stocks, 3=Finance, 4=Designs/Produits
     struct { int idx; bool allowed; } perms[] = {
-        { 0, currentEmployee.canAccessProjet()       },
-        { 1, currentEmployee.canAccessEmploye()      },
-        { 2, currentEmployee.canAccessMateriau()     },
-        { 3, currentEmployee.canAccessTransactions() },
-        { 4, currentEmployee.canAccessProduit()      },
-    };
+                 { 0, currentEmployee.canAccessProjet()       },
+                 { 1, currentEmployee.canAccessEmploye()      },
+                 { 2, currentEmployee.canAccessMateriau()     },
+                 { 3, currentEmployee.canAccessTransactions() },
+                 { 4, currentEmployee.canAccessProduit()      },
+                 };
     int firstAllowed = 0;
     for (auto& p : perms) {
         if (p.idx < sidebarButtons.size()) {
@@ -221,51 +222,51 @@ QLabel* MainWindow::createRoundedAvatar(const QString& imagePath, int size)
     QLabel *avatarLabel = new QLabel();
     avatarLabel->setFixedSize(size, size);
     avatarLabel->setScaledContents(false);
-    
+
     QPixmap sourcePixmap(imagePath);
     if (sourcePixmap.isNull()) {
         QPixmap fallback(size, size);
         fallback.fill(Qt::transparent);
-        
+
         QPainter painter(&fallback);
         painter.setRenderHint(QPainter::Antialiasing);
-        
+
         QLinearGradient gradient(0, 0, size, size);
         gradient.setColorAt(0, QColor("#8A9A5B"));
         gradient.setColorAt(1, QColor("#9aaa6b"));
-        
+
         painter.setBrush(gradient);
         painter.setPen(Qt::NoPen);
         painter.drawEllipse(0, 0, size, size);
-        
+
         painter.setPen(Qt::white);
         QFont font = painter.font();
         font.setPixelSize(size / 2);
         font.setBold(true);
         painter.setFont(font);
         painter.drawText(QRect(0, 0, size, size), Qt::AlignCenter, "A");
-        
+
         avatarLabel->setPixmap(fallback);
         return avatarLabel;
     }
-    
+
     QPixmap scaled = sourcePixmap.scaled(size, size, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-    
+
     QPixmap rounded(size, size);
     rounded.fill(Qt::transparent);
-    
+
     QPainter painter(&rounded);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
-    
+
     QPainterPath path;
     path.addEllipse(0, 0, size, size);
     painter.setClipPath(path);
-    
+
     int x = (size - scaled.width()) / 2;
     int y = (size - scaled.height()) / 2;
     painter.drawPixmap(x, y, scaled);
-    
+
     avatarLabel->setPixmap(rounded);
     return avatarLabel;
 }
@@ -275,7 +276,7 @@ void MainWindow::createSidebar()
     sidebar = new QFrame(centralWidget);
     sidebar->setObjectName("sidebar");
     sidebar->setFixedWidth(220);
-    
+
     sidebarLayout = new QVBoxLayout(sidebar);
     sidebarLayout->setContentsMargins(0, 0, 0, 0);
     sidebarLayout->setSpacing(0);
@@ -296,29 +297,29 @@ void MainWindow::createSidebar()
         "Gestion Financiere",
         "Gestion des Designs"
     };
-    
+
     for (int i = 0; i < menuItems.size(); ++i) {
         QPushButton *btn = new QPushButton(menuItems[i], sidebar);
         btn->setObjectName("sidebarButton");
         btn->setCheckable(true);
         btn->setFixedHeight(48);
         btn->setCursor(Qt::PointingHandCursor);
-        
+
         if (i == 0) {
             btn->setChecked(true);
             btn->setProperty("active", true);
             btn->style()->unpolish(btn);
             btn->style()->polish(btn);
         }
-        
+
         connect(btn, &QPushButton::clicked, this, [this, i]() {
             onSidebarButtonClicked(i);
         });
-        
+
         sidebarButtons.append(btn);
         sidebarLayout->addWidget(btn);
     }
-    
+
     sidebarLayout->addStretch();
 
     QLabel *footer = new QLabel("Version 1.0.0", sidebar);
@@ -333,26 +334,26 @@ void MainWindow::createNavbar()
     navbar = new QFrame(contentArea);
     navbar->setObjectName("navbar");
     navbar->setFixedHeight(65);
-    
+
     navbarLayout = new QHBoxLayout(navbar);
     navbarLayout->setContentsMargins(25, 0, 25, 0);
     navbarLayout->setSpacing(15);
-    
+
     pageTitle = new QLabel("Gestion des Projets", navbar);
     pageTitle->setObjectName("pageTitle");
     navbarLayout->addWidget(pageTitle);
-    
+
     navbarLayout->addStretch();
-    
+
     QWidget *darkModeContainer = new QWidget(navbar);
     QHBoxLayout *darkModeLayout = new QHBoxLayout(darkModeContainer);
     darkModeLayout->setContentsMargins(0, 0, 0, 0);
     darkModeLayout->setSpacing(8);
-    
+
     QLabel *darkModeLabel = new QLabel("Passer en mode sombre", darkModeContainer);
     darkModeLabel->setObjectName("darkModeLabel");
     darkModeLabel->setStyleSheet("color: #718096; font-size: 12px;");
-    
+
     darkModeToggle = new ToggleSwitch(darkModeContainer);
     connect(darkModeToggle, &ToggleSwitch::toggled, this, [this, darkModeLabel](bool checked) {
         if (checked) {
@@ -362,10 +363,10 @@ void MainWindow::createNavbar()
         }
         toggleDarkMode();
     });
-    
+
     darkModeLayout->addWidget(darkModeLabel);
     darkModeLayout->addWidget(darkModeToggle);
-    
+
     // Profile button — circular avatar only, click opens dropdown with logout
     profileBtn = new QPushButton(navbar);
     profileBtn->setObjectName("profileButton");
@@ -375,7 +376,7 @@ void MainWindow::createNavbar()
         "QPushButton#profileButton { border-radius: 21px; border: 2px solid #8A9A5B; "
         "background: transparent; padding: 0; }"
         "QPushButton#profileButton:hover { border-color: #9aaa6b; }"
-    );
+        );
 
     QHBoxLayout *profileLayout = new QHBoxLayout(profileBtn);
     profileLayout->setContentsMargins(0, 0, 0, 0);
@@ -415,10 +416,10 @@ void MainWindow::createContainer()
 {
     container = new QFrame(contentArea);
     container->setObjectName("container");
-    
+
     QVBoxLayout *containerLayout = new QVBoxLayout(container);
     containerLayout->setContentsMargins(25, 25, 25, 25);
-    
+
     stackedWidget = new QStackedWidget(container);
     stackedWidget->setObjectName("stackedWidget");
     containerLayout->addWidget(stackedWidget);
@@ -426,165 +427,14 @@ void MainWindow::createContainer()
 
 void MainWindow::createPages()
 {
-    stackedWidget->addWidget(createProjectsPage());
+    stackedWidget->addWidget(new ProjectManagementPage(this));
     stackedWidget->addWidget(createEmployeesPage());
     stackedWidget->addWidget(new StockPage(this));
     stackedWidget->addWidget(createFinancePage());
     stackedWidget->addWidget(createProductsPage());
 }
 
-QWidget* MainWindow::createProjectsPage()
-{
-    QWidget *page = new QWidget();
-    QVBoxLayout *layout = new QVBoxLayout(page);
-    layout->setSpacing(18);
 
-    QHBoxLayout *statsLayout = new QHBoxLayout();
-    statsLayout->setSpacing(15);
-
-    struct StatData { QString title; QString value; QString type; };
-    QList<StatData> stats = {
-        {"PROJETS ACTIFS", "12", "active"},
-        {"EN ATTENTE", "5", "pending"},
-        {"TERMINES CE MOIS", "8", "completed"}
-    };
-
-    for (const auto& stat : stats) {
-        QFrame *card = new QFrame(page);
-        card->setObjectName("statCard");
-        card->setProperty("type", stat.type);
-
-        QVBoxLayout *cardLayout = new QVBoxLayout(card);
-        cardLayout->setSpacing(10);
-        cardLayout->setContentsMargins(20, 20, 20, 20);
-
-        QLabel *title = new QLabel(stat.title, card);
-        title->setObjectName("statTitle");
-
-        QLabel *value = new QLabel(stat.value, card);
-        value->setObjectName("statValue");
-
-        cardLayout->addWidget(title);
-        cardLayout->addWidget(value);
-        cardLayout->addStretch();
-        statsLayout->addWidget(card);
-    }
-
-    layout->addLayout(statsLayout);
-
-    QHBoxLayout *actionsLayout = new QHBoxLayout();
-    QPushButton *addBtn = new QPushButton("+ Nouveau Projet", page);
-    QPushButton *editBtn = new QPushButton("Modifier", page);
-    QPushButton *deleteBtn = new QPushButton("Supprimer", page);
-    QPushButton *exportBtn = new QPushButton("Generer PDF", page);
-
-    addBtn->setObjectName("actionButton");
-    editBtn->setObjectName("actionButton");
-    deleteBtn->setObjectName("actionButton");
-    exportBtn->setObjectName("actionButton");
-
-    addBtn->setCursor(Qt::PointingHandCursor);
-    editBtn->setCursor(Qt::PointingHandCursor);
-    deleteBtn->setCursor(Qt::PointingHandCursor);
-    exportBtn->setCursor(Qt::PointingHandCursor);
-
-    connect(addBtn, &QPushButton::clicked, this, &MainWindow::onAddButtonClicked);
-    connect(editBtn, &QPushButton::clicked, this, &MainWindow::onEditButtonClicked);
-    connect(deleteBtn, &QPushButton::clicked, this, &MainWindow::onDeleteButtonClicked);
-
-    actionsLayout->addWidget(addBtn);
-    actionsLayout->addWidget(editBtn);
-    actionsLayout->addWidget(deleteBtn);
-    actionsLayout->addWidget(exportBtn);
-    actionsLayout->addStretch();
-
-    QTableWidget *table = new QTableWidget(page);
-    table->setObjectName("dataTable");
-    table->setColumnCount(8);
-    table->setHorizontalHeaderLabels({
-        "CLIENT", "TYPE", "DATE DEBUT", "DATE FIN",
-        "STATUT", "BUDGET", "NOM PROJET", "ADRESSE"
-    });
-
-    table->horizontalHeader()->setStretchLastSection(true);
-    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    table->verticalHeader()->setVisible(false);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setSelectionMode(QAbstractItemView::SingleSelection);
-    table->setAlternatingRowColors(true);
-    table->setShowGrid(false);
-
-    table->setRowCount(3);
-
-    table->setItem(0, 0, new QTableWidgetItem("M. Dupont"));
-    table->setItem(0, 1, new QTableWidgetItem("Meuble sur mesure"));
-    table->setItem(0, 2, new QTableWidgetItem("01/02/2026"));
-    table->setItem(0, 3, new QTableWidgetItem("15/03/2026"));
-    QTableWidgetItem *statut1 = new QTableWidgetItem("En cours");
-    statut1->setForeground(QBrush(QColor("#2ecc71")));
-    table->setItem(0, 4, statut1);
-    table->setItem(0, 5, new QTableWidgetItem("3500 EUR"));
-    table->setItem(0, 6, new QTableWidgetItem("Rénovation Salon"));
-    table->setItem(0, 7, new QTableWidgetItem("15 Rue de Paris, 75001 Paris"));
-
-    table->setItem(1, 0, new QTableWidgetItem("Mme Martin"));
-    table->setItem(1, 1, new QTableWidgetItem("Rénovation"));
-    table->setItem(1, 2, new QTableWidgetItem("10/02/2026"));
-    table->setItem(1, 3, new QTableWidgetItem("28/02/2026"));
-    QTableWidgetItem *statut2 = new QTableWidgetItem("En attente");
-    statut2->setForeground(QBrush(QColor("#f39c12")));
-    table->setItem(1, 4, statut2);
-    table->setItem(1, 5, new QTableWidgetItem("2800 EUR"));
-    table->setItem(1, 6, new QTableWidgetItem("Cuisine Moderne"));
-    table->setItem(1, 7, new QTableWidgetItem("8 Rue des Lilas, 69002 Lyon"));
-
-    table->setItem(2, 0, new QTableWidgetItem("Restaurant Le Bois"));
-    table->setItem(2, 1, new QTableWidgetItem("Agencement"));
-    table->setItem(2, 2, new QTableWidgetItem("15/01/2026"));
-    table->setItem(2, 3, new QTableWidgetItem("30/01/2026"));
-    QTableWidgetItem *statut3 = new QTableWidgetItem("Terminé");
-    statut3->setForeground(QBrush(QColor("#3498db")));
-    table->setItem(2, 4, statut3);
-    table->setItem(2, 5, new QTableWidgetItem("8500 EUR"));
-    table->setItem(2, 6, new QTableWidgetItem("Agencement Restaurant"));
-    table->setItem(2, 7, new QTableWidgetItem("45 Cours Gambetta, 33000 Bordeaux"));
-
-    for (int row = 0; row < 3; ++row) table->setRowHeight(row, 50);
-
-    connect(table, &QTableWidget::cellDoubleClicked, this, [this, table](int row, int) {
-        if (!table || row < 0 || row >= table->rowCount()) return;
-        QString nomProjet   = table->item(row, 6) ? table->item(row, 6)->text() : "Non spécifié";
-        QString client      = table->item(row, 0) ? table->item(row, 0)->text() : "Non spécifié";
-        QString adresse     = table->item(row, 7) ? table->item(row, 7)->text() : "Non spécifiée";
-        QString type        = table->item(row, 1) ? table->item(row, 1)->text() : "Non spécifié";
-        QString dateDebut   = table->item(row, 2) ? table->item(row, 2)->text() : "Non spécifiée";
-        QString dateFin     = table->item(row, 3) ? table->item(row, 3)->text() : "Non spécifiée";
-        QString statut      = table->item(row, 4) ? table->item(row, 4)->text() : "Non spécifié";
-        QString budget      = table->item(row, 5) ? table->item(row, 5)->text() : "Non spécifié";
-        QString statutColor = statut == "En cours" ? "#2ecc71" : statut == "En attente" ? "#f39c12" : statut == "Terminé" ? "#3498db" : "#e74c3c";
-        QMessageBox details(this);
-        details.setWindowTitle("Détails du Projet");
-        details.setIcon(QMessageBox::Information);
-        details.setText(QString(
-            "<div style='font-family: Arial, sans-serif;'>"
-            "<h3 style='color: #8A9A5B; margin-bottom: 15px;'>%1</h3>"
-            "<table cellspacing='12' style='font-size: 13px;'>"
-            "<tr><td style='font-weight: bold; color: #4a5568;'>Client:</td><td>%2</td></tr>"
-            "<tr><td style='font-weight: bold; color: #4a5568;'>Adresse:</td><td>%3</td></tr>"
-            "<tr><td style='font-weight: bold; color: #4a5568;'>Type:</td><td>%4</td></tr>"
-            "<tr><td style='font-weight: bold; color: #4a5568;'>Date début:</td><td>%5</td></tr>"
-            "<tr><td style='font-weight: bold; color: #4a5568;'>Date fin:</td><td>%6</td></tr>"
-            "<tr><td style='font-weight: bold; color: #4a5568;'>Statut:</td><td><span style='font-weight: bold; color: %7;'>%8</span></td></tr>"
-            "<tr><td style='font-weight: bold; color: #4a5568;'>Budget:</td><td style='font-weight: bold;'>%9</td></tr>"
-            "</table></div>"
-        ).arg(nomProjet, client, adresse, type, dateDebut, dateFin, statutColor, statut, budget));
-        details.exec();
-    });
-
-    layout->addLayout(actionsLayout);
-    layout->addWidget(table);
-    return page;
-}
 
 QWidget* MainWindow::createEmployeesPage()
 {
@@ -851,7 +701,7 @@ QWidget* MainWindow::createFinancePage()
         int row=financeTable->currentRow();
         if (row<0) { QMessageBox::warning(this,"Aucune sélection","Sélectionnez une ligne."); return; }
         if (QMessageBox::question(this,"Confirmer","Supprimer cette transaction ?",QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes)
-            { financeTable->removeRow(row); updateStats(); }
+        { financeTable->removeRow(row); updateStats(); }
     });
     connect(btnExporter,&QPushButton::clicked,[=](){
         QString fichier=QFileDialog::getSaveFileName(this,"Exporter en CSV","transactions_"+QDate::currentDate().toString("yyyyMMdd")+".csv","Fichiers CSV (*.csv);;Tous (*.*)");
@@ -979,114 +829,6 @@ void MainWindow::onSidebarButtonClicked(int index)
     pageTitle->setText(titles[index]);
 }
 
-void MainWindow::onAddButtonClicked()
-{
-    QDialog dialog(this);
-    dialog.setWindowTitle("Ajouter un Nouveau Projet");
-    dialog.setMinimumWidth(500);
-    dialog.setStyleSheet("QDialog { background-color: white; }");
-    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
-    mainLayout->setSpacing(20); mainLayout->setContentsMargins(30,30,30,30);
-    QLabel *titleLabel = new QLabel("Nouveau Projet", &dialog);
-    titleLabel->setStyleSheet("font-size: 18px; font-weight: bold; color: #2c3e50;"); titleLabel->setAlignment(Qt::AlignCenter);
-    mainLayout->addWidget(titleLabel);
-    QFormLayout *form = new QFormLayout(); form->setSpacing(15); form->setLabelAlignment(Qt::AlignRight); form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-    QLineEdit *nomProjet=new QLineEdit(&dialog); nomProjet->setPlaceholderText("Nom du projet"); nomProjet->setMinimumHeight(35);
-    QLineEdit *client=new QLineEdit(&dialog); client->setPlaceholderText("Nom du client"); client->setMinimumHeight(35);
-    QLineEdit *adresse=new QLineEdit(&dialog); adresse->setPlaceholderText("Adresse complète du chantier"); adresse->setMinimumHeight(35);
-    QComboBox *typeProjet=new QComboBox(&dialog); typeProjet->addItems({"Meuble sur mesure","Rénovation","Agencement","Restaurant","Bureau","Cuisine","Salle de bain"}); typeProjet->setMinimumHeight(35);
-    QDateEdit *dateDebut=new QDateEdit(&dialog); dateDebut->setDate(QDate::currentDate()); dateDebut->setCalendarPopup(true); dateDebut->setDisplayFormat("dd/MM/yyyy"); dateDebut->setMinimumHeight(35);
-    QDateEdit *dateFin=new QDateEdit(&dialog); dateFin->setDate(QDate::currentDate().addDays(30)); dateFin->setCalendarPopup(true); dateFin->setDisplayFormat("dd/MM/yyyy"); dateFin->setMinimumHeight(35);
-    QComboBox *statut=new QComboBox(&dialog); statut->addItems({"En cours","En attente","Terminé","Annulé"}); statut->setMinimumHeight(35);
-    QLineEdit *budget=new QLineEdit(&dialog); budget->setPlaceholderText("0.00 EUR"); budget->setMinimumHeight(35);
-    form->addRow("Nom du projet:",nomProjet); form->addRow("Client:",client); form->addRow("Adresse chantier:",adresse);
-    form->addRow("Type:",typeProjet); form->addRow("Date début:",dateDebut); form->addRow("Date fin:",dateFin);
-    form->addRow("Statut:",statut); form->addRow("Budget:",budget);
-    mainLayout->addLayout(form);
-    QDialogButtonBox *buttonBox=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dialog);
-    buttonBox->button(QDialogButtonBox::Ok)->setText("Ajouter"); buttonBox->button(QDialogButtonBox::Ok)->setMinimumHeight(40);
-    buttonBox->button(QDialogButtonBox::Ok)->setStyleSheet("QPushButton{background-color:#8A9A5B;color:white;border:none;border-radius:5px;padding:8px 20px;font-weight:bold;}QPushButton:hover{background-color:#9aaa6b;}");
-    buttonBox->button(QDialogButtonBox::Cancel)->setText("Annuler"); buttonBox->button(QDialogButtonBox::Cancel)->setMinimumHeight(40);
-    buttonBox->button(QDialogButtonBox::Cancel)->setStyleSheet("QPushButton{background-color:#e2e8f0;color:#4a5568;border:none;border-radius:5px;padding:8px 20px;}QPushButton:hover{background-color:#cbd5e0;}");
-    mainLayout->addWidget(buttonBox);
-    connect(buttonBox,&QDialogButtonBox::accepted,&dialog,&QDialog::accept); connect(buttonBox,&QDialogButtonBox::rejected,&dialog,&QDialog::reject);
-    if (dialog.exec()==QDialog::Accepted) {
-        QWidget *projectsPage=stackedWidget->widget(0); QTableWidget *table=projectsPage->findChild<QTableWidget*>("dataTable");
-        if (table) {
-            int row=table->rowCount(); table->insertRow(row);
-            QString budgetText=budget->text(); if (!budgetText.contains("EUR")) budgetText+=" EUR";
-            table->setItem(row,0,new QTableWidgetItem(client->text())); table->setItem(row,1,new QTableWidgetItem(typeProjet->currentText()));
-            table->setItem(row,2,new QTableWidgetItem(dateDebut->date().toString("dd/MM/yyyy"))); table->setItem(row,3,new QTableWidgetItem(dateFin->date().toString("dd/MM/yyyy")));
-            QTableWidgetItem *statutItem=new QTableWidgetItem(statut->currentText());
-            statutItem->setForeground(QBrush(QColor(statut->currentText()=="En cours"?"#2ecc71":statut->currentText()=="En attente"?"#f39c12":statut->currentText()=="Terminé"?"#3498db":"#e74c3c")));
-            table->setItem(row,4,statutItem); table->setItem(row,5,new QTableWidgetItem(budgetText));
-            table->setItem(row,6,new QTableWidgetItem(nomProjet->text())); table->setItem(row,7,new QTableWidgetItem(adresse->text()));
-            table->setRowHeight(row,50); QMessageBox::information(this,"Succès","Projet ajouté avec succès!");
-        }
-    }
-}
-
-void MainWindow::onEditButtonClicked()
-{
-    QWidget *projectsPage=stackedWidget->widget(0); QTableWidget *table=projectsPage->findChild<QTableWidget*>("dataTable");
-    if (!table||table->selectedItems().isEmpty()) { QMessageBox::warning(this,"Aucune sélection","Veuillez sélectionner un projet à modifier."); return; }
-    int row=table->currentRow();
-    QString clientValue=table->item(row,0)?table->item(row,0)->text():"";
-    QString typeValue=table->item(row,1)?table->item(row,1)->text():"";
-    QString dateDebutValue=table->item(row,2)?table->item(row,2)->text():QDate::currentDate().toString("dd/MM/yyyy");
-    QString dateFinValue=table->item(row,3)?table->item(row,3)->text():QDate::currentDate().addDays(30).toString("dd/MM/yyyy");
-    QString statutValue=table->item(row,4)?table->item(row,4)->text():"En cours";
-    QString budgetValue=table->item(row,5)?table->item(row,5)->text().replace(" EUR",""):"";
-    QString nomProjetValue=(table->columnCount()>6&&table->item(row,6))?table->item(row,6)->text():"";
-    QString adresseValue=(table->columnCount()>7&&table->item(row,7))?table->item(row,7)->text():"";
-    QDialog dialog(this); dialog.setWindowTitle("Modifier le Projet"); dialog.setMinimumWidth(500); dialog.setStyleSheet("QDialog{background-color:white;}");
-    QVBoxLayout *mainLayout=new QVBoxLayout(&dialog); mainLayout->setSpacing(20); mainLayout->setContentsMargins(30,30,30,30);
-    QLabel *titleLabel=new QLabel("Modifier le Projet",&dialog); titleLabel->setStyleSheet("font-size:18px;font-weight:bold;color:#2c3e50;"); titleLabel->setAlignment(Qt::AlignCenter); mainLayout->addWidget(titleLabel);
-    QFormLayout *form=new QFormLayout(); form->setSpacing(15); form->setLabelAlignment(Qt::AlignRight); form->setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
-    QLineEdit *nomProjet=new QLineEdit(nomProjetValue,&dialog); nomProjet->setMinimumHeight(35);
-    QLineEdit *client=new QLineEdit(clientValue,&dialog); client->setMinimumHeight(35);
-    QLineEdit *adresse=new QLineEdit(adresseValue,&dialog); adresse->setMinimumHeight(35);
-    QComboBox *typeProjet=new QComboBox(&dialog); typeProjet->addItems({"Meuble sur mesure","Rénovation","Agencement","Restaurant","Bureau","Cuisine","Salle de bain"}); typeProjet->setCurrentText(typeValue); typeProjet->setMinimumHeight(35);
-    QDateEdit *dateDebut=new QDateEdit(&dialog); dateDebut->setDate(QDate::fromString(dateDebutValue,"dd/MM/yyyy")); dateDebut->setCalendarPopup(true); dateDebut->setDisplayFormat("dd/MM/yyyy"); dateDebut->setMinimumHeight(35);
-    QDateEdit *dateFin=new QDateEdit(&dialog); dateFin->setDate(QDate::fromString(dateFinValue,"dd/MM/yyyy")); dateFin->setCalendarPopup(true); dateFin->setDisplayFormat("dd/MM/yyyy"); dateFin->setMinimumHeight(35);
-    QComboBox *statut=new QComboBox(&dialog); statut->addItems({"En cours","En attente","Terminé","Annulé"}); statut->setCurrentText(statutValue); statut->setMinimumHeight(35);
-    QLineEdit *budget=new QLineEdit(budgetValue,&dialog); budget->setMinimumHeight(35);
-    form->addRow("Nom du projet:",nomProjet); form->addRow("Client:",client); form->addRow("Adresse chantier:",adresse);
-    form->addRow("Type:",typeProjet); form->addRow("Date début:",dateDebut); form->addRow("Date fin:",dateFin);
-    form->addRow("Statut:",statut); form->addRow("Budget:",budget);
-    mainLayout->addLayout(form);
-    QDialogButtonBox *buttonBox=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dialog);
-    buttonBox->button(QDialogButtonBox::Ok)->setText("Modifier"); buttonBox->button(QDialogButtonBox::Ok)->setMinimumHeight(40);
-    buttonBox->button(QDialogButtonBox::Ok)->setStyleSheet("QPushButton{background-color:#8A9A5B;color:white;border:none;border-radius:5px;padding:8px 20px;font-weight:bold;}QPushButton:hover{background-color:#9aaa6b;}");
-    buttonBox->button(QDialogButtonBox::Cancel)->setText("Annuler"); buttonBox->button(QDialogButtonBox::Cancel)->setMinimumHeight(40);
-    buttonBox->button(QDialogButtonBox::Cancel)->setStyleSheet("QPushButton{background-color:#e2e8f0;color:#4a5568;border:none;border-radius:5px;padding:8px 20px;}QPushButton:hover{background-color:#cbd5e0;}");
-    mainLayout->addWidget(buttonBox);
-    connect(buttonBox,&QDialogButtonBox::accepted,&dialog,&QDialog::accept); connect(buttonBox,&QDialogButtonBox::rejected,&dialog,&QDialog::reject);
-    if (dialog.exec()==QDialog::Accepted) {
-        QString budgetText=budget->text(); if (!budgetText.contains("EUR")) budgetText+=" EUR";
-        table->item(row,0)->setText(client->text()); table->item(row,1)->setText(typeProjet->currentText());
-        table->item(row,2)->setText(dateDebut->date().toString("dd/MM/yyyy")); table->item(row,3)->setText(dateFin->date().toString("dd/MM/yyyy"));
-        QTableWidgetItem *statutItem=table->item(row,4); statutItem->setText(statut->currentText());
-        statutItem->setForeground(QBrush(QColor(statut->currentText()=="En cours"?"#2ecc71":statut->currentText()=="En attente"?"#f39c12":statut->currentText()=="Terminé"?"#3498db":"#e74c3c")));
-        table->item(row,5)->setText(budgetText);
-        if (table->item(row,6)) table->item(row,6)->setText(nomProjet->text()); else table->setItem(row,6,new QTableWidgetItem(nomProjet->text()));
-        if (table->item(row,7)) table->item(row,7)->setText(adresse->text()); else table->setItem(row,7,new QTableWidgetItem(adresse->text()));
-        QMessageBox::information(this,"Succès","Projet modifié avec succès!");
-    }
-}
-
-void MainWindow::onDeleteButtonClicked()
-{
-    QWidget *projectsPage=stackedWidget->widget(0); QTableWidget *table=projectsPage->findChild<QTableWidget*>("dataTable");
-    if (!table||table->selectedItems().isEmpty()) { QMessageBox::warning(this,"Aucune sélection","Veuillez sélectionner un projet à supprimer."); return; }
-    int row=table->currentRow();
-    QString clientName=table->item(row,0)?table->item(row,0)->text():"";
-    QString projectName=(table->columnCount()>6&&table->item(row,6))?table->item(row,6)->text():"Projet sans nom";
-    if (QMessageBox::question(this,"Confirmer la suppression",QString("Supprimer \"%1\" pour %2 ?\n\nCette action est irréversible.").arg(projectName,clientName),QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes)
-        { table->removeRow(row); QMessageBox::information(this,"Succès","Projet supprimé avec succès!"); }
-}
-
-void MainWindow::onSearchTextChanged(const QString &text) { qDebug() << "Recherche:" << text; }
 
 void MainWindow::toggleDarkMode() { isDarkMode = darkModeToggle->isChecked(); loadStyleSheet(); }
 
@@ -1221,7 +963,7 @@ void MainWindow::onDeleteProductClicked()
     QString idProd=table->item(row,0)?table->item(row,0)->text():"";
     QString nomProd=table->item(row,1)?table->item(row,1)->text():"Produit sans nom";
     if (QMessageBox::question(this,"Confirmer la suppression",QString("Supprimer \"%1\" (ID: %2) ?\n\nCette action est irréversible.").arg(nomProd,idProd),QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes)
-        { table->removeRow(row); QMessageBox::information(this,"Succès","Produit supprimé avec succès!"); }
+    { table->removeRow(row); QMessageBox::information(this,"Succès","Produit supprimé avec succès!"); }
 }
 
 QFrame* MainWindow::createSeparator()
