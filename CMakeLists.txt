@@ -90,6 +90,7 @@ if(Qt6_FOUND)
         src/database/projectdatabase.h src/database/projectdatabase.cpp
         src/modules/projects/projectstatspage.h src/modules/projects/projectstatspage.cpp
         src/common/projectvalidators.h src/common/projectvalidators.cpp
+        src/common/stockvalidators.h src/common/stockvalidators.cpp
 
     )
 else()

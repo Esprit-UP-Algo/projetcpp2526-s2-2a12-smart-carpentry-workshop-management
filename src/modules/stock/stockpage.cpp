@@ -1,7 +1,7 @@
 #include "stockpage.h"
 #include "src/database/stockdatabase.h"
 #include "src/database/connection.h"
-
+#include "src/common/stockvalidators.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -1021,13 +1021,22 @@ StockMaterial StockPage::materialFromCurrentRow() const
     return m;
 }
 
-static QDialog* buildMaterialDialog(QWidget* parent, const QString& windowTitle,
-                                    QLineEdit*& nomEdit, QLineEdit*& typeEdit,
-                                    QDoubleSpinBox*& qteEdit, QDoubleSpinBox*& prixEdit,
-                                    QLineEdit*& fournEdit, QDoubleSpinBox*& seuilEdit,
-                                    QDateEdit*& dateEdit, QDoubleSpinBox*& consoEdit,
-                                    QLineEdit*& uniteEdit, QComboBox*& produitCombo,
-                                    const QMap<int, QString>& produitsMap)
+static QDialog* buildMaterialDialog(QWidget* parent,
+                                    const QString& windowTitle,
+                                    const StockMaterial* initialData,
+                                    int excludeId,
+                                    bool isEdit,
+                                    const QMap<int, QString>& produitsMap,
+                                    QLineEdit*& nomEdit,
+                                    QComboBox*& typeCombo,
+                                    QDoubleSpinBox*& qteEdit,
+                                    QDoubleSpinBox*& prixEdit,
+                                    QLineEdit*& fournEdit,
+                                    QDoubleSpinBox*& seuilEdit,
+                                    QDateEdit*& dateEdit,
+                                    QDoubleSpinBox*& consoEdit,
+                                    QComboBox*& uniteCombo,
+                                    QComboBox*& produitCombo)
 {
     QDialog* dialog = new QDialog(parent);
     dialog->setObjectName("stockDialog");
@@ -1048,65 +1057,189 @@ static QDialog* buildMaterialDialog(QWidget* parent, const QString& windowTitle,
     form->setLabelAlignment(Qt::AlignRight);
     form->setSpacing(14);
 
-    nomEdit  = new QLineEdit(dialog);
-    typeEdit = new QLineEdit(dialog);
-    qteEdit  = new QDoubleSpinBox(dialog); qteEdit->setRange(0, 9999999); qteEdit->setDecimals(2);
-    prixEdit = new QDoubleSpinBox(dialog); prixEdit->setRange(0, 9999999); prixEdit->setDecimals(2); prixEdit->setSuffix(" DT");
-    fournEdit  = new QLineEdit(dialog);
-    seuilEdit  = new QDoubleSpinBox(dialog); seuilEdit->setRange(0, 9999999); seuilEdit->setDecimals(2);
-    dateEdit   = new QDateEdit(dialog); dateEdit->setDate(QDate::currentDate()); dateEdit->setCalendarPopup(true); dateEdit->setDisplayFormat("dd/MM/yyyy");
-    consoEdit  = new QDoubleSpinBox(dialog); consoEdit->setRange(0, 9999999); consoEdit->setDecimals(2);
-    uniteEdit  = new QLineEdit(dialog);
+    // Create widgets
+    nomEdit   = new QLineEdit(dialog);
+    typeCombo = new QComboBox(dialog);
+    typeCombo->addItems({"Bois", "Métal", "Plastique", "Verre", "Peinture", "Quincaillerie", "Textile", "Autre"});
+
+    qteEdit   = new QDoubleSpinBox(dialog); qteEdit->setRange(0, 9999999); qteEdit->setDecimals(2);
+    prixEdit  = new QDoubleSpinBox(dialog); prixEdit->setRange(0, 9999999); prixEdit->setDecimals(2); prixEdit->setSuffix(" DT");
+    fournEdit = new QLineEdit(dialog);
+    seuilEdit = new QDoubleSpinBox(dialog); seuilEdit->setRange(0, 9999999); seuilEdit->setDecimals(2);
+    dateEdit  = new QDateEdit(dialog); dateEdit->setDate(QDate::currentDate()); dateEdit->setCalendarPopup(true); dateEdit->setDisplayFormat("dd/MM/yyyy");
+    consoEdit = new QDoubleSpinBox(dialog); consoEdit->setRange(0, 9999999); consoEdit->setDecimals(2);
+    uniteCombo = new QComboBox(dialog);
+    uniteCombo->addItems({"m", "m²", "m³", "kg", "g", "L", "mL", "pièce", "paquet", "rouleau", "barre", "feuille", "Autre"});
+
     produitCombo = new QComboBox(dialog);
     for (auto it = produitsMap.constBegin(); it != produitsMap.constEnd(); ++it) {
         if (it.key() == 0) produitCombo->insertItem(0, it.value(), 0);
-        else                produitCombo->addItem(it.value(), it.key());
+        else               produitCombo->addItem(it.value(), it.key());
     }
 
-    form->addRow("Nom *",                  nomEdit);
-    form->addRow("Type",                   typeEdit);
-    form->addRow("Quantité en stock",      qteEdit);
-    form->addRow("Prix unitaire",          prixEdit);
-    form->addRow("Fournisseur",            fournEdit);
-    form->addRow("Seuil d'alerte",         seuilEdit);
-    form->addRow("Date dernière commande", dateEdit);
-    form->addRow("Consommation mensuelle", consoEdit);
-    form->addRow("Unité",                  uniteEdit);
-    form->addRow("Produit associé",        produitCombo);
+    // Populate initial data if provided
+    if (initialData) {
+        nomEdit->setText(initialData->getNom());
+        typeCombo->setCurrentText(initialData->getType());
+        qteEdit->setValue(initialData->getQuantite());
+        prixEdit->setValue(initialData->getPrixUnitaire());
+        fournEdit->setText(initialData->getFournisseur());
+        seuilEdit->setValue(initialData->getSeuilAlerte());
+        if (!initialData->getLastOrder().isNull())
+            dateEdit->setDate(initialData->getLastOrder());
+        consoEdit->setValue(initialData->getConsoMensuelle());
+        uniteCombo->setCurrentText(initialData->getUnite());
+        int idx = produitCombo->findData(initialData->getIdProduit());
+        if (idx >= 0) produitCombo->setCurrentIndex(idx);
+        else produitCombo->setCurrentIndex(0); // "Aucun produit"
+    }
+
+    // Error labels
+    QLabel* errorName   = new QLabel(dialog);
+    QLabel* errorType   = new QLabel(dialog);
+    QLabel* errorQty    = new QLabel(dialog);
+    QLabel* errorPrice  = new QLabel(dialog);
+    QLabel* errorSupp   = new QLabel(dialog);
+    QLabel* errorThresh = new QLabel(dialog);
+    QLabel* errorDate   = new QLabel(dialog);
+    QLabel* errorConso  = new QLabel(dialog);
+    QLabel* errorUnit   = new QLabel(dialog);
+
+    for (auto lbl : {errorName, errorType, errorQty, errorPrice, errorSupp, errorThresh, errorDate, errorConso, errorUnit}) {
+        lbl->setStyleSheet("color: #ef4444; font-size: 11px; padding-top: 2px;");
+        lbl->hide();
+    }
+
+    auto addRow = [&](const QString& label, QWidget* field, QLabel* errorLabel) {
+        QVBoxLayout* vbox = new QVBoxLayout();
+        vbox->setSpacing(0);
+        vbox->setContentsMargins(0, 0, 0, 0);
+        vbox->addWidget(field);
+        vbox->addWidget(errorLabel);
+        form->addRow(label, vbox);
+    };
+
+    addRow("Nom *",                     nomEdit,     errorName);
+    addRow("Type *",                    typeCombo,   errorType);
+    addRow("Quantité en stock",         qteEdit,     errorQty);
+    addRow("Prix unitaire (DT) *",      prixEdit,    errorPrice);
+    addRow("Fournisseur *",             fournEdit,   errorSupp);
+    addRow("Seuil d'alerte *",          seuilEdit,   errorThresh);
+    addRow("Date dernière commande *",  dateEdit,    errorDate);
+    addRow("Consommation mensuelle *",  consoEdit,   errorConso);
+    addRow("Unité *",                   uniteCombo,  errorUnit);
+    form->addRow("Produit associé",     produitCombo); // optional
+
     mainLayout->addLayout(form);
 
     QDialogButtonBox* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, dialog);
-    buttons->button(QDialogButtonBox::Ok)->setText("Enregistrer");
+    buttons->button(QDialogButtonBox::Ok)->setText(isEdit ? "Modifier" : "Ajouter");
     buttons->button(QDialogButtonBox::Ok)->setObjectName("saveButton");
     buttons->button(QDialogButtonBox::Cancel)->setText("Annuler");
     buttons->button(QDialogButtonBox::Cancel)->setObjectName("cancelButton");
-    QObject::connect(buttons, &QDialogButtonBox::accepted, dialog, &QDialog::accept);
-    QObject::connect(buttons, &QDialogButtonBox::rejected, dialog, &QDialog::reject);
     mainLayout->addWidget(buttons, 0, Qt::AlignCenter);
+
+    // Validate and accept on OK button
+    QPushButton* okButton = buttons->button(QDialogButtonBox::Ok);
+    QObject::connect(okButton, &QPushButton::clicked, dialog, [=]() {
+        bool ok = true;
+
+        // Clear previous errors
+        for (auto lbl : {errorName, errorType, errorQty, errorPrice, errorSupp, errorThresh, errorDate, errorConso, errorUnit}) {
+            lbl->hide();
+            lbl->clear();
+        }
+
+        QString err;
+        // Name
+        if (!StockValidators::validateName(nomEdit->text().trimmed(), err, excludeId)) {
+            errorName->setText(err); errorName->show(); ok = false;
+        }
+        // Type
+        if (!StockValidators::validateType(typeCombo->currentText(), err)) {
+            errorType->setText(err); errorType->show(); ok = false;
+        }
+        // Quantity
+        if (!StockValidators::validateQuantity(qteEdit->value(), err)) {
+            errorQty->setText(err); errorQty->show(); ok = false;
+        }
+        // Price
+        if (!StockValidators::validatePrice(prixEdit->value(), err)) {
+            errorPrice->setText(err); errorPrice->show(); ok = false;
+        }
+        // Supplier
+        if (!StockValidators::validateSupplier(fournEdit->text().trimmed(), err)) {
+            errorSupp->setText(err); errorSupp->show(); ok = false;
+        }
+        // Threshold
+        if (!StockValidators::validateThreshold(seuilEdit->value(), err)) {
+            errorThresh->setText(err); errorThresh->show(); ok = false;
+        }
+        // Date
+        if (!StockValidators::validateDate(dateEdit->date(), err)) {
+            errorDate->setText(err); errorDate->show(); ok = false;
+        }
+        // Consumption
+        if (!StockValidators::validateMonthlyConsumption(consoEdit->value(), err)) {
+            errorConso->setText(err); errorConso->show(); ok = false;
+        }
+        // Unit
+        if (!StockValidators::validateUnit(uniteCombo->currentText(), err)) {
+            errorUnit->setText(err); errorUnit->show(); ok = false;
+        }
+
+        if (ok) {
+            dialog->accept();
+        }
+    });
+
+    QObject::connect(buttons->button(QDialogButtonBox::Cancel), &QPushButton::clicked, dialog, &QDialog::reject);
+
     return dialog;
 }
 
 void StockPage::onAddButtonClicked()
 {
-    QLineEdit *nomEdit, *typeEdit, *fournEdit, *uniteEdit;
-    QDoubleSpinBox *qteEdit, *prixEdit, *seuilEdit, *consoEdit;
-    QDateEdit *dateEdit; QComboBox *produitCombo;
+    QLineEdit* nomEdit;
+    QComboBox* typeCombo;
+    QDoubleSpinBox* qteEdit;
+    QDoubleSpinBox* prixEdit;
+    QLineEdit* fournEdit;
+    QDoubleSpinBox* seuilEdit;
+    QDateEdit* dateEdit;
+    QDoubleSpinBox* consoEdit;
+    QComboBox* uniteCombo;
+    QComboBox* produitCombo;
 
-    QDialog* dialog = buildMaterialDialog(this, "Ajouter un matériau",
-                                          nomEdit, typeEdit, qteEdit, prixEdit, fournEdit, seuilEdit, dateEdit, consoEdit,
-                                          uniteEdit, produitCombo, m_produitsMap);
+    QDialog* dialog = buildMaterialDialog(this,
+                                          "Ajouter un matériau",
+                                          nullptr,
+                                          -1,
+                                          false,
+                                          m_produitsMap,
+                                          nomEdit,
+                                          typeCombo,
+                                          qteEdit,
+                                          prixEdit,
+                                          fournEdit,
+                                          seuilEdit,
+                                          dateEdit,
+                                          consoEdit,
+                                          uniteCombo,
+                                          produitCombo);
 
     if (dialog->exec() == QDialog::Accepted) {
-        if (nomEdit->text().trimmed().isEmpty()) {
-            QMessageBox::warning(this, "Champ obligatoire", "Le nom du matériau est obligatoire.");
-            delete dialog; return;
-        }
         StockMaterial mat;
-        mat.setNom(nomEdit->text().trimmed());           mat.setType(typeEdit->text().trimmed());
-        mat.setQuantite(qteEdit->value());               mat.setPrixUnitaire(prixEdit->value());
-        mat.setFournisseur(fournEdit->text().trimmed()); mat.setSeuilAlerte(seuilEdit->value());
-        mat.setLastOrder(dateEdit->date());              mat.setConsoMensuelle(consoEdit->value());
-        mat.setUnite(uniteEdit->text().trimmed());       mat.setIdProduit(produitCombo->currentData().toInt());
+        mat.setNom(nomEdit->text().trimmed());
+        mat.setType(typeCombo->currentText());
+        mat.setQuantite(qteEdit->value());
+        mat.setPrixUnitaire(prixEdit->value());
+        mat.setFournisseur(fournEdit->text().trimmed());
+        mat.setSeuilAlerte(seuilEdit->value());
+        mat.setLastOrder(dateEdit->date());
+        mat.setConsoMensuelle(consoEdit->value());
+        mat.setUnite(uniteCombo->currentText());
+        mat.setIdProduit(produitCombo->currentData().toInt());
 
         if (StockDatabase::instance().addMaterial(mat)) {
             QMessageBox::information(this, "Succès", "Matériau ajouté avec succès.");
@@ -1125,32 +1258,46 @@ void StockPage::onEditButtonClicked()
         return;
     }
     StockMaterial current = materialFromCurrentRow();
-    QLineEdit *nomEdit, *typeEdit, *fournEdit, *uniteEdit;
-    QDoubleSpinBox *qteEdit, *prixEdit, *seuilEdit, *consoEdit;
-    QDateEdit *dateEdit; QComboBox *produitCombo;
 
-    QDialog* dialog = buildMaterialDialog(this, "Modifier un matériau",
-                                          nomEdit, typeEdit, qteEdit, prixEdit, fournEdit, seuilEdit, dateEdit, consoEdit,
-                                          uniteEdit, produitCombo, m_produitsMap);
+    QLineEdit* nomEdit;
+    QComboBox* typeCombo;
+    QDoubleSpinBox* qteEdit;
+    QDoubleSpinBox* prixEdit;
+    QLineEdit* fournEdit;
+    QDoubleSpinBox* seuilEdit;
+    QDateEdit* dateEdit;
+    QDoubleSpinBox* consoEdit;
+    QComboBox* uniteCombo;
+    QComboBox* produitCombo;
 
-    nomEdit->setText(current.getNom());           typeEdit->setText(current.getType());
-    qteEdit->setValue(current.getQuantite());     prixEdit->setValue(current.getPrixUnitaire());
-    fournEdit->setText(current.getFournisseur()); seuilEdit->setValue(current.getSeuilAlerte());
-    if (!current.getLastOrder().isNull()) dateEdit->setDate(current.getLastOrder());
-    consoEdit->setValue(current.getConsoMensuelle()); uniteEdit->setText(current.getUnite());
-    int idx = produitCombo->findData(current.getIdProduit());
-    produitCombo->setCurrentIndex(idx >= 0 ? idx : 0);
+    QDialog* dialog = buildMaterialDialog(this,
+                                          "Modifier un matériau",
+                                          &current,
+                                          current.getId(),
+                                          true,
+                                          m_produitsMap,
+                                          nomEdit,
+                                          typeCombo,
+                                          qteEdit,
+                                          prixEdit,
+                                          fournEdit,
+                                          seuilEdit,
+                                          dateEdit,
+                                          consoEdit,
+                                          uniteCombo,
+                                          produitCombo);
 
     if (dialog->exec() == QDialog::Accepted) {
-        if (nomEdit->text().trimmed().isEmpty()) {
-            QMessageBox::warning(this, "Champ obligatoire", "Le nom du matériau est obligatoire.");
-            delete dialog; return;
-        }
-        current.setNom(nomEdit->text().trimmed());           current.setType(typeEdit->text().trimmed());
-        current.setQuantite(qteEdit->value());               current.setPrixUnitaire(prixEdit->value());
-        current.setFournisseur(fournEdit->text().trimmed()); current.setSeuilAlerte(seuilEdit->value());
-        current.setLastOrder(dateEdit->date());              current.setConsoMensuelle(consoEdit->value());
-        current.setUnite(uniteEdit->text().trimmed());       current.setIdProduit(produitCombo->currentData().toInt());
+        current.setNom(nomEdit->text().trimmed());
+        current.setType(typeCombo->currentText());
+        current.setQuantite(qteEdit->value());
+        current.setPrixUnitaire(prixEdit->value());
+        current.setFournisseur(fournEdit->text().trimmed());
+        current.setSeuilAlerte(seuilEdit->value());
+        current.setLastOrder(dateEdit->date());
+        current.setConsoMensuelle(consoEdit->value());
+        current.setUnite(uniteCombo->currentText());
+        current.setIdProduit(produitCombo->currentData().toInt());
 
         if (StockDatabase::instance().updateMaterial(current)) {
             QMessageBox::information(this, "Succès", "Matériau mis à jour avec succès.");
@@ -1161,7 +1308,6 @@ void StockPage::onEditButtonClicked()
     }
     delete dialog;
 }
-
 void StockPage::onDeleteButtonClicked()
 {
     if (stockTable->currentRow() < 0) {
