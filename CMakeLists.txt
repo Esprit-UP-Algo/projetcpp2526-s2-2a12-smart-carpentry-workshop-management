@@ -19,10 +19,20 @@ set(PROJECT_SOURCES
         mainwindow.ui
 )
 
+<<<<<<< Updated upstream
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(interface-qt-project
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+=======
+if(Qt6_FOUND)
+    qt_add_executable(WoodFlow ${PROJECT_SOURCES}
+        src/modules/stock/stockpage.h src/modules/stock/stockpage.cpp
+        src/database/stockdatabase.h src/database/stockdatabase.cpp
+        src/models/stockmaterial.h src/models/stockmaterial.cpp
+        src/database/produitdatabase.h src/database/produitdatabase.cpp
+        src/models/produit.h src/models/produit.cpp
+>>>>>>> Stashed changes
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET interface-qt-project APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
