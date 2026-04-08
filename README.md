@@ -20,10 +20,7 @@ A Qt/C++ desktop application for managing a carpentry workshop, backed by Oracle
 ```bash
 # First time — pull and run
 docker pull lain456/oracle-cpp-project:v1
-docker run -d --name oracle11g \
-  -p 1522:1521 \
-  -p 8081:8080 \
-  lain456/oracle-cpp-project:v1
+docker run -d --name oracle11g -p 1522:1521 -p 8081:8080 lain456/oracle-cpp-project:v1
 ```
 
 - **Oracle APEX** (web UI): http://localhost:8081/apex
@@ -100,10 +97,7 @@ docker rm oracle11g
 docker pull lain456/oracle-cpp-project:v1
 
 # Start fresh
-docker run -d --name oracle11g \
-  -p 1522:1521 \
-  -p 8081:8080 \
-  lain456/oracle-cpp-project:v1
+docker run -d --name oracle11g -p 1522:1521 -p 8081:8080 lain456/oracle-cpp-project:v1
 ```
 ---
 
