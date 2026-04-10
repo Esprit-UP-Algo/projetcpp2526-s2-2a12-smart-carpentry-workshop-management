@@ -9,6 +9,18 @@
 #include <QPrinter>
 #include <QPainter>
 #include <QTextDocument>
+#include <QAbstractTextDocumentLayout>
+#include <QPageSize>
+#include <QPageLayout>
+#include <QDateTime>
+#include <QFont>
+#include <QLocale>
+#include <QImage>
+#include <QPixmap>
+#include <QStandardPaths>
+#include <QFile>
+#include <QDir>
+#include <QCoreApplication>
 #include <QFrame>
 #include <QApplication>
 #include <QPalette>
@@ -132,10 +144,19 @@ void EmployeeManagementPage::createToolbar()
     m_deleteButton->setCursor(Qt::PointingHandCursor);
     m_deleteButton->setEnabled(false);
 
+    /*
     m_exportButton = new QPushButton("Exporter PDF", toolbar);
     m_exportButton->setObjectName("empSecondaryBtn");
     m_exportButton->setFixedHeight(40);
     m_exportButton->setCursor(Qt::PointingHandCursor);
+    */
+
+
+    m_certButton = new QPushButton("Attestation de travail", toolbar);
+    m_certButton->setObjectName("empSecondaryBtn");
+    m_certButton->setFixedHeight(40);
+    m_certButton->setCursor(Qt::PointingHandCursor);
+    m_certButton->setEnabled(false);   // only active when a row is selected
 
     m_refreshButton = new QPushButton("Actualiser", toolbar);
     m_refreshButton->setObjectName("empSecondaryBtn");
@@ -145,7 +166,8 @@ void EmployeeManagementPage::createToolbar()
     buttonLayout->addWidget(m_addButton);
     buttonLayout->addWidget(m_editButton);
     buttonLayout->addWidget(m_deleteButton);
-    buttonLayout->addWidget(m_exportButton);
+    //buttonLayout->addWidget(m_exportButton);  // export list is broken so i commented out for now    ~lain
+    buttonLayout->addWidget(m_certButton);
     buttonLayout->addWidget(m_refreshButton);
     buttonLayout->addStretch();
 
@@ -195,7 +217,8 @@ void EmployeeManagementPage::setupConnections()
     connect(m_addButton,    &QPushButton::clicked, this, &EmployeeManagementPage::onAddEmployee);
     connect(m_editButton,   &QPushButton::clicked, this, &EmployeeManagementPage::onEditEmployee);
     connect(m_deleteButton, &QPushButton::clicked, this, &EmployeeManagementPage::onDeleteEmployee);
-    connect(m_exportButton, &QPushButton::clicked, this, &EmployeeManagementPage::onExportPDF);
+    //connect(m_exportButton, &QPushButton::clicked, this, &EmployeeManagementPage::onExportPDF);
+    connect(m_certButton,   &QPushButton::clicked, this, &EmployeeManagementPage::onExportCertificate);
     connect(m_refreshButton,&QPushButton::clicked, this, &EmployeeManagementPage::onRefreshTable);
     connect(m_searchInput,  &QLineEdit::textChanged, this, &EmployeeManagementPage::onSearchTextChanged);
     connect(m_filterCombo,  &QComboBox::currentTextChanged, this, &EmployeeManagementPage::onFilterChanged);
@@ -288,6 +311,7 @@ void EmployeeManagementPage::updateButtonStates()
     bool has = m_table->currentRow() >= 0;
     m_editButton->setEnabled(has);
     m_deleteButton->setEnabled(has);
+    m_certButton->setEnabled(has);
 }
 
 QString EmployeeManagementPage::getPosteBadgeColor(const QString& poste) const
@@ -399,9 +423,645 @@ void EmployeeManagementPage::onSortChanged(int index)
 
 void EmployeeManagementPage::onExportPDF()
 {
-    QString f = QFileDialog::getSaveFileName(this, "Exporter en PDF", "liste_employees.pdf", "PDF Files (*.pdf)");
-    if (!f.isEmpty()) QMessageBox::information(this, "Export", "Export PDF a implementer");
+    QString filePath = QFileDialog::getSaveFileName(
+        this, "Exporter en PDF", "liste_employees.pdf", "PDF Files (*.pdf)");
+    if (filePath.isEmpty()) return;
+
+    // ── Collect employees currently visible in the table (respects filter/sort)
+    QList<Employee> employees;
+    for (int row = 0; row < m_table->rowCount(); ++row) {
+        QString id = m_table->item(row, 0)->text();
+        Employee e = EmployeeDatabase::instance().getEmployee(id);
+        if (e.isValid()) employees.append(e);
+    }
+
+    if (employees.isEmpty()) {
+        QMessageBox::warning(this, "Export PDF", "Aucun employé à exporter.");
+        return;
+    }
+
+    // ── Aggregate stats ───────────────────────────────────────────────────────
+    double totalSalary = 0, totalPerf = 0;
+    int available = 0;
+    for (const Employee& e : employees) {
+        totalSalary += e.getSalaire();
+        totalPerf   += e.getPerformance();
+        if (e.getDisponibilite() == "Disponible") ++available;
+    }
+    double avgPerf = totalPerf / employees.size();
+
+    // ── Badge style helpers ───────────────────────────────────────────────────
+    auto posteBadge = [](const QString& p) -> QString {
+        if (p == "Chef d'equipe" || p == "Chef Equipe" || p == "Chef de Projet")
+            return "background:#d1fae5;color:#065f46";
+        if (p == "Menuisier" || p == "Menuisier Senior") return "background:#fef9c3;color:#713f12";
+        if (p == "Apprenti")  return "background:#ffedd5;color:#7c2d12";
+        if (p == "Designer")  return "background:#ede9fe;color:#4c1d95";
+        return "background:#f3f4f6;color:#374151";
+    };
+    auto dispoBadge = [](const QString& d) -> QString {
+        if (d == "Disponible")   return "background:#d1fae5;color:#065f46";
+        if (d == "En conge")     return "background:#fee2e2;color:#7f1d1d";
+        if (d == "Indisponible") return "background:#ffedd5;color:#7c2d12";
+        if (d == "En formation") return "background:#dbeafe;color:#1e3a5f";
+        return "background:#f3f4f6;color:#374151";
+    };
+    auto perfColor = [](double p) -> QString {
+        if (p >= 8.0) return "#16a34a";
+        if (p >= 5.0) return "#374151";
+        return "#dc2626";
+    };
+
+    // ── Build table rows ──────────────────────────────────────────────────────
+    QString rows;
+    for (int i = 0; i < employees.size(); ++i) {
+        const Employee& e = employees[i];
+        QString rowBg = (i % 2 == 0) ? "#ffffff" : "#f9f7f2";
+        double  perf  = e.getPerformance();
+
+        rows += QString(
+            "<tr style='background-color:%1;'>"
+            "  <td style='padding:8px 10px;font-size:10px;color:#6b7280;'>%2</td>"
+            "  <td style='padding:8px 10px;font-size:11px;font-weight:bold;color:#111827;'>%3</td>"
+            "  <td style='padding:8px 10px;font-size:10px;color:#374151;'>%4</td>"
+            "  <td style='padding:8px 10px;text-align:center;'>"
+            "    <span style='%5;padding:2px 8px;font-size:9px;font-weight:bold;border:1px solid #cccccc;'>%6</span>"
+            "  </td>"
+            "  <td style='padding:8px 10px;font-size:10px;color:#374151;'>%7</td>"
+            "  <td style='padding:8px 10px;font-size:10px;color:#374151;text-align:center;'>%8</td>"
+            "  <td style='padding:8px 10px;font-size:11px;font-weight:bold;color:#111827;text-align:right;'>%9 TND</td>"
+            "  <td style='padding:8px 10px;text-align:center;font-size:11px;font-weight:bold;color:%10;'>%11</td>"
+            "  <td style='padding:8px 10px;text-align:center;'>"
+            "    <span style='%12;padding:2px 8px;font-size:9px;font-weight:bold;border:1px solid #cccccc;'>%13</span>"
+            "  </td>"
+            "</tr>")
+            .arg(rowBg)                                              // %1
+            .arg(e.getCin())                                         // %2
+            .arg(e.getFullName().toHtmlEscaped())                    // %3
+            .arg(e.getEmail().toHtmlEscaped())                       // %4
+            .arg(posteBadge(e.getPoste()))                           // %5
+            .arg(e.getPoste().toHtmlEscaped())                       // %6
+            .arg(e.getTelephone().toHtmlEscaped())                   // %7
+            .arg(e.getDateEmbauche().toString("dd/MM/yyyy"))         // %8
+            .arg(QString::number(e.getSalaire(), 'f', 2))            // %9
+            .arg(perfColor(perf))                                    // %10
+            .arg(QString::number(perf, 'f', 1) + "/10")              // %11
+            .arg(dispoBadge(e.getDisponibilite()))                   // %12
+            .arg(e.getDisponibilite().toHtmlEscaped());              // %13
+    }
+
+    // ── Context labels for the header ─────────────────────────────────────────
+    QString filterLabel = m_filterCombo->currentText();
+    QString sortLabel   = m_sortCombo->currentText();
+    QString exportDate  = QDateTime::currentDateTime().toString("dd/MM/yyyy à HH:mm");
+
+    // ── Full HTML document ────────────────────────────────────────────────────
+    // Qt's HTML renderer only supports a subset of CSS2 — no flexbox, no gradients,
+    // no border-radius, no letter-spacing, no text-transform. Use table-based layout.
+    QString html = QString(R"(
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<style>
+  body { font-family: Arial, sans-serif; font-size: 11px; color: #374151;
+         margin: 24px 28px; background: #ffffff; }
+
+  table.hdr { width: 100%; border-collapse: collapse;
+              background-color: #4a5e2a; margin-bottom: 14px; }
+  table.hdr td { padding: 14px 18px; color: #ffffff; vertical-align: middle; }
+  .hdr-title { font-size: 17px; font-weight: bold; color: #ffffff; }
+  .hdr-sub   { font-size: 9px; color: #ccddaa; }
+  .hdr-right { text-align: right; font-size: 9px; color: #ddeebb; line-height: 2.0; }
+  .hdr-right b { color: #ffffff; }
+
+  table.kpi  { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+  table.kpi td { background-color: #f8f6f0; border: 1px solid #ddd8cc;
+                 padding: 10px 14px; width: 25%; vertical-align: top; }
+  .kpi-lbl { font-size: 8px; font-weight: bold; color: #9ca3af; }
+  .kpi-val { font-size: 20px; font-weight: bold; margin: 2px 0; }
+  .kpi-sub { font-size: 9px; color: #9ca3af; }
+
+  table.ibar { width: 100%; border-collapse: collapse;
+               background-color: #f5f3ef; border: 1px solid #ddd8cc;
+               margin-bottom: 10px; }
+  table.ibar td { padding: 6px 14px; font-size: 10px; color: #6b7280; }
+
+  p.sec { font-size: 11px; font-weight: bold; color: #374151;
+          margin: 0 0 6px 0; padding-left: 8px;
+          border-left: 3px solid #8A9A5B; }
+
+  table.emp { width: 100%; border-collapse: collapse; }
+  table.emp thead tr { background-color: #4a5e2a; }
+  table.emp thead th { padding: 8px 9px; font-size: 8px; font-weight: bold;
+                       color: #ffffff; text-align: left; }
+  table.emp tbody td { padding: 7px 9px; font-size: 10px;
+                       border-bottom: 1px solid #ece8df; vertical-align: middle; }
+  table.emp tbody tr.alt { background-color: #f9f7f2; }
+
+  table.foot { width: 100%; border-collapse: collapse;
+               border-top: 1px solid #ddd8cc; margin-top: 18px; }
+  table.foot td { padding: 8px 0; font-size: 9px; color: #9ca3af; text-align: center; }
+</style>
+</head>
+<body>
+
+<table class="hdr" cellspacing="0" cellpadding="0">
+  <tr>
+    <td>
+      <div class="hdr-title">WoodFlow &mdash; Liste des Employ&eacute;s</div>
+      <div class="hdr-sub">Rapport g&eacute;n&eacute;r&eacute; automatiquement depuis le syst&egrave;me de gestion</div>
+    </td>
+    <td class="hdr-right">
+      Date d&rsquo;export&nbsp;: <b>%1</b><br/>
+      Filtre&nbsp;: <b>%2</b><br/>
+      Tri&nbsp;: <b>%3</b>
+    </td>
+  </tr>
+</table>
+
+<table class="kpi" cellspacing="4" cellpadding="0">
+  <tr>
+    <td><div class="kpi-lbl">EFFECTIF EXPORT&Eacute;</div>
+        <div class="kpi-val" style="color:#8A9A5B;">%4</div>
+        <div class="kpi-sub">employ&eacute;s</div></td>
+    <td><div class="kpi-lbl">PERFORMANCE MOYENNE</div>
+        <div class="kpi-val" style="color:#5B8A9A;">%5</div>
+        <div class="kpi-sub">/ 10</div></td>
+    <td><div class="kpi-lbl">DISPONIBLES</div>
+        <div class="kpi-val" style="color:#9A8A5B;">%6</div>
+        <div class="kpi-sub">/ %4</div></td>
+    <td><div class="kpi-lbl">MASSE SALARIALE</div>
+        <div class="kpi-val" style="color:#7A5B9A;">%7</div>
+        <div class="kpi-sub">TND / mois</div></td>
+  </tr>
+</table>
+
+<table class="ibar" cellspacing="0" cellpadding="0">
+  <tr><td>
+    Filtre actif&nbsp;: <b>%2</b> &nbsp;&bull;&nbsp;
+    Tri&nbsp;: <b>%3</b> &nbsp;&bull;&nbsp;
+    Total&nbsp;: <b>%4 employ&eacute;(s)</b>
+  </td></tr>
+</table>
+
+<p class="sec">D&eacute;tail des employ&eacute;s</p>
+
+<table class="emp" cellspacing="0" cellpadding="0">
+  <thead>
+    <tr>
+      <th>CIN</th><th>Nom complet</th><th>Email</th><th>Poste</th>
+      <th>T&eacute;l&eacute;phone</th>
+      <th style="text-align:center;">Embauche</th>
+      <th style="text-align:right;">Salaire</th>
+      <th style="text-align:center;">Perf.</th>
+      <th style="text-align:center;">Disponibilit&eacute;</th>
+    </tr>
+  </thead>
+  <tbody>
+    %8
+  </tbody>
+</table>
+
+<table class="foot" cellspacing="0" cellpadding="0">
+  <tr><td>
+    G&eacute;n&eacute;r&eacute; par <b style="color:#8A9A5B;">WoodFlow</b>
+    &nbsp;&bull;&nbsp; %1 &nbsp;&bull;&nbsp; %4 employ&eacute;(s) export&eacute;(s)
+  </td></tr>
+</table>
+
+</body>
+</html>
+)")
+    .arg(exportDate)                              // %1
+    .arg(filterLabel.toHtmlEscaped())             // %2
+    .arg(sortLabel.toHtmlEscaped())               // %3
+    .arg(employees.size())                        // %4
+    .arg(avgPerf, 0, 'f', 1)                     // %5
+    .arg(available)                               // %6
+    .arg(QString::number(totalSalary, 'f', 0))    // %7
+    .arg(rows);                                   // %8
+
+    // ── Render via QTextDocument → QPrinter (landscape A4) ───────────────────
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(filePath);
+    printer.setPageSize(QPageSize(QPageSize::A4));
+    printer.setPageOrientation(QPageLayout::Landscape);
+    printer.setPageMargins(QMarginsF(10, 10, 10, 10), QPageLayout::Millimeter);
+
+    QTextDocument doc;
+    doc.setHtml(html);
+    doc.setPageSize(printer.pageRect(QPrinter::DevicePixel).size());
+    doc.print(&printer);
+
+    QMessageBox::information(this, "Export réussi",
+        QString("PDF généré avec succès :\n%1\n\n%2 employé(s) exporté(s).")
+            .arg(filePath).arg(employees.size()));
 }
+
+void EmployeeManagementPage::onExportCertificate()
+{
+    Employee e = getSelectedEmployee();
+    if (!e.isValid()) {
+        QMessageBox::warning(this, "Aucune sélection", "Veuillez sélectionner un employé.");
+        return;
+    }
+
+    // ── Gender heuristic ──────────────────────────────────────────────────────
+    QString prenom = e.getPrenom().trimmed();
+    bool feminine  = !prenom.isEmpty() &&
+                     (prenom.back() == 'a' || prenom.back() == 'A' ||
+                      prenom.back() == 'e' || prenom.back() == 'E');
+    QString civility = feminine ? "Mme" : "M.";
+    QString pronoun  = feminine ? "elle" : "il";
+
+    // ── Seniority & dates ─────────────────────────────────────────────────────
+    QDate embauche = e.getDateEmbauche().date();
+    QDate today    = QDate::currentDate();
+    int years  = embauche.daysTo(today) / 365;
+    int months = (embauche.daysTo(today) % 365) / 30;
+    QString anciennete;
+    if      (years > 0 && months > 0) anciennete = QString("%1 an(s) et %2 mois").arg(years).arg(months);
+    else if (years > 0)               anciennete = QString("%1 an(s)").arg(years);
+    else                              anciennete = QString("%1 mois").arg(months);
+
+    QLocale frLocale(QLocale::French, QLocale::Tunisia);
+    QString certDate  = frLocale.toString(today,    "dd MMMM yyyy");
+    QString hireDate  = frLocale.toString(embauche, "dd MMMM yyyy");
+    QString refNumber = QString("WF-%1-%2")
+                            .arg(today.toString("yyyyMM"))
+                            .arg(e.getCin().right(4));
+
+    // ── File save dialog ──────────────────────────────────────────────────────
+    QString safeName    = e.getFullName().simplified().replace(' ', '_');
+    QString docsDir     = QCoreApplication::applicationDirPath() + "/../docs";
+    QDir().mkpath(docsDir);
+    QString defaultPath = docsDir + "/" + safeName + "_certif.pdf";
+    QString filePath    = QFileDialog::getSaveFileName(
+        this, "Enregistrer l'attestation", defaultPath, "PDF Files (*.pdf)");
+    if (filePath.isEmpty()) return;
+
+    // ── Logo ──────────────────────────────────────────────────────────────────
+    QString logoPath;
+    const QStringList logoCandidates = {
+        QApplication::applicationDirPath() + "/src/assets/icons/logo1.png",
+        QApplication::applicationDirPath() + "/../src/assets/icons/logo1.png",
+        QCoreApplication::applicationDirPath() + "/logo1.png"
+    };
+    for (const QString& lc : logoCandidates)
+        if (QFile::exists(lc)) { logoPath = lc; break; }
+
+    // ── Printer setup — A4 portrait, no margins (we paint everything ourselves)
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setOutputFileName(filePath);
+    printer.setPageSize(QPageSize(QPageSize::A4));
+    printer.setPageOrientation(QPageLayout::Portrait);
+    printer.setPageMargins(QMarginsF(0, 0, 0, 0), QPageLayout::Millimeter);
+
+    QPainter p;
+    if (!p.begin(&printer)) {
+        QMessageBox::critical(this, "Erreur", "Impossible d'ouvrir le fichier PDF.");
+        return;
+    }
+
+    p.setRenderHint(QPainter::Antialiasing, true);
+    p.setRenderHint(QPainter::TextAntialiasing, true);
+    p.setRenderHint(QPainter::SmoothPixmapTransform, true);
+
+    // ── Coordinate system: device pixels ─────────────────────────────────────
+    // QPrinter with HighResolution works in device pixels at printer.resolution() dpi.
+    // DO NOT call p.scale() — Qt font engine already accounts for DPI internally.
+    // All mm values are converted to pixels explicitly via mm().
+    const qreal dpi       = printer.resolution();
+    const qreal px_per_mm = dpi / 25.4;
+    auto mm = [&](qreal v) { return v * px_per_mm; };
+
+    // ── Page geometry in device pixels ────────────────────────────────────────
+    const qreal PW = mm(210.0);
+    const qreal PH = mm(297.0);
+    const qreal ML = mm(14.0);
+    const qreal MR = mm(14.0);
+    const qreal TW = PW - ML - MR;
+
+    // ── Colors ────────────────────────────────────────────────────────────────
+    const QColor HDR_BG    ("#4a5e2a");
+    const QColor ACCENT    ("#2a3a14");
+    const QColor MID_GREEN ("#8A9A5B");
+    const QColor LABEL_GRAY("#6b7280");
+    const QColor TEXT_DARK ("#1a1a1a");
+    const QColor CARD_BG   ("#f8f6f0");
+    const QColor CARD_ALT  ("#f2efe8");
+    const QColor BORDER    ("#ddd8cc");
+    const QColor STAMP_COL ("#c5bfb0");
+    const QColor FOOT_BG   ("#f0ede4");
+    const QColor REF_BG    ("#f5f3ef");
+    const QColor PURPOSE_BG("#fffdf7");
+    const QColor WHITE     (Qt::white);
+    const QColor CCDDAA    ("#ccddaa");
+    const QColor DDEEBB    ("#ddeebb");
+    const QColor GRAY_LIGHT("#9ca3af");
+
+    // ── Font helper — always use pixel sizes so fonts are DPI-correct ─────────
+    // setPixelSize() is immune to painter transforms; setPointSize() is not.
+    auto F = [&](const char* family, qreal ptSize, bool bold=false, bool italic=false) {
+        QFont f(family);
+        f.setPixelSize(qRound(ptSize * dpi / 72.0));
+        f.setBold(bold); f.setItalic(italic);
+        return f;
+    };
+
+    // ── SECTION: HEADER ───────────────────────────────────────────────────────
+    const qreal HDR_H = mm(25.4);
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(ACCENT);
+    p.drawRect(QRectF(0, 0, mm(2.1), HDR_H));
+
+    p.setBrush(HDR_BG);
+    p.drawRect(QRectF(mm(2.1), 0, PW - mm(2.1), HDR_H));
+
+    // Logo
+    qreal textStartX = ML;
+    QPixmap logoPixmap;
+    if (!logoPath.isEmpty() && logoPixmap.load(logoPath)) {
+        const qreal LW = mm(17.0), LH = mm(17.0);
+        qreal logoY = (HDR_H - LH) / 2.0;
+        p.drawPixmap(QRect(int(ML), int(logoY), int(LW), int(LH)),
+                     logoPixmap.scaled(int(LW), int(LH),
+                                       Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        textStartX = ML + LW + mm(3.0);
+    }
+
+    p.setFont(F("Arial", 16, true));
+    p.setPen(WHITE);
+    p.drawText(QPointF(textStartX, HDR_H * 0.62), "WoodFlow");
+
+    p.setFont(F("Arial", 7));
+    p.setPen(CCDDAA);
+    p.drawText(QPointF(textStartX, HDR_H * 0.82),
+               QString::fromUtf8("Menuiserie & Aménagement Intérieur — Depuis 2015"));
+
+    // Contact lines (right-aligned)
+    p.setFont(F("Arial", 6));
+    p.setPen(DDEEBB);
+    const QStringList contactLines = {
+        QString::fromUtf8("Adresse : Zone Industrielle, Tunis, Tunisie"),
+        QString::fromUtf8("Tél : +216 71 000 000   |   Email : contact@woodflow.tn"),
+        QString::fromUtf8("RC : B123456789   |   MF : 0012345/A"),
+    };
+    qreal cy = HDR_H * 0.22;
+    QFontMetricsF fmContact(F("Arial", 6));
+    for (const QString& line : contactLines) {
+        p.drawText(QPointF(PW - MR - fmContact.horizontalAdvance(line), cy), line);
+        cy += HDR_H * 0.26;
+    }
+
+    // ── SECTION: REFERENCE BAR ────────────────────────────────────────────────
+    const qreal REF_Y = HDR_H;
+    const qreal REF_H = mm(7.5);
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(REF_BG);
+    p.drawRect(QRectF(0, REF_Y, PW, REF_H));
+    p.setPen(QPen(BORDER, mm(0.18)));
+    p.drawLine(QPointF(0, REF_Y + REF_H), QPointF(PW, REF_Y + REF_H));
+
+    QFont f8  = F("Arial", 8);
+    QFont f8b = F("Arial", 8, true);
+    p.setFont(f8);
+    p.setPen(LABEL_GRAY);
+    p.drawText(QPointF(ML, REF_Y + REF_H * 0.68),
+               QString::fromUtf8("Référence : ") + refNumber);
+
+    p.setFont(f8b);
+    p.setPen(TEXT_DARK);
+    {
+        const QString ds = QString::fromUtf8("Tunis, le ") + certDate;
+        p.drawText(QPointF(PW - MR - QFontMetricsF(f8b).horizontalAdvance(ds),
+                           REF_Y + REF_H * 0.68), ds);
+    }
+
+    // ── SECTION: FOOTER (pinned to bottom) ────────────────────────────────────
+    const qreal FOOT_H = mm(7.5);
+    const qreal FOOT_Y = PH - FOOT_H;
+
+    p.setPen(Qt::NoPen);
+    p.setBrush(FOOT_BG);
+    p.drawRect(QRectF(0, FOOT_Y, PW, FOOT_H));
+    p.setPen(QPen(MID_GREEN, mm(0.5)));
+    p.drawLine(QPointF(0, FOOT_Y), QPointF(PW, FOOT_Y));
+
+    p.setFont(F("Arial", 6));
+    p.setPen(LABEL_GRAY);
+    p.drawText(QPointF(ML, FOOT_Y + FOOT_H * 0.68),
+               QString::fromUtf8("WoodFlow — Zone Industrielle, Tunis — contact@woodflow.tn — +216 71 000 000"));
+
+    QFont fFootB = F("Arial", 6, true);
+    p.setFont(fFootB);
+    p.setPen(MID_GREEN);
+    {
+        const QString fr2 = QString::fromUtf8("Réf. ") + refNumber + QString::fromUtf8(" — Confidentiel");
+        p.drawText(QPointF(PW - MR - QFontMetricsF(fFootB).horizontalAdvance(fr2),
+                           FOOT_Y + FOOT_H * 0.68), fr2);
+    }
+
+    // ── BODY ──────────────────────────────────────────────────────────────────
+    qreal y = REF_Y + REF_H + mm(8.0);
+
+    // Title
+    QFont fTitle = F("Arial", 18, true);
+    p.setFont(fTitle);
+    p.setPen(TEXT_DARK);
+    {
+        const QString title = QString::fromUtf8("ATTESTATION DE TRAVAIL");
+        p.drawText(QPointF((PW - QFontMetricsF(fTitle).horizontalAdvance(title)) / 2.0,
+                           y + mm(6.5)), title);
+    }
+    y += mm(10.0);
+    p.setPen(QPen(MID_GREEN, mm(0.7)));
+    p.drawLine(QPointF((PW - mm(49.5)) / 2.0, y), QPointF((PW + mm(49.5)) / 2.0, y));
+    y += mm(7.0);
+
+    // Intro paragraph
+    QFont f9 = F("Arial", 9);
+    p.setFont(f9);
+    p.setPen(TEXT_DARK);
+    const QString intro = QString::fromUtf8(
+        "Je soussigné(e), La Direction des Ressources Humaines de la société WoodFlow, "
+        "enregistrée sous le matricule fiscal 0012345/A, sise Zone Industrielle, Tunis, "
+        "Tunisie, atteste par la présente que :");
+    p.drawText(QRectF(ML, y, TW, mm(22)), Qt::AlignJustify | Qt::TextWordWrap, intro);
+    y += QFontMetricsF(f9).height() * 2.0 + mm(5.0);
+
+    // ── Employee info card ────────────────────────────────────────────────────
+    const qreal ROW_H  = mm(7.5);
+    const qreal CARD_H = 4 * ROW_H;
+    const qreal c1x = ML + mm(1.5), c1w = TW * 0.20;
+    const qreal c2x = c1x + c1w,    c2w = TW * 0.28;
+    const qreal c3x = c2x + c2w,    c3w = TW * 0.20;
+    const qreal c4x = c3x + c3w,    c4w = TW - (c4x - ML) - mm(2.0);
+
+    struct CardRow { QString l1, v1, l2, v2; bool boldV; };
+    const QList<CardRow> cardRows = {
+        { QString::fromUtf8("Nom et prénom :"),  e.getFullName(),    QString::fromUtf8("Numéro CIN :"),      e.getCin(),             true  },
+        { QString::fromUtf8("Poste occupé :"),   e.getPoste(),       QString::fromUtf8("Date d'embauche :"), hireDate,               false },
+        { QString::fromUtf8("Email pro. :"),     e.getEmail(),       QString::fromUtf8("Ancienneté :"),      anciennete,             false },
+        { QString::fromUtf8("Téléphone :"),      e.getTelephone(),   QString::fromUtf8("Statut :"),          e.getDisponibilite(),   true  },
+    };
+
+    // Alternating row backgrounds
+    p.setPen(Qt::NoPen);
+    for (int i = 0; i < 4; ++i) {
+        p.setBrush(i % 2 == 0 ? CARD_BG : CARD_ALT);
+        p.drawRect(QRectF(ML, y + i * ROW_H, TW, ROW_H));
+    }
+    // Outer border
+    p.setPen(QPen(BORDER, mm(0.18)));
+    p.setBrush(Qt::NoBrush);
+    p.drawRect(QRectF(ML, y, TW, CARD_H));
+    // Vertical separators
+    p.drawLine(QPointF(c2x, y), QPointF(c2x, y + CARD_H));
+    p.drawLine(QPointF(c3x, y), QPointF(c3x, y + CARD_H));
+    p.drawLine(QPointF(c4x, y), QPointF(c4x, y + CARD_H));
+    // Horizontal separators
+    for (int i = 1; i < 4; ++i)
+        p.drawLine(QPointF(ML, y + i * ROW_H), QPointF(ML + TW, y + i * ROW_H));
+    // Left accent bar
+    p.setPen(Qt::NoPen);
+    p.setBrush(MID_GREEN);
+    p.drawRect(QRectF(ML, y, mm(1.5), CARD_H));
+
+    QFont fLbl  = F("Arial", 8, true);
+    QFont fVal  = F("Arial", 8);
+    QFont fValB = F("Arial", 8, true);
+    for (int i = 0; i < cardRows.size(); ++i) {
+        const CardRow& row = cardRows[i];
+        qreal ry = y + i * ROW_H;
+        p.setFont(fLbl);  p.setPen(LABEL_GRAY);
+        p.drawText(QRectF(c1x + mm(2), ry, c1w - mm(2), ROW_H), Qt::AlignLeft | Qt::AlignVCenter, row.l1);
+        p.setFont(row.boldV ? fValB : fVal); p.setPen(TEXT_DARK);
+        p.drawText(QRectF(c2x + mm(2), ry, c2w - mm(2), ROW_H), Qt::AlignLeft | Qt::AlignVCenter, row.v1);
+        p.setFont(fLbl);  p.setPen(LABEL_GRAY);
+        p.drawText(QRectF(c3x + mm(2), ry, c3w - mm(2), ROW_H), Qt::AlignLeft | Qt::AlignVCenter, row.l2);
+        p.setFont(row.boldV ? fValB : fVal); p.setPen(TEXT_DARK);
+        p.drawText(QRectF(c4x + mm(2), ry, c4w - mm(2), ROW_H), Qt::AlignLeft | Qt::AlignVCenter, row.v2);
+    }
+    y += CARD_H + mm(6.0);
+
+    // ── Body paragraph (rich text with bold) ─────────────────────────────────
+    // QTextDocument is drawn at identity scale; pass pixel-based rect & font size.
+    auto drawRichText = [&](const QString& html, const QRectF& rectPx) {
+        QTextDocument tdoc;
+        QFont docFont("Arial");
+        docFont.setPixelSize(qRound(9.0 * dpi / 72.0));
+        tdoc.setDefaultFont(docFont);
+        tdoc.setHtml(html);
+        tdoc.setTextWidth(rectPx.width());
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.palette.setColor(QPalette::Text, TEXT_DARK);
+        p.save();
+        p.translate(rectPx.topLeft());
+        tdoc.documentLayout()->draw(&p, ctx);
+        p.restore();
+        return tdoc.size().height();
+    };
+
+    const int fPx = qRound(9.0 * dpi / 72.0);
+    const QString bodyHtml = QString::fromUtf8(
+        "<span style='font-family:Arial;font-size:%7px;'>"
+        "%1 <b>%2</b> est employé(e) au sein de notre société en qualité de "
+        "<b>%3</b> depuis le %4, soit une ancienneté de <b>%5</b>. "
+        "À ce jour, %6 n'est ni en période d'essai, "
+        "ni en procédure de démission ou de licenciement.</span>")
+        .arg(civility, e.getFullName().toHtmlEscaped(),
+             e.getPoste().toHtmlEscaped(), hireDate.toHtmlEscaped(),
+             anciennete.toHtmlEscaped(), pronoun)
+        .arg(fPx);
+    qreal bodyH = drawRichText(bodyHtml, QRectF(ML, y, TW, mm(30)));
+    y += bodyH + mm(6.0);
+
+    // ── Purpose box ───────────────────────────────────────────────────────────
+    {
+        const QString purposeHtml = QString::fromUtf8(
+            "<span style='font-family:Arial;font-size:%1px;font-style:italic;color:#374151;'>"
+            "La présente attestation est délivrée à l'intéressé(e) à sa demande et pour "
+            "servir et valoir ce que de droit, notamment pour toute démarche administrative, "
+            "bancaire ou consulaire.</span>").arg(fPx);
+
+        QTextDocument tdoc;
+        QFont pf("Arial", -1, -1, true);
+        pf.setPixelSize(fPx);
+        tdoc.setDefaultFont(pf);
+        tdoc.setHtml(purposeHtml);
+        tdoc.setTextWidth(TW - mm(6.0));
+        qreal boxH = tdoc.size().height() + mm(6.0);
+
+        p.setPen(Qt::NoPen);
+        p.setBrush(PURPOSE_BG);
+        p.drawRect(QRectF(ML, y, TW, boxH));
+        p.setPen(QPen(STAMP_COL, mm(0.35), Qt::DashLine));
+        p.setBrush(Qt::NoBrush);
+        p.drawRect(QRectF(ML, y, TW, boxH));
+
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.palette.setColor(QPalette::Text, QColor("#374151"));
+        p.save();
+        p.translate(ML + mm(3.0), y + mm(3.0));
+        tdoc.documentLayout()->draw(&p, ctx);
+        p.restore();
+        y += boxH + mm(9.0);
+    }
+
+    // ── Signature block ───────────────────────────────────────────────────────
+    QFont fMeta = F("Arial", 7);
+    p.setFont(fMeta); p.setPen(LABEL_GRAY);
+    p.drawText(QPointF(ML, y + mm(3.5)),  QString::fromUtf8("Document généré le : ") + certDate);
+    p.drawText(QPointF(ML, y + mm(7.5)),  QString::fromUtf8("Réf. : ") + refNumber);
+    p.setFont(F("Arial", 7, false, true)); p.setPen(GRAY_LIGHT);
+    p.drawText(QPointF(ML, y + mm(11.5)), QString::fromUtf8("Valable 3 mois à compter de sa date d'émission."));
+
+    const qreal SIG_X = PW * 0.50;
+    const qreal SIG_W = PW * 0.47;
+
+    QFont fSigT = F("Arial", 9, true);
+    p.setFont(fSigT); p.setPen(TEXT_DARK);
+    {
+        const QString st = QString::fromUtf8("Le Directeur des Ressources Humaines");
+        qreal stw = QFontMetricsF(fSigT).horizontalAdvance(st);
+        p.drawText(QPointF(SIG_X + (SIG_W - mm(18) - stw) / 2.0, y + mm(3.5)), st);
+    }
+    const qreal SIG_LINE_Y = y + mm(17.0);
+    p.setPen(QPen(TEXT_DARK, mm(0.18)));
+    p.drawLine(QPointF(SIG_X + mm(4), SIG_LINE_Y), QPointF(SIG_X + SIG_W - mm(20), SIG_LINE_Y));
+
+    p.setFont(F("Arial", 7)); p.setPen(LABEL_GRAY);
+    {
+        const QString sub = QString::fromUtf8("Direction RH — WoodFlow");
+        qreal subw = QFontMetricsF(F("Arial", 7)).horizontalAdvance(sub);
+        p.drawText(QPointF(SIG_X + mm(4) + (SIG_W - mm(24) - subw) / 2.0,
+                           SIG_LINE_Y + mm(3.5)), sub);
+    }
+
+    // Stamp circle
+    const qreal SR  = mm(8.0);
+    const qreal SCX = SIG_X + SIG_W - mm(10);
+    const qreal SCY = SIG_LINE_Y - mm(2);
+    p.setPen(QPen(STAMP_COL, mm(0.35), Qt::DashLine));
+    p.setBrush(Qt::NoBrush);
+    p.drawEllipse(QPointF(SCX, SCY), SR, SR);
+    p.setFont(F("Arial", 6)); p.setPen(STAMP_COL);
+    p.drawText(QRectF(SCX - SR, SCY - SR, SR * 2, SR * 2),
+               Qt::AlignCenter, QString::fromUtf8("Cachet\nofficiel"));
+
+    p.end();
+
+    QMessageBox::information(this, QString::fromUtf8("Attestation générée"),
+        QString::fromUtf8("L'attestation de travail de %1 a été générée :\n%2")
+            .arg(e.getFullName()).arg(filePath));
+}
+
 
 void EmployeeManagementPage::onRefreshTable()
 {
