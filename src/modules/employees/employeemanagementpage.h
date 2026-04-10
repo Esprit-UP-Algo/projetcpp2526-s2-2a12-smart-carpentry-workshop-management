@@ -31,6 +31,7 @@ private slots:
     void onFilterChanged(const QString& filter);
     void onSortChanged(int index);
     void onExportPDF();
+    void onExportCertificate();
     void onRefreshTable();
     void onTableSelectionChanged();
 
@@ -44,6 +45,7 @@ private:
     QPushButton *m_editButton;
     QPushButton *m_deleteButton;
     QPushButton *m_exportButton;
+    QPushButton *m_certButton;
     QPushButton *m_refreshButton;
 
     // Stats tab widgets
