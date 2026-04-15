@@ -1,6 +1,7 @@
 #include "stockvalidators.h"
 #include "src/models/stockmaterial.h"
 #include "src/database/stockdatabase.h"
+#include "src/modules/stock/stocklocales.h"
 
 bool StockValidators::isMaterialNameUnique(const QString& name, int excludeId)
 {
@@ -122,6 +123,32 @@ bool StockValidators::validateUnit(const QString& unit, QString& errorMsg)
     return true;
 }
 
+bool StockValidators::validateLocale(const QString& locale, QString& errorMsg)
+{
+    // Locale est optionnelle — on valide seulement si elle est renseignée
+    if (locale.trimmed().isEmpty())
+        return true;
+
+    if (!StockLocales::localeNames().contains(locale)) {
+        errorMsg = "Locale invalide. Veuillez choisir une locale dans la liste.";
+        return false;
+    }
+    return true;
+}
+
+bool StockValidators::validateEmplacement(const QString& emplacement, QString& errorMsg)
+{
+    // Emplacement est optionnel — on valide seulement si renseigné
+    if (emplacement.trimmed().isEmpty())
+        return true;
+
+    if (!StockLocales::emplacements().contains(emplacement)) {
+        errorMsg = "Emplacement invalide. Veuillez choisir un emplacement dans la liste.";
+        return false;
+    }
+    return true;
+}
+
 bool StockValidators::validateAll(const StockMaterial& material, QString& errorMsg, int excludeId)
 {
     if (!validateName(material.getNom(), errorMsg, excludeId)) return false;
@@ -133,14 +160,17 @@ bool StockValidators::validateAll(const StockMaterial& material, QString& errorM
     if (!validateDate(material.getLastOrder(), errorMsg)) return false;
     if (!validateMonthlyConsumption(material.getConsoMensuelle(), errorMsg)) return false;
     if (!validateUnit(material.getUnite(), errorMsg)) return false;
+    if (!validateLocale(material.getLocale(), errorMsg)) return false;
+    if (!validateEmplacement(material.getEmplacement(), errorMsg)) return false;
     return true;
 }
 
 bool StockValidators::validateAll(const QString& name, const QString& type, double quantity,
                                   double price, const QString& supplier, double threshold,
                                   const QDate& lastOrder, double monthlyConsumption,
-                                  const QString& unit, int /*productId*/, QString& errorMsg,
-                                  int excludeId)
+                                  const QString& unit, int /*productId*/,
+                                  const QString& locale, const QString& emplacement,
+                                  QString& errorMsg, int excludeId)
 {
     if (!validateName(name, errorMsg, excludeId)) return false;
     if (!validateType(type, errorMsg)) return false;
@@ -151,5 +181,7 @@ bool StockValidators::validateAll(const QString& name, const QString& type, doub
     if (!validateDate(lastOrder, errorMsg)) return false;
     if (!validateMonthlyConsumption(monthlyConsumption, errorMsg)) return false;
     if (!validateUnit(unit, errorMsg)) return false;
+    if (!validateLocale(locale, errorMsg)) return false;
+    if (!validateEmplacement(emplacement, errorMsg)) return false;
     return true;
 }

@@ -5,7 +5,9 @@
 #include "src/modules/employees/employeemanagementpage.h"
 #include "src/core/session.h"
 #include "src/modules/stock/stockpage.h"
-#include "src/modules/projects/projectmanagementpage.h"
+#include "src/modules/projects/projectmanagementpage.h"  // manquant dans le 2ème
+#include "src/modules/finance/financeview.h"
+#include "src/modules/finance/financemodel.h"
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
@@ -16,12 +18,13 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QPainterPath>
-#include <QScrollArea>
+#include <QScrollArea>          // manquant dans le 2ème
 #include <QKeyEvent>
 #include <QDialog>
 #include <QFormLayout>
 #include <QDialogButtonBox>
 #include <QDateEdit>
+#include <QDoubleValidator>     // manquant dans le 1er
 #include <QComboBox>
 #include <QDate>
 #include <QMenu>
@@ -32,11 +35,9 @@
 #include <QHBoxLayout>
 #include <QTableWidget>
 #include <QTableWidgetItem>
-#include <QHeaderView>
 #include <QFileDialog>
-#include <QDate>
-#include <QMap>
-#include <algorithm>
+#include <QMap>                 // manquant dans le 2ème
+#include <algorithm>            // manquant dans le 2ème
 
 
 
@@ -450,299 +451,17 @@ QWidget* MainWindow::createEmployeesPage()
 QWidget* MainWindow::createFinancePage()
 {
     QWidget *page = new QWidget();
-    QVBoxLayout *mainLayout = new QVBoxLayout(page);
-    mainLayout->setSpacing(18);
-    mainLayout->setContentsMargins(10, 10, 10, 10);
+    QVBoxLayout *layout = new QVBoxLayout(page);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
 
-    QHBoxLayout *statsLayout = new QHBoxLayout();
-    statsLayout->setSpacing(15);
+    FinanceModel *model = new FinanceModel(page);  // QObject* parent
+    FinanceView *view = new FinanceView(page);      // QWidget* parent
+    view->setModel(model);
 
-    struct StatInfo { QString title; QString property; };
-    const QList<StatInfo> stats = {
-        {"REVENUS",  "income"},
-        {"DÉPENSES", "expense"},
-        {"BÉNÉFICE", "profit"}
-    };
-
-    QList<QLabel*> valueLabels;
-    for (const auto &s : stats) {
-        QFrame *card = new QFrame(page);
-        card->setObjectName("statCard");
-        card->setProperty("type", s.property);
-        QVBoxLayout *cardLay = new QVBoxLayout(card);
-        cardLay->setContentsMargins(20, 20, 20, 20);
-        cardLay->setSpacing(10);
-        QLabel *titleLbl = new QLabel(s.title, card);
-        titleLbl->setObjectName("statTitle");
-        QLabel *valLbl = new QLabel("0 DT", card);
-        valLbl->setObjectName("statValue");
-        valueLabels.append(valLbl);
-        cardLay->addWidget(titleLbl);
-        cardLay->addWidget(valLbl);
-        cardLay->addStretch();
-        statsLayout->addWidget(card);
-    }
-    mainLayout->addLayout(statsLayout);
-
-    QFrame *filterFrame = new QFrame(page);
-    filterFrame->setObjectName("searchFrame");
-    QHBoxLayout *filterLay = new QHBoxLayout(filterFrame);
-    filterLay->setContentsMargins(0, 0, 0, 10);
-    filterLay->setSpacing(10);
-
-    QLabel *lblSearch = new QLabel("Rechercher :", filterFrame);
-    lblSearch->setObjectName("searchLabel");
-    QLineEdit *searchEdit = new QLineEdit(filterFrame);
-    searchEdit->setObjectName("financeSearch");
-    searchEdit->setPlaceholderText("Client, type, catégorie...");
-    searchEdit->setMinimumWidth(260);
-    QComboBox *cbType = new QComboBox(filterFrame);
-    cbType->setObjectName("filterCombo");
-    cbType->addItems({"Tous", "Facture", "Devis", "Acompte"});
-    QComboBox *cbCategory = new QComboBox(filterFrame);
-    cbCategory->setObjectName("filterCombo");
-    cbCategory->addItems({"Toutes", "Recette", "Dépense"});
-    QComboBox *cbStatus = new QComboBox(filterFrame);
-    cbStatus->setObjectName("filterCombo");
-    cbStatus->addItems({"Tous", "Payé", "En attente", "Retard"});
-    QDateEdit *debutDate = new QDateEdit(filterFrame);
-    debutDate->setObjectName("dateFilter");
-    debutDate->setCalendarPopup(true);
-    debutDate->setDate(QDate::currentDate().addMonths(-1));
-    debutDate->setDisplayFormat("dd/MM/yyyy");
-    QDateEdit *finDate = new QDateEdit(filterFrame);
-    finDate->setObjectName("dateFilter");
-    finDate->setCalendarPopup(true);
-    finDate->setDate(QDate::currentDate());
-    finDate->setDisplayFormat("dd/MM/yyyy");
-    QPushButton *btnFiltrer = new QPushButton("Filtrer", filterFrame);
-    btnFiltrer->setObjectName("searchButton");
-    btnFiltrer->setCursor(Qt::PointingHandCursor);
-    QPushButton *btnReset = new QPushButton("Réinitialiser", filterFrame);
-    btnReset->setObjectName("resetButton");
-    btnReset->setCursor(Qt::PointingHandCursor);
-
-    filterLay->addWidget(lblSearch);
-    filterLay->addWidget(searchEdit);
-    filterLay->addWidget(cbType);
-    filterLay->addWidget(cbCategory);
-    filterLay->addWidget(cbStatus);
-    filterLay->addWidget(new QLabel("Du :"));
-    filterLay->addWidget(debutDate);
-    filterLay->addWidget(new QLabel("Au :"));
-    filterLay->addWidget(finDate);
-    filterLay->addWidget(btnFiltrer);
-    filterLay->addWidget(btnReset);
-    filterLay->addStretch();
-    mainLayout->addWidget(filterFrame);
-
-    financeTable = new QTableWidget(page);
-    financeTable->setObjectName("financeTable");
-    financeTable->setColumnCount(6);
-    financeTable->setHorizontalHeaderLabels({"CLIENT", "TYPE", "CATÉGORIE", "MONTANT (DT)", "STATUT", "DATE"});
-    financeTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    financeTable->verticalHeader()->setVisible(false);
-    financeTable->setAlternatingRowColors(true);
-    financeTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-    financeTable->setSelectionMode(QAbstractItemView::SingleSelection);
-    financeTable->setShowGrid(false);
-    financeTable->setSortingEnabled(false);
-
-    const QList<QStringList> exemples = {
-        {"M. Dupont",         "Facture",  "Recette",  "3500", "Payé",       "01/02/2026"},
-        {"Mme Martin",        "Devis",    "Recette",  "2800", "En attente", "10/02/2026"},
-        {"Restaurant Le Bois","Acompte",  "Recette",  "1500", "Payé",       "15/01/2026"},
-        {"M. Bernard",        "Facture",  "Dépense",  "1200", "Retard",     "05/02/2026"},
-        {"SARL Dubois",       "Facture",  "Recette",  "5200", "Payé",       "20/01/2026"}
-    };
-    financeTable->setRowCount(exemples.size());
-    for (int r = 0; r < exemples.size(); ++r) {
-        for (int c = 0; c < 6; ++c) {
-            QString txt = exemples[r][c];
-            if (c == 3) txt += " DT";
-            financeTable->setItem(r, c, new QTableWidgetItem(txt));
-        }
-        financeTable->setRowHeight(r, 52);
-    }
-    mainLayout->addWidget(financeTable, 1);
-
-    auto updateStats = [this, valueLabels]() {
-        double revenus = 0.0, depenses = 0.0;
-        for (int r = 0; r < financeTable->rowCount(); ++r) {
-            if (financeTable->isRowHidden(r)) continue;
-            auto itemMontant = financeTable->item(r, 3);
-            if (!itemMontant) continue;
-            QString m = itemMontant->text().replace(" DT", "").replace(" ", "").trimmed();
-            bool ok; double montant = m.toDouble(&ok);
-            if (!ok) continue;
-            QString cat = financeTable->item(r, 2)->text();
-            if (cat == "Recette") revenus += montant;
-            else if (cat == "Dépense") depenses += montant;
-        }
-        if (valueLabels.size() >= 3) {
-            valueLabels[0]->setText(QString("%L1 DT").arg(revenus, 0, 'f', 2));
-            valueLabels[1]->setText(QString("%L1 DT").arg(depenses, 0, 'f', 2));
-            valueLabels[2]->setText(QString("%L1 DT").arg(revenus - depenses, 0, 'f', 2));
-        }
-    };
-    updateStats();
-
-    QHBoxLayout *actionBar = new QHBoxLayout();
-    actionBar->setSpacing(12);
-    QPushButton *btnAjouter   = new QPushButton("+ Nouvelle Transaction", page);
-    QPushButton *btnSupprimer = new QPushButton("Supprimer", page);
-    QPushButton *btnExporter  = new QPushButton("Exporter CSV", page);
-    QPushButton *btnStats     = new QPushButton("Statistiques détaillées", page);
-    for (auto b : {btnAjouter, btnSupprimer, btnExporter, btnStats}) {
-        b->setObjectName("actionButton"); b->setCursor(Qt::PointingHandCursor);
-    }
-    QComboBox *triCombo = new QComboBox(page);
-    triCombo->setObjectName("sortCombo");
-    triCombo->addItems({"Tri par défaut","Montant ↑","Montant ↓","Date ↓ (récent)","Date ↑ (ancien)"});
-    triCombo->setMinimumWidth(210);
-    actionBar->addWidget(btnAjouter);
-    actionBar->addWidget(btnSupprimer);
-    actionBar->addWidget(btnExporter);
-    actionBar->addWidget(btnStats);
-    actionBar->addSpacing(16);
-    actionBar->addWidget(new QLabel("Trier par :"));
-    actionBar->addWidget(triCombo);
-    actionBar->addStretch();
-
-    auto doFilter = [=]() {
-        QString recherche = searchEdit->text().trimmed().toLower();
-        QString typeSel = cbType->currentText(), catSel = cbCategory->currentText(), statutSel = cbStatus->currentText();
-        QDate d1 = debutDate->date(), d2 = finDate->date();
-        for (int r = 0; r < financeTable->rowCount(); ++r) {
-            bool visible = true;
-            if (!recherche.isEmpty()) {
-                bool trouve = false;
-                for (int c = 0; c < 3; ++c) { auto it = financeTable->item(r,c); if (it && it->text().toLower().contains(recherche)) { trouve=true; break; } }
-                if (!trouve) visible = false;
-            }
-            if (visible && typeSel   != "Tous"   && financeTable->item(r,1)->text() != typeSel)   visible = false;
-            if (visible && catSel    != "Toutes" && financeTable->item(r,2)->text() != catSel)    visible = false;
-            if (visible && statutSel != "Tous"   && financeTable->item(r,4)->text() != statutSel) visible = false;
-            if (visible) { auto dateIt = financeTable->item(r,5); if (dateIt) { QDate dt = QDate::fromString(dateIt->text(),"dd/MM/yyyy"); if (dt.isValid() && (dt<d1||dt>d2)) visible=false; } }
-            financeTable->setRowHidden(r, !visible);
-        }
-        updateStats();
-    };
-
-    connect(btnFiltrer, &QPushButton::clicked, doFilter);
-    connect(btnReset, &QPushButton::clicked, [=](){
-        searchEdit->clear(); cbType->setCurrentIndex(0); cbCategory->setCurrentIndex(0); cbStatus->setCurrentIndex(0);
-        debutDate->setDate(QDate::currentDate().addMonths(-1)); finDate->setDate(QDate::currentDate());
-        for (int r = 0; r < financeTable->rowCount(); ++r) financeTable->setRowHidden(r, false);
-        updateStats();
-    });
-    connect(triCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), [=](int idx){
-        if (idx==0) return;
-        struct Ligne { int row; double montant=0.0; QDate date; };
-        QList<Ligne> lignes;
-        for (int r=0; r<financeTable->rowCount(); ++r) {
-            if (!financeTable->isRowHidden(r)) {
-                auto mIt=financeTable->item(r,3); auto dIt=financeTable->item(r,5);
-                if (mIt&&dIt) { QString mStr=mIt->text().replace(" DT","").trimmed(); lignes<<Ligne{r,mStr.toDouble(),QDate::fromString(dIt->text(),"dd/MM/yyyy")}; }
-            }
-        }
-        std::stable_sort(lignes.begin(),lignes.end(),[idx](const Ligne&a,const Ligne&b){
-            if(idx==1) return a.montant<b.montant; if(idx==2) return a.montant>b.montant;
-            if(idx==3) return a.date>b.date; if(idx==4) return a.date<b.date; return false;
-        });
-        int nl=0;
-        for (const auto&l:lignes){ for(int c=0;c<6;++c){ auto item=financeTable->takeItem(l.row,c); financeTable->setItem(nl,c,item); } financeTable->setRowHeight(nl,52); nl++; }
-    });
-    connect(btnAjouter, &QPushButton::clicked, [=](){
-        QDialog dlg(this); dlg.setWindowTitle("Nouvelle Transaction"); dlg.setMinimumWidth(420);
-        QFormLayout form(&dlg);
-        QLineEdit *clientEdit=new QLineEdit(&dlg); QComboBox *typeCb=new QComboBox(&dlg); QComboBox *catCb=new QComboBox(&dlg);
-        QLineEdit *montantEdit=new QLineEdit(&dlg); QComboBox *statutCb=new QComboBox(&dlg); QDateEdit *dateEdit=new QDateEdit(QDate::currentDate(),&dlg);
-        typeCb->addItems({"Facture","Devis","Acompte"}); catCb->addItems({"Recette","Dépense"}); statutCb->addItems({"Payé","En attente","Retard"});
-        dateEdit->setCalendarPopup(true); dateEdit->setDisplayFormat("dd/MM/yyyy");
-        form.addRow("Client :",clientEdit); form.addRow("Type :",typeCb); form.addRow("Catégorie :",catCb);
-        form.addRow("Montant (DT) :",montantEdit); form.addRow("Statut :",statutCb); form.addRow("Date :",dateEdit);
-        QDialogButtonBox *box=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dlg); form.addRow(box);
-        connect(box,&QDialogButtonBox::accepted,&dlg,&QDialog::accept); connect(box,&QDialogButtonBox::rejected,&dlg,&QDialog::reject);
-        if (dlg.exec()==QDialog::Accepted) {
-            int row=financeTable->rowCount(); financeTable->insertRow(row);
-            financeTable->setItem(row,0,new QTableWidgetItem(clientEdit->text()));
-            financeTable->setItem(row,1,new QTableWidgetItem(typeCb->currentText()));
-            financeTable->setItem(row,2,new QTableWidgetItem(catCb->currentText()));
-            financeTable->setItem(row,3,new QTableWidgetItem(montantEdit->text()+" DT"));
-            financeTable->setItem(row,4,new QTableWidgetItem(statutCb->currentText()));
-            financeTable->setItem(row,5,new QTableWidgetItem(dateEdit->date().toString("dd/MM/yyyy")));
-            financeTable->setRowHeight(row,52); updateStats();
-        }
-    });
-    connect(financeTable,&QTableWidget::cellDoubleClicked,[=](int row,int){
-        QDialog dlg(this); dlg.setWindowTitle("Modifier Transaction"); dlg.setMinimumWidth(420);
-        QFormLayout form(&dlg);
-        QString montantTxt=financeTable->item(row,3)->text().replace(" DT","").trimmed();
-        QLineEdit *clientEdit=new QLineEdit(financeTable->item(row,0)->text(),&dlg);
-        QComboBox *typeCb=new QComboBox(&dlg); QComboBox *catCb=new QComboBox(&dlg);
-        QLineEdit *montantEdit=new QLineEdit(montantTxt,&dlg); QComboBox *statutCb=new QComboBox(&dlg); QDateEdit *dateEdit=new QDateEdit(&dlg);
-        typeCb->addItems({"Facture","Devis","Acompte"}); typeCb->setCurrentText(financeTable->item(row,1)->text());
-        catCb->addItems({"Recette","Dépense"}); catCb->setCurrentText(financeTable->item(row,2)->text());
-        statutCb->addItems({"Payé","En attente","Retard"}); statutCb->setCurrentText(financeTable->item(row,4)->text());
-        dateEdit->setDate(QDate::fromString(financeTable->item(row,5)->text(),"dd/MM/yyyy")); dateEdit->setCalendarPopup(true); dateEdit->setDisplayFormat("dd/MM/yyyy");
-        form.addRow("Client :",clientEdit); form.addRow("Type :",typeCb); form.addRow("Catégorie :",catCb);
-        form.addRow("Montant (DT) :",montantEdit); form.addRow("Statut :",statutCb); form.addRow("Date :",dateEdit);
-        QDialogButtonBox *box=new QDialogButtonBox(QDialogButtonBox::Ok|QDialogButtonBox::Cancel,&dlg); form.addRow(box);
-        connect(box,&QDialogButtonBox::accepted,&dlg,&QDialog::accept); connect(box,&QDialogButtonBox::rejected,&dlg,&QDialog::reject);
-        if (dlg.exec()==QDialog::Accepted) {
-            financeTable->item(row,0)->setText(clientEdit->text()); financeTable->item(row,1)->setText(typeCb->currentText());
-            financeTable->item(row,2)->setText(catCb->currentText()); financeTable->item(row,3)->setText(montantEdit->text()+" DT");
-            financeTable->item(row,4)->setText(statutCb->currentText()); financeTable->item(row,5)->setText(dateEdit->date().toString("dd/MM/yyyy"));
-            updateStats();
-        }
-    });
-    connect(btnSupprimer,&QPushButton::clicked,[=](){
-        int row=financeTable->currentRow();
-        if (row<0) { QMessageBox::warning(this,"Aucune sélection","Sélectionnez une ligne."); return; }
-        if (QMessageBox::question(this,"Confirmer","Supprimer cette transaction ?",QMessageBox::Yes|QMessageBox::No)==QMessageBox::Yes)
-        { financeTable->removeRow(row); updateStats(); }
-    });
-    connect(btnExporter,&QPushButton::clicked,[=](){
-        QString fichier=QFileDialog::getSaveFileName(this,"Exporter en CSV","transactions_"+QDate::currentDate().toString("yyyyMMdd")+".csv","Fichiers CSV (*.csv);;Tous (*.*)");
-        if (fichier.isEmpty()) return;
-        QFile file(fichier);
-        if (!file.open(QIODevice::WriteOnly|QIODevice::Text)) { QMessageBox::warning(this,"Erreur","Impossible d'écrire."); return; }
-        QTextStream out(&file);
-        QStringList entetes; for(int c=0;c<financeTable->columnCount();++c) entetes<<financeTable->horizontalHeaderItem(c)->text();
-        out<<entetes.join(";")<<"\n";
-        for(int r=0;r<financeTable->rowCount();++r){ if(financeTable->isRowHidden(r)) continue; QStringList ligne; for(int c=0;c<financeTable->columnCount();++c){auto it=financeTable->item(r,c);ligne<<(it?it->text():"");} out<<ligne.join(";")<<"\n"; }
-        file.close(); QMessageBox::information(this,"Succès","Export terminé.");
-    });
-    connect(btnStats,&QPushButton::clicked,[=](){
-        QDialog *dlg=new QDialog(this); dlg->setWindowTitle("Statistiques détaillées"); dlg->setMinimumSize(520,480);
-        QVBoxLayout *lay=new QVBoxLayout(dlg);
-        double totRevenus=0,totDepenses=0,totPaye=0,totAttente=0,totRetard=0; int cntPaye=0,cntAttente=0,cntRetard=0;
-        QMap<QString,double> revenusMensuels,depensesMensuels;
-        for(int r=0;r<financeTable->rowCount();++r){
-            if(financeTable->isRowHidden(r)) continue;
-            auto montantIt=financeTable->item(r,3); auto catIt=financeTable->item(r,2); auto statutIt=financeTable->item(r,4); auto dateIt=financeTable->item(r,5);
-            if(!montantIt||!catIt||!statutIt||!dateIt) continue;
-            double montant=montantIt->text().replace(" DT","").trimmed().toDouble();
-            QString cat=catIt->text(),statut=statutIt->text(),mois=dateIt->text().right(7);
-            if(cat=="Recette"){totRevenus+=montant;revenusMensuels[mois]+=montant;}else if(cat=="Dépense"){totDepenses+=montant;depensesMensuels[mois]+=montant;}
-            if(statut=="Payé"){totPaye+=montant;cntPaye++;}else if(statut=="En attente"){totAttente+=montant;cntAttente++;}else if(statut=="Retard"){totRetard+=montant;cntRetard++;}
-        }
-        QFrame *resume=new QFrame(dlg); resume->setObjectName("statsSummary"); QGridLayout *gr=new QGridLayout(resume);
-        gr->addWidget(new QLabel("<b>Résumé financier</b>"),0,0,1,2);
-        gr->addWidget(new QLabel("Total revenus :"),1,0); gr->addWidget(new QLabel(QString("%L1 DT").arg(totRevenus,0,'f',2)),1,1);
-        gr->addWidget(new QLabel("Total dépenses :"),2,0); gr->addWidget(new QLabel(QString("%L1 DT").arg(totDepenses,0,'f',2)),2,1);
-        gr->addWidget(new QLabel("Bénéfice net :"),3,0);
-        QLabel *profitLbl=new QLabel(QString("%L1 DT").arg(totRevenus-totDepenses,0,'f',2)); profitLbl->setStyleSheet("color:#27ae60;font-weight:bold;"); gr->addWidget(profitLbl,3,1);
-        lay->addWidget(resume);
-        QPushButton *close=new QPushButton("Fermer",dlg); close->setObjectName("actionButton"); connect(close,&QPushButton::clicked,dlg,&QDialog::accept); lay->addWidget(close,0,Qt::AlignRight);
-        dlg->exec();
-    });
-
-    mainLayout->addLayout(actionBar);
+    layout->addWidget(view);
     return page;
 }
-
 QWidget* MainWindow::createProductsPage()
 {
     QWidget *page = new QWidget();

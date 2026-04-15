@@ -1,4 +1,8 @@
+#include "stocklocales.h"
+#include "stockmapview.h"
 #include "stockpage.h"
+#include "stockalertbell.h"
+#include "stockalertpanel.h"
 #include "src/database/stockdatabase.h"
 #include "src/database/connection.h"
 #include "src/common/stockvalidators.h"
@@ -25,6 +29,7 @@
 #include <QDebug>
 #include <QScrollArea>
 #include <QApplication>
+#include <QSystemTrayIcon>
 #include <cmath>
 #include <algorithm>
 
@@ -402,6 +407,7 @@ StockPage::StockPage(QWidget *parent)
 {
     loadProduitsMap();
     setupUI();
+    setupTrayIcon();
     refreshTable(StockDatabase::instance().getAllMaterials());
 }
 
@@ -468,19 +474,25 @@ void StockPage::setupUI()
     QPushButton *addBtn       = new QPushButton("+ Ajouter un matériau", tablePage);
     QPushButton *editBtn      = new QPushButton("Modifier",               tablePage);
     QPushButton *deleteBtn    = new QPushButton("Supprimer",              tablePage);
-    QPushButton *alertBtn     = new QPushButton("Voir alertes",           tablePage);
     QPushButton *exportPdfBtn = new QPushButton("Exporter alertes PDF",   tablePage);
     QPushButton *statsBtn     = new QPushButton("Statistiques",           tablePage);
 
-    for (auto btn : {addBtn, editBtn, deleteBtn, alertBtn, exportPdfBtn, statsBtn}) {
+    for (auto btn : {addBtn, editBtn, deleteBtn, exportPdfBtn, statsBtn}) {
         btn->setObjectName("actionButton");
         btn->setCursor(Qt::PointingHandCursor);
     }
 
+    // ── Cloche de notifications ──────────────────────────────────────────────
+    m_bell = new StockAlertBell(tablePage);
+    m_alertPanel = new StockAlertPanel(nullptr); // parent nullptr = fenêtre flottante
+
+    connect(m_bell,        &StockAlertBell::clicked,            this, &StockPage::onBellClicked);
+    connect(m_bell,        &StockAlertBell::newAlertsDetected,  this, &StockPage::onNewAlertsDetected);
+    connect(m_alertPanel,  &StockAlertPanel::alertSelected,     this, &StockPage::onAlertSelected);
+
     connect(addBtn,       &QPushButton::clicked, this, &StockPage::onAddButtonClicked);
     connect(editBtn,      &QPushButton::clicked, this, &StockPage::onEditButtonClicked);
     connect(deleteBtn,    &QPushButton::clicked, this, &StockPage::onDeleteButtonClicked);
-    connect(alertBtn,     &QPushButton::clicked, this, &StockPage::onShowAlertsClicked);
     connect(exportPdfBtn, &QPushButton::clicked, this, &StockPage::onExportAlertPdfClicked);
     connect(statsBtn,     &QPushButton::clicked, this, &StockPage::onShowStatsClicked);
 
@@ -488,18 +500,24 @@ void StockPage::setupUI()
     actionsLayout->addWidget(editBtn);
     actionsLayout->addWidget(deleteBtn);
     actionsLayout->addWidget(exportPdfBtn);
-    actionsLayout->addWidget(alertBtn);
-    actionsLayout->addStretch();
+
+    QPushButton *mapBtn = new QPushButton("Carte", tablePage);
+    mapBtn->setObjectName("actionButton");
+    mapBtn->setCursor(Qt::PointingHandCursor);
+    connect(mapBtn, &QPushButton::clicked, this, &StockPage::onShowMapClicked);
     actionsLayout->addWidget(statsBtn);
+    actionsLayout->addWidget(mapBtn);
+    actionsLayout->addStretch();
+    actionsLayout->addWidget(m_bell);   // cloche à la place du bouton alertes
     mainLayout->addLayout(actionsLayout);
 
     stockTable = new QTableWidget(tablePage);
     stockTable->setObjectName("dataTable");
-    stockTable->setColumnCount(11);
+    stockTable->setColumnCount(13);
     stockTable->setHorizontalHeaderLabels({
-        "ID","Nom","Type","Quantité","Prix unit. (DT)",
-        "Fournisseur","Seuil alerte","Dernière commande",
-        "Conso. mensuelle","Unité","Produit associé"
+                                           "ID","Nom","Type","Quantité","Prix unit. (DT)",
+                                           "Fournisseur","Seuil alerte","Dernière commande",
+                                           "Conso. mensuelle","Unité","Produit associé","Locale","Emplacement"
     });
     stockTable->horizontalHeader()->setStretchLastSection(true);
     stockTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
@@ -510,6 +528,9 @@ void StockPage::setupUI()
     stockTable->setShowGrid(false);
     stockTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     stockTable->setColumnHidden(0, true);
+
+    stockTable->setColumnHidden(11, true);  // Locale
+    stockTable->setColumnHidden(12, true);  // Emplacement
     connect(stockTable, &QTableWidget::cellDoubleClicked, this, &StockPage::onViewTriggered);
     mainLayout->addWidget(stockTable);
 
@@ -517,6 +538,8 @@ void StockPage::setupUI()
 
     setupStatsPage();
     mainStack->addWidget(statsPage);
+    setupMapPage();
+    mainStack->addWidget(mapPage);
     mainStack->setCurrentIndex(0);
 }
 
@@ -988,9 +1011,11 @@ void StockPage::refreshTable(const QList<StockMaterial>& materials)
         stockTable->setItem(i, 8,  item(QString::number(m.getConsoMensuelle(), 'f', 2)));
         stockTable->setItem(i, 9,  item(m.getUnite()));
         stockTable->setItem(i, 10, item(nomProduit));
+        stockTable->setItem(i, 11, item(m.getLocale()));
+        stockTable->setItem(i, 12, item(m.getEmplacement()));
         stockTable->setRowHeight(i, 48);
         if (m.isBelowAlert())
-            for (int c = 0; c < 11; ++c)
+            for (int c = 0; c < 13; ++c)
                 if (stockTable->item(i, c))
                     stockTable->item(i, c)->setBackground(QColor(255, 220, 220));
     }
@@ -1018,6 +1043,8 @@ StockMaterial StockPage::materialFromCurrentRow() const
             if (it.value() == nomProd && it.key() != 0) { idFound = it.key(); break; }
         m.setIdProduit(idFound);
     }
+    m.setLocale(stockTable->item(row, 11) ? stockTable->item(row, 11)->text() : "");
+    m.setEmplacement(stockTable->item(row, 12) ? stockTable->item(row, 12)->text() : "");
     return m;
 }
 
@@ -1036,7 +1063,9 @@ static QDialog* buildMaterialDialog(QWidget* parent,
                                     QDateEdit*& dateEdit,
                                     QDoubleSpinBox*& consoEdit,
                                     QComboBox*& uniteCombo,
-                                    QComboBox*& produitCombo)
+                                    QComboBox*& produitCombo,
+                                    QComboBox*& localeCombo,
+                                    QComboBox*& emplacementCombo)
 {
     QDialog* dialog = new QDialog(parent);
     dialog->setObjectName("stockDialog");
@@ -1077,6 +1106,16 @@ static QDialog* buildMaterialDialog(QWidget* parent,
         else               produitCombo->addItem(it.value(), it.key());
     }
 
+    localeCombo = new QComboBox(dialog);
+    localeCombo->addItem("— Aucune locale —", "");
+    for (const QString& n : StockLocales::localeNames())
+        localeCombo->addItem(n, n);
+
+    emplacementCombo = new QComboBox(dialog);
+    emplacementCombo->addItem("— Aucun emplacement —", "");
+    for (const QString& e : StockLocales::emplacements())
+        emplacementCombo->addItem(e, e);
+
     // Populate initial data if provided
     if (initialData) {
         nomEdit->setText(initialData->getNom());
@@ -1091,7 +1130,13 @@ static QDialog* buildMaterialDialog(QWidget* parent,
         uniteCombo->setCurrentText(initialData->getUnite());
         int idx = produitCombo->findData(initialData->getIdProduit());
         if (idx >= 0) produitCombo->setCurrentIndex(idx);
-        else produitCombo->setCurrentIndex(0); // "Aucun produit"
+        else produitCombo->setCurrentIndex(0);
+
+        int locIdx = localeCombo->findData(initialData->getLocale());
+        if (locIdx >= 0) localeCombo->setCurrentIndex(locIdx);
+
+        int emplIdx = emplacementCombo->findData(initialData->getEmplacement());
+        if (emplIdx >= 0) emplacementCombo->setCurrentIndex(emplIdx);
     }
 
     // Error labels
@@ -1128,7 +1173,9 @@ static QDialog* buildMaterialDialog(QWidget* parent,
     addRow("Date dernière commande *",  dateEdit,    errorDate);
     addRow("Consommation mensuelle *",  consoEdit,   errorConso);
     addRow("Unité *",                   uniteCombo,  errorUnit);
-    form->addRow("Produit associé",     produitCombo); // optional
+    form->addRow("Produit associé",     produitCombo);
+    form->addRow("Locale (entrepôt)",   localeCombo);
+    form->addRow("Emplacement",         emplacementCombo);
 
     mainLayout->addLayout(form);
 
@@ -1210,6 +1257,8 @@ void StockPage::onAddButtonClicked()
     QDoubleSpinBox* consoEdit;
     QComboBox* uniteCombo;
     QComboBox* produitCombo;
+    QComboBox* localeCombo;
+    QComboBox* emplacementCombo;
 
     QDialog* dialog = buildMaterialDialog(this,
                                           "Ajouter un matériau",
@@ -1226,7 +1275,9 @@ void StockPage::onAddButtonClicked()
                                           dateEdit,
                                           consoEdit,
                                           uniteCombo,
-                                          produitCombo);
+                                          produitCombo,
+                                          localeCombo,
+                                          emplacementCombo);
 
     if (dialog->exec() == QDialog::Accepted) {
         StockMaterial mat;
@@ -1240,6 +1291,8 @@ void StockPage::onAddButtonClicked()
         mat.setConsoMensuelle(consoEdit->value());
         mat.setUnite(uniteCombo->currentText());
         mat.setIdProduit(produitCombo->currentData().toInt());
+        mat.setLocale(localeCombo->currentData().toString());
+        mat.setEmplacement(emplacementCombo->currentData().toString());
 
         if (StockDatabase::instance().addMaterial(mat)) {
             QMessageBox::information(this, "Succès", "Matériau ajouté avec succès.");
@@ -1270,6 +1323,9 @@ void StockPage::onEditButtonClicked()
     QComboBox* uniteCombo;
     QComboBox* produitCombo;
 
+    QComboBox* localeCombo;
+    QComboBox* emplacementCombo;
+
     QDialog* dialog = buildMaterialDialog(this,
                                           "Modifier un matériau",
                                           &current,
@@ -1285,7 +1341,9 @@ void StockPage::onEditButtonClicked()
                                           dateEdit,
                                           consoEdit,
                                           uniteCombo,
-                                          produitCombo);
+                                          produitCombo,
+                                          localeCombo,
+                                          emplacementCombo);
 
     if (dialog->exec() == QDialog::Accepted) {
         current.setNom(nomEdit->text().trimmed());
@@ -1298,6 +1356,8 @@ void StockPage::onEditButtonClicked()
         current.setConsoMensuelle(consoEdit->value());
         current.setUnite(uniteCombo->currentText());
         current.setIdProduit(produitCombo->currentData().toInt());
+        current.setLocale(localeCombo->currentData().toString());
+        current.setEmplacement(emplacementCombo->currentData().toString());
 
         if (StockDatabase::instance().updateMaterial(current)) {
             QMessageBox::information(this, "Succès", "Matériau mis à jour avec succès.");
@@ -1332,7 +1392,8 @@ void StockPage::onViewTriggered(int row, int)
     if (row < 0) return;
     QStringList labels = {"ID","Nom","Type","Quantité en stock","Prix unitaire (DT)",
                           "Fournisseur","Seuil alerte","Dernière commande",
-                          "Conso. mensuelle","Unité","Produit associé"};
+                          "Conso. mensuelle","Unité","Produit associé",
+                          "Locale","Emplacement"};
     QDialog dialog(this);
     dialog.setObjectName("stockViewDialog");
     dialog.setWindowTitle("Détails du matériau");
@@ -1356,6 +1417,81 @@ void StockPage::onViewTriggered(int row, int)
     connect(closeBtn, &QPushButton::clicked, &dialog, &QDialog::accept);
     mainLayout->addWidget(closeBtn, 0, Qt::AlignCenter);
     dialog.exec();
+}
+
+// ---------------------------------------------------------------------------
+//  setupTrayIcon : initialise la notification système
+// ---------------------------------------------------------------------------
+void StockPage::setupTrayIcon()
+{
+    if (!QSystemTrayIcon::isSystemTrayAvailable()) return;
+
+    m_trayIcon = new QSystemTrayIcon(this);
+    // Utilise l'icône d'application, ou une icône générique si non définie
+    QIcon icon = QApplication::windowIcon();
+    if (icon.isNull())
+        icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
+    m_trayIcon->setIcon(icon);
+    m_trayIcon->setToolTip("WoodFlow — Stock");
+    m_trayIcon->show();
+}
+
+// ---------------------------------------------------------------------------
+//  onBellClicked : ouvre / ferme le panneau de notifications
+// ---------------------------------------------------------------------------
+void StockPage::onBellClicked()
+{
+    if (m_alertPanel->isVisible()) {
+        m_alertPanel->hide();
+        return;
+    }
+
+    // Recharger les matériaux en alerte
+    QList<StockMaterial> all = StockDatabase::instance().getAllMaterials();
+    QList<StockMaterial> alerts;
+    for (const auto& m : all)
+        if (m.isBelowAlert()) alerts.append(m);
+
+    m_alertPanel->populate(alerts);
+    m_alertPanel->showUnder(m_bell);
+}
+
+// ---------------------------------------------------------------------------
+//  onAlertSelected : l'utilisateur a cliqué sur une carte → sélectionner la ligne
+// ---------------------------------------------------------------------------
+void StockPage::onAlertSelected(int materialId)
+{
+    // S'assurer qu'on est sur la page table
+    mainStack->setCurrentIndex(0);
+
+    // Chercher la ligne correspondant à l'ID dans le QTableWidget
+    for (int row = 0; row < stockTable->rowCount(); ++row) {
+        QTableWidgetItem *idItem = stockTable->item(row, 0); // colonne ID (cachée)
+        if (idItem && idItem->text().toInt() == materialId) {
+            stockTable->selectRow(row);
+            stockTable->scrollToItem(idItem);
+            break;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+//  onNewAlertsDetected : nouvelles alertes → notification système
+// ---------------------------------------------------------------------------
+void StockPage::onNewAlertsDetected(int count)
+{
+    if (!m_trayIcon || count == 0) return;
+
+    QString msg = count == 1
+                      ? "1 matériau est passé sous son seuil d'alerte."
+                      : QString("%1 matériaux sont passés sous leur seuil d'alerte.").arg(count);
+
+    m_trayIcon->showMessage(
+        "Alerte Stock WoodFlow",
+        msg,
+        QSystemTrayIcon::Warning,
+        5000 // durée en ms
+        );
 }
 
 void StockPage::onShowAlertsClicked()
@@ -1439,4 +1575,74 @@ void StockPage::onFilterByProduitChanged(int)
                                     : StockDatabase::instance().getMaterialsByProduit(idProduit);
     searchEdit->blockSignals(true); searchEdit->clear(); searchEdit->blockSignals(false);
     refreshTable(list);
+}
+void StockPage::setupMapPage()
+{
+    mapPage = new QWidget();
+    QVBoxLayout *pageLayout = new QVBoxLayout(mapPage);
+    pageLayout->setContentsMargins(0, 0, 0, 0);
+    pageLayout->setSpacing(0);
+
+    // ── Back button header ───────────────────────────────────────────────────
+    QFrame *header = new QFrame(mapPage);
+    header->setObjectName("mapHeader");
+
+    bool isDark = qApp->styleSheet().contains("0f0f0f");
+    header->setStyleSheet(isDark
+                              ? "QFrame#mapHeader { background:#1a1a1a; border-bottom:1px solid #2a2a2a; }"
+                              : "QFrame#mapHeader { background:#ffffff; border-bottom:1px solid #e5e7eb; }");
+
+    QHBoxLayout *hLay = new QHBoxLayout(header);
+    hLay->setContentsMargins(16, 10, 16, 10);
+
+    QPushButton *backBtn = new QPushButton("<- Retour au stock", mapPage);
+    backBtn->setObjectName("backButton");
+    backBtn->setCursor(Qt::PointingHandCursor);
+    backBtn->setFixedHeight(34);
+    connect(backBtn, &QPushButton::clicked, this, &StockPage::onBackFromMapClicked);
+
+    QLabel *pageTitle = new QLabel("Carte des entrepots — Tunisie", mapPage);
+    pageTitle->setObjectName("dialogTitle");
+    {
+        QFont f = pageTitle->font(); f.setPixelSize(15); f.setBold(true);
+        pageTitle->setFont(f);
+    }
+
+    hLay->addWidget(backBtn);
+    hLay->addStretch();
+    hLay->addWidget(pageTitle);
+    hLay->addStretch();
+    pageLayout->addWidget(header);
+
+    // ── Body: StockMapView (with built-in toolbar) + side panel ─────────────
+    QHBoxLayout *body = new QHBoxLayout();
+    body->setContentsMargins(0, 0, 0, 0);
+    body->setSpacing(0);
+
+    m_mapView = new StockMapView(mapPage);
+    m_mapView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    WarehouseDetailPanel *detailPanel = new WarehouseDetailPanel(mapPage);
+
+    connect(m_mapView,   &StockMapView::localeClicked,
+            detailPanel, &WarehouseDetailPanel::showLocale);
+
+    connect(detailPanel, &WarehouseDetailPanel::materialSelected,
+            this,        &StockPage::onAlertSelected);
+
+    body->addWidget(m_mapView, 1);
+    body->addWidget(detailPanel);
+
+    pageLayout->addLayout(body, 1);
+}
+void StockPage::onShowMapClicked()
+{
+    if (m_mapView)
+        m_mapView->refresh();
+    mainStack->setCurrentWidget(mapPage);
+}
+
+void StockPage::onBackFromMapClicked()
+{
+    mainStack->setCurrentWidget(tablePage);
 }

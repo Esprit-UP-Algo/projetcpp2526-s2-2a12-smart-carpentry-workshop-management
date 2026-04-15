@@ -4,6 +4,7 @@
 #include "src/models/stockmaterial.h"
 #include <QList>
 #include <QString>
+#include <QMap>
 
 /**
  * StockDatabase — thin Oracle DB wrapper (singleton).
@@ -23,6 +24,12 @@ public:
     // Recherche par produit associé (FK)
     QList<StockMaterial> getMaterialsByProduit(int idProduit) const;
 
+    // Recherche par locale (pour la carte)
+    QList<StockMaterial> getMaterialsByLocale(const QString& locale) const;
+
+    // Nombre de matériaux par locale (pour la carte — évite de charger tout)
+    QMap<QString, int> getCountByLocale() const;
+
     // Search
     QList<StockMaterial> searchByNom(const QString& nom)             const;
     QList<StockMaterial> searchByType(const QString& type)           const;
@@ -33,10 +40,10 @@ public:
     QList<StockMaterial> sortByConsoMensuelle(bool ascending = true) const;
 
     // Stats
-    double getTotalValue()         const;   // SUM(QUANTITE_MAT * PRIX_UNITAIRE)
+    double getTotalValue()         const;
     int    getTotalCount()         const;
-    int    getAlertCount()         const;   // WHERE QUANTITE_MAT < SEUIL_ALERTE
-    double getAverageRenewalRate() const;   // AVG(CONSO_MENSUELLE)
+    int    getAlertCount()         const;
+    double getAverageRenewalRate() const;
 
 private:
     StockDatabase() = default;

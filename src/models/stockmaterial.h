@@ -12,7 +12,9 @@ public:
                   const QString& fournisseur, double seuilAlerte,
                   const QDate& lastOrder, double consoMensuelle,
                   const QString& unite = QString(),
-                  int idProduit = 0);
+                  int idProduit = 0,
+                  const QString& locale = QString(),
+                  const QString& emplacement = QString());
 
     // Getters
     int     getId()             const { return m_id; }
@@ -25,7 +27,9 @@ public:
     QDate   getLastOrder()      const { return m_lastOrder; }
     double  getConsoMensuelle() const { return m_consoMensuelle; }
     QString getUnite()          const { return m_unite; }
-    int     getIdProduit()      const { return m_idProduit; }   // FK → PRODUIT (0 = aucun)
+    int     getIdProduit()      const { return m_idProduit; }
+    QString getLocale()         const { return m_locale; }
+    QString getEmplacement()    const { return m_emplacement; }
 
     // Setters
     void setId(int v)                     { m_id = v; }
@@ -38,7 +42,9 @@ public:
     void setLastOrder(const QDate& v)     { m_lastOrder = v; }
     void setConsoMensuelle(double v)      { m_consoMensuelle = v; }
     void setUnite(const QString& v)       { m_unite = v; }
-    void setIdProduit(int v)              { m_idProduit = v; }  // 0 = aucun produit associé
+    void setIdProduit(int v)              { m_idProduit = v; }
+    void setLocale(const QString& v)      { m_locale = v; }
+    void setEmplacement(const QString& v) { m_emplacement = v; }
 
     bool isBelowAlert() const { return m_quantite < m_seuilAlerte; }
     bool isValid()      const;
@@ -56,7 +62,9 @@ private:
     QDate   m_lastOrder;
     double  m_consoMensuelle = 0.0;
     QString m_unite;
-    int     m_idProduit      = 0;   // FK → PRODUIT.ID_PROD  (0 = NULL en DB)
+    int     m_idProduit      = 0;
+    QString m_locale;        // nom de la locale (ex: "Sfax Nord")
+    QString m_emplacement;   // code emplacement (ex: "A1", "C3")
 };
 
 #endif // STOCKMATERIAL_H

@@ -9,8 +9,15 @@
 #include <QLabel>
 #include <QMap>
 #include <QStackedWidget>
+#include <QSystemTrayIcon>
+#include <QComboBox>
 
 #include "src/models/stockmaterial.h"
+#include "stockalertbell.h"
+#include "stockalertpanel.h"
+
+// Forward declarations
+class StockMapView;
 
 class StockPage : public QWidget
 {
@@ -36,26 +43,44 @@ private slots:
     // Navigation
     void onShowStatsClicked();
     void onBackFromStatsClicked();
+    void onShowMapClicked();
+    void onBackFromMapClicked();
+
+    // Alertes
+    void onBellClicked();
+    void onAlertSelected(int materialId);
+    void onNewAlertsDetected(int count);
 
 private:
     void setupUI();
     void setupStatsPage();
+    void setupMapPage();
+    void setupTrayIcon();
     void loadProduitsMap();
     void refreshTable(const QList<StockMaterial>& materials);
     StockMaterial materialFromCurrentRow() const;
 
-    // Stacked widget (page 0 = table, page 1 = stats)
+    // Stacked widget (0 = table, 1 = stats, 2 = map)
     QStackedWidget *mainStack;
 
     // --- Page table ---
-    QWidget      *tablePage;
-    QTableWidget *stockTable;
-    QLineEdit    *searchEdit;
-    QComboBox    *sortCombo;
-    QComboBox    *produitFilterCombo;
+    QWidget          *tablePage;
+    QTableWidget     *stockTable;
+    QLineEdit        *searchEdit;
+    QComboBox        *sortCombo;
+    QComboBox        *produitFilterCombo;
+
+    // --- Cloche + panneau de notifications ---
+    StockAlertBell   *m_bell        = nullptr;
+    StockAlertPanel  *m_alertPanel  = nullptr;
+    QSystemTrayIcon  *m_trayIcon    = nullptr;
 
     // --- Page stats ---
     QWidget *statsPage;
+
+    // --- Page carte ---
+    QWidget      *mapPage      = nullptr;
+    StockMapView *m_mapView    = nullptr;
 
     // Map id_produit → nom_produit
     QMap<int, QString> m_produitsMap;

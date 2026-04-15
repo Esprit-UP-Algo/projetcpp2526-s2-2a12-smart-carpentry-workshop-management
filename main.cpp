@@ -4,9 +4,13 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QDebug>
+#include <QQuickStyle>
 
 int main(int argc, char *argv[])
 {
+    // Must be set before QApplication is constructed
+    QQuickStyle::setStyle("Basic");
+
     QApplication a(argc, argv);
 
     // Debug: show available SQL drivers
@@ -14,12 +18,12 @@ int main(int argc, char *argv[])
 
     if (!Connection::createInstance().createconnect()) {
         QMessageBox::critical(nullptr,
-            "Échec de connexion",
-            "Impossible de se connecter à la base de données Oracle.\n\n"
-            "Vérifiez que :\n"
-            "• Le conteneur Docker Oracle est démarré\n"
-            "• La source ODBC 'CPP_PROJECT_WS' est configurée\n"
-            "• Les pilotes Qt SQL sont installés");
+                              "Échec de connexion",
+                              "Impossible de se connecter à la base de données Oracle.\n\n"
+                              "Vérifiez que :\n"
+                              "• Le conteneur Docker Oracle est démarré\n"
+                              "• La source ODBC 'CPP_PROJECT_WS' est configurée\n"
+                              "• Les pilotes Qt SQL sont installés");
 
         return 1;
     }
