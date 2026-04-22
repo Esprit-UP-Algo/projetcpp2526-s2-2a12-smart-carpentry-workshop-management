@@ -23,6 +23,9 @@ private slots:
     void onExportPdfClicked();
     void onSearchTextChanged(const QString &text);
     void onRowDoubleClicked(int row, int column);
+    void onStatsClicked();
+    void onCalendarClicked();
+    void onEmailAlertClicked();
 
 private:
     void setupUI();
@@ -57,12 +60,9 @@ private:
     QPushButton  *m_editBtn;
     QPushButton  *m_deleteBtn;
     QPushButton  *m_exportPdfBtn;
-
-    // Stat labels
-    QLabel *m_lblTotal;
-    QLabel *m_lblEnCours;
-    QLabel *m_lblTermines;
-    QLabel *m_lblBudget;
+    QPushButton *m_statsBtn;
+    QPushButton *m_calendarBtn;
+    QPushButton *m_emailAlertBtn;
 };
 
 #endif // PROJECTMANAGEMENTPAGE_H

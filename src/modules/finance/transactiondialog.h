@@ -18,17 +18,20 @@ public:
 
     void setData(const QMap<QString, QString> &data);
     QMap<QString, QString> getData() const;
+    void setProjects(const QMap<QString, QString> &projects);
 
 private:
     void setupUI();
-
+    void loadProjectsFromDatabase();
     QComboBox *m_typeCombo;
     QComboBox *m_modeCombo;
     QComboBox *m_statutCombo;
     QComboBox *m_categoryCombo;
+    QComboBox *m_projetCombo;
     QLineEdit *m_montantEdit;
     QDateEdit *m_dateEdit;
     QDialogButtonBox *m_buttonBox;
+
 };
 
 #endif // TRANSACTIONDIALOG_H

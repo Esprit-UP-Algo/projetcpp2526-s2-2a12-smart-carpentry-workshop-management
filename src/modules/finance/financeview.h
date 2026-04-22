@@ -13,7 +13,7 @@
 
 class FinanceView : public QWidget
 {
-    Q_OBJECT  // ← IMPORTANT : Cette macro est nécessaire
+    Q_OBJECT
 public:
     explicit FinanceView(QWidget *parent = nullptr);
     ~FinanceView();
@@ -27,6 +27,7 @@ signals:
     void deleteRequested(const QString &id);
     void exportRequested();
     void statsRequested();
+
 private slots:
     void onAddClicked();
     void onEditClicked(int row);
@@ -38,12 +39,19 @@ private slots:
     void onResetFilters();
     void onModelDataChanged();
     void onModelError(const QString &error);
-
+    
+    void onArchiveClicked();
 private:
     void setupUI();
     void setupConnections();
     void applyFilters();
     void loadTransactions();
+    QPushButton *m_archiveButton;
+
+
+    void exportToExcelNative(const QString &fileName,
+                             const FinanceModel::FinanceStats &stats,
+                             const QList<FinanceModel::Transaction> &transactions);
 
     FinanceModel *m_model;
 

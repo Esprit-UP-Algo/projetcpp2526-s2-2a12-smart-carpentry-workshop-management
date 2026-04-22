@@ -1,4 +1,7 @@
 #include "projectmanagementpage.h"
+#include "projectstatspage.h"
+#include "projectcalendarpage.h"
+#include "projectemailalerts.h"
 #include "src/database/projectdatabase.h"
 #include "src/common/projectvalidators.h"
 
@@ -62,31 +65,36 @@ void ProjectManagementPage::setupUI()
     mainLayout->setContentsMargins(25, 25, 25, 25);
     mainLayout->setSpacing(16);
 
-    // ── Stat cards ───────────────────────────────────────────
-    QHBoxLayout *statsLayout = new QHBoxLayout();
-    statsLayout->setSpacing(14);
+    // ── Top action row: Stats + Calendar ────────────────────
+    QHBoxLayout *topActions = new QHBoxLayout();
+    topActions->setSpacing(10);
 
-    auto makeCard = [&](const QString& label, QLabel*& valueLabel, const QString& color) -> QFrame* {
-        QFrame *card = new QFrame(this);
-        card->setStyleSheet(QString(
-                                "QFrame { background:%1; border-radius:10px; padding:6px; }").arg(color));
-        card->setFixedHeight(80);
-        QVBoxLayout *cl = new QVBoxLayout(card);
-        cl->setContentsMargins(14, 8, 14, 8);
-        QLabel *lbl = new QLabel(label, card);
-        lbl->setStyleSheet("color:rgba(255,255,255,0.85); font-size:11px; font-weight:600;");
-        valueLabel = new QLabel("—", card);
-        valueLabel->setStyleSheet("color:white; font-size:22px; font-weight:bold;");
-        cl->addWidget(lbl);
-        cl->addWidget(valueLabel);
-        return card;
-    };
+    m_statsBtn    = new QPushButton("Statistiques", this);
+    m_calendarBtn = new QPushButton("Calendrier",   this);
 
-    statsLayout->addWidget(makeCard("Total Projets",      m_lblTotal,    "#5b6f8a"));
-    statsLayout->addWidget(makeCard("En cours",           m_lblEnCours,  "#2ecc71"));
-    statsLayout->addWidget(makeCard("Terminés",           m_lblTermines, "#3498db"));
-    statsLayout->addWidget(makeCard("Budget Total (DT)",  m_lblBudget,   "#8A9A5B"));
-    mainLayout->addLayout(statsLayout);
+    for (auto btn : {m_statsBtn, m_calendarBtn}) {
+        btn->setFixedHeight(38);
+        btn->setCursor(Qt::PointingHandCursor);
+        btn->setStyleSheet(
+            "QPushButton{background:#5b6f8a;color:white;border:none;"
+            "border-radius:8px;font-size:13px;font-weight:700;padding:0 20px;}"
+            "QPushButton:hover{background:#6b7f9a;}");
+    }
+
+    topActions->addWidget(m_statsBtn);
+    topActions->addWidget(m_calendarBtn);
+    topActions->addStretch();
+    mainLayout->addLayout(topActions);
+
+    m_emailAlertBtn = new QPushButton("Alertes Deadline", this);
+    m_emailAlertBtn->setFixedHeight(38);
+    m_emailAlertBtn->setCursor(Qt::PointingHandCursor);
+    m_emailAlertBtn->setStyleSheet(
+        "QPushButton{background:#e67e22;color:white;border:none;"
+        "border-radius:8px;font-size:13px;font-weight:700;padding:0 20px;}"
+        "QPushButton:hover{background:#f39c12;}");
+    topActions->addWidget(m_emailAlertBtn);
+
 
     // ── Toolbar ──────────────────────────────────────────────
     QHBoxLayout *toolbar = new QHBoxLayout();
@@ -102,6 +110,8 @@ void ProjectManagementPage::setupUI()
     m_searchEdit->setMinimumWidth(220);
     m_searchEdit->setFixedHeight(36);
 
+
+
     for (auto btn : {m_addBtn, m_editBtn, m_deleteBtn, m_exportPdfBtn}) {
         btn->setObjectName("actionButton");
         btn->setCursor(Qt::PointingHandCursor);
@@ -114,6 +124,8 @@ void ProjectManagementPage::setupUI()
     toolbar->addWidget(m_exportPdfBtn);
     toolbar->addStretch();
     toolbar->addWidget(m_searchEdit);
+
+
     mainLayout->addLayout(toolbar);
 
     // ── Table ────────────────────────────────────────────────
@@ -144,6 +156,9 @@ void ProjectManagementPage::setupUI()
     connect(m_exportPdfBtn, &QPushButton::clicked, this, &ProjectManagementPage::onExportPdfClicked);
     connect(m_searchEdit,   &QLineEdit::textChanged, this, &ProjectManagementPage::onSearchTextChanged);
     connect(m_table, &QTableWidget::cellDoubleClicked, this, &ProjectManagementPage::onRowDoubleClicked);
+    connect(m_statsBtn, &QPushButton::clicked, this, &ProjectManagementPage::onStatsClicked);
+    connect(m_calendarBtn, &QPushButton::clicked, this, &ProjectManagementPage::onCalendarClicked);
+    connect(m_emailAlertBtn, &QPushButton::clicked, this, &ProjectManagementPage::onEmailAlertClicked);
 }
 
 // ============================================================
@@ -194,17 +209,6 @@ void ProjectManagementPage::populateTable(const QList<Projet>& projets)
                                : "—";
         cell(COL_CHEF, chefName);
     }
-
-    // Update stat cards
-    int total    = projets.size();
-    int enCours  = ProjectDatabase::instance().getCountByStatus("En cours");
-    int termines = ProjectDatabase::instance().getCountByStatus("Terminé");
-    double budgetTotal = ProjectDatabase::instance().getTotalBudget();
-
-    m_lblTotal->setText(QString::number(total));
-    m_lblEnCours->setText(QString::number(enCours));
-    m_lblTermines->setText(QString::number(termines));
-    m_lblBudget->setText(QString::number(budgetTotal, 'f', 0));
 }
 
 void ProjectManagementPage::refreshTable()
@@ -480,6 +484,7 @@ void ProjectManagementPage::onEditButtonClicked()
     Projet existing = ProjectDatabase::instance().getProjet(id);
 
     ProjectFormData fd;
+    fd.id           = id;
     fd.nom          = existing.getNom();
     fd.client       = existing.getClient();
     fd.adresse      = existing.getAdresse();
@@ -864,5 +869,23 @@ void ProjectManagementPage::onRowDoubleClicked(int row, int /*column*/)
     vl->addSpacing(6);
     vl->addWidget(closeBtn, 0, Qt::AlignCenter);
 
+    dlg.exec();
+}
+
+void ProjectManagementPage::onStatsClicked()
+{
+    ProjectStatsPage dlg(this);
+    dlg.exec();
+}
+
+void ProjectManagementPage::onCalendarClicked()
+{
+    ProjectCalendarPage dlg(this);
+    dlg.exec();
+}
+
+void ProjectManagementPage::onEmailAlertClicked()
+{
+    ProjectEmailAlertDialog dlg(this);
     dlg.exec();
 }

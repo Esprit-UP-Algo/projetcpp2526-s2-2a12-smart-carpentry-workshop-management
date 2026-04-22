@@ -17,6 +17,7 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS ui ui/modules/auth)
 find_package(Qt6 COMPONENTS
     Core
     Widgets
+    Charts
     PrintSupport
     Sql
     Network
@@ -30,7 +31,7 @@ find_package(Qt6 COMPONENTS
 )
 if (NOT Qt6_FOUND)
     find_package(Qt5 5.15 REQUIRED COMPONENTS
-        Core Widgets PrintSupport Sql Network SvgWidgets
+        Core Widgets Charts PrintSupport Sql Network SvgWidgets
         Location Positioning Quick QuickWidgets QuickControls2)
 endif()
 
@@ -97,7 +98,17 @@ set(PROJECT_SOURCES
     src/modules/finance/financeview.cpp
     src/modules/finance/transactiondialog.h
     src/modules/finance/transactiondialog.cpp
-
+    # Config
+    src/config/configmanager.cpp
+    src/config/configmanager.h
+    
+    # Chat Module
+    src/models/chatmessage.cpp
+    src/models/chatmessage.h
+    src/services/openrouterservice.cpp
+    src/services/openrouterservice.h
+    src/modules/chat/chatbotwidget.cpp
+    src/modules/chat/chatbotwidget.h
     # UI Files
     ui/modules/auth/loginpage.ui
 )
@@ -129,6 +140,8 @@ if(Qt6_FOUND)
         QML_FILES
             src/modules/stock/qml/MapView.qml
         RESOURCE_PREFIX /
+        SOURCES src/modules/projects/projectcalendarpage.h src/modules/projects/projectcalendarpage.cpp
+        SOURCES src/modules/projects/projectemailalerts.h src/modules/projects/projectemailalerts.cpp
     )
 else()
     add_executable(WoodFlow ${PROJECT_SOURCES})
@@ -145,6 +158,7 @@ if(Qt6_FOUND)
     target_link_libraries(WoodFlow PRIVATE
         Qt6::Core
         Qt6::Widgets
+        Qt6::Charts
         Qt6::PrintSupport
         Qt6::Sql
         Qt6::Network
@@ -157,7 +171,7 @@ if(Qt6_FOUND)
     )
 else()
     target_link_libraries(WoodFlow PRIVATE
-        Qt5::Core Qt5::Widgets Qt5::PrintSupport Qt5::Sql Qt5::Network Qt5::SvgWidgets
+        Qt5::Core Qt5::Widgets Qt5::Charts Qt5::PrintSupport Qt5::Sql Qt5::Network Qt5::SvgWidgets
         Qt5::Location Qt5::Positioning Qt5::Quick Qt5::QuickWidgets Qt5::QuickControls2
 )
 endif()
@@ -189,3 +203,7 @@ set_target_properties(WoodFlow PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
 )
+if(EXISTS ${CMAKE_SOURCE_DIR}/config.ini)
+    configure_file(${CMAKE_SOURCE_DIR}/config.ini ${CMAKE_BINARY_DIR}/config.ini COPYONLY)
+    message(STATUS "config.ini copied from source to build directory")
+endif()
