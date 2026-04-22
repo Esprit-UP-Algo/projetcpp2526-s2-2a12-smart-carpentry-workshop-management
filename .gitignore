@@ -1,8 +1,4 @@
 
-# Ignore config file with API keys
-config.ini
-*.ini
-
 # Ignore build directory
 build/
 build-*/
