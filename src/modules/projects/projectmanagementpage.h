@@ -8,6 +8,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include "src/models/projet.h"
+#include "lcdconnectorwidget.h"
 
 class ProjectManagementPage : public QWidget
 {
@@ -26,6 +27,7 @@ private slots:
     void onStatsClicked();
     void onCalendarClicked();
     void onEmailAlertClicked();
+    void onQrScannerClicked();
 
 private:
     void setupUI();
@@ -63,6 +65,7 @@ private:
     QPushButton *m_statsBtn;
     QPushButton *m_calendarBtn;
     QPushButton *m_emailAlertBtn;
+    LcdConnectorWidget* m_lcdWidget = nullptr;
 };
 
 #endif // PROJECTMANAGEMENTPAGE_H

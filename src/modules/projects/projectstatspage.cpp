@@ -145,10 +145,23 @@ void ProjectStatsPage::setupUI()
             return "#aaaaaa";
         };
 
+        // Calculate total for percentages
+        int totalStatusCount = 0;
+        for (auto it = statusCount.constBegin(); it != statusCount.constEnd(); ++it)
+            totalStatusCount += it.value();
+
         for (auto it = statusCount.constBegin(); it != statusCount.constEnd(); ++it) {
             if (it.value() <= 0) continue;
-            QPieSlice* slice = pie->append(
-                QString("%1  (%2)").arg(it.key()).arg(it.value()), it.value());
+
+            double percent = totalStatusCount > 0
+                                 ? (100.0 * it.value() / totalStatusCount)
+                                 : 0.0;
+            QString label = QString("%1  (%2)  %3%")
+                                .arg(it.key())
+                                .arg(it.value())
+                                .arg(percent, 0, 'f', 1);   // 1 decimal place
+
+            QPieSlice* slice = pie->append(label, it.value());
             slice->setColor(QColor(colorForStatus(it.key())));
             slice->setLabelVisible(true);
             slice->setLabelColor(QColor("#1e293b"));
@@ -196,10 +209,23 @@ void ProjectStatsPage::setupUI()
 
         QValueAxis* axisY = new QValueAxis();
         axisY->setLabelFormat("%d");
-        axisY->setTickCount(5);
+
+        // Find the highest bar value
+        int maxCount = 0;
+        for (int val : typeCount.values())
+            if (val > maxCount) maxCount = val;
+
+        // Set range always starting at zero
+        axisY->setRange(0, maxCount + 1);
+
+        // For small ranges, use integers steps to avoid duplicate labels
+        if (maxCount <= 10) {
+            axisY->setTickInterval(1);   // ticks at 0,1,2,...maxCount+1
+        } else {
+            axisY->setTickCount(6);      // about 6 evenly spaced ticks
+        }
         chart->addAxis(axisY, Qt::AlignLeft);
         series->attachAxis(axisY);
-
         chart->legend()->setVisible(false);
 
         QChartView* view = new QChartView(chart);

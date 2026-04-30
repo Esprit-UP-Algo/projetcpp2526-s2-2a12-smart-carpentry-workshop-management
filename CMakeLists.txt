@@ -27,7 +27,9 @@ find_package(Qt6 COMPONENTS
     Quick
     QuickWidgets
     QuickControls2
+    SerialPort
     QUIET
+
 )
 if (NOT Qt6_FOUND)
     find_package(Qt5 5.15 REQUIRED COMPONENTS
@@ -142,6 +144,9 @@ if(Qt6_FOUND)
         RESOURCE_PREFIX /
         SOURCES src/modules/projects/projectcalendarpage.h src/modules/projects/projectcalendarpage.cpp
         SOURCES src/modules/projects/projectemailalerts.h src/modules/projects/projectemailalerts.cpp
+        SOURCES
+        SOURCES src/modules/projects/lcdconnectorwidget.h src/modules/projects/lcdconnectorwidget.cpp
+        SOURCES src/modules/projects/lcdserialbridge.h src/modules/projects/lcdserialbridge.cpp
     )
 else()
     add_executable(WoodFlow ${PROJECT_SOURCES})
@@ -168,6 +173,7 @@ if(Qt6_FOUND)
         Qt6::Quick
         Qt6::QuickWidgets
         Qt6::QuickControls2
+        Qt6::SerialPort
     )
 else()
     target_link_libraries(WoodFlow PRIVATE

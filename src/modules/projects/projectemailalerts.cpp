@@ -44,7 +44,7 @@ void ProjectEmailAlertDialog::setupUI()
     mainLayout->setSpacing(14);
 
     // Title
-    QLabel *title = new QLabel("📧  Alertes Deadline", this);
+    QLabel *title = new QLabel("Alertes Deadline", this);
     title->setStyleSheet("font-size:18px; font-weight:800; color:#1e293b;");
     mainLayout->addWidget(title);
 

@@ -1,10 +1,12 @@
+#include "lcdconnectorwidget.h"
+#include "lcdserialbridge.h"
 #include "projectmanagementpage.h"
 #include "projectstatspage.h"
 #include "projectcalendarpage.h"
 #include "projectemailalerts.h"
 #include "src/database/projectdatabase.h"
 #include "src/common/projectvalidators.h"
-
+#include <QBuffer>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>
@@ -65,6 +67,8 @@ void ProjectManagementPage::setupUI()
     mainLayout->setContentsMargins(25, 25, 25, 25);
     mainLayout->setSpacing(16);
 
+
+
     // ── Top action row: Stats + Calendar ────────────────────
     QHBoxLayout *topActions = new QHBoxLayout();
     topActions->setSpacing(10);
@@ -84,6 +88,8 @@ void ProjectManagementPage::setupUI()
     topActions->addWidget(m_statsBtn);
     topActions->addWidget(m_calendarBtn);
     topActions->addStretch();
+    m_lcdWidget = new LcdConnectorWidget(this);
+    topActions->addWidget(m_lcdWidget);
     mainLayout->addLayout(topActions);
 
     m_emailAlertBtn = new QPushButton("Alertes Deadline", this);
@@ -159,6 +165,17 @@ void ProjectManagementPage::setupUI()
     connect(m_statsBtn, &QPushButton::clicked, this, &ProjectManagementPage::onStatsClicked);
     connect(m_calendarBtn, &QPushButton::clicked, this, &ProjectManagementPage::onCalendarClicked);
     connect(m_emailAlertBtn, &QPushButton::clicked, this, &ProjectManagementPage::onEmailAlertClicked);
+
+    // Send project info to LCD when a row is clicked (single click)
+    connect(m_table, &QTableWidget::currentCellChanged,
+            this, [this](int row, int /*col*/, int /*prevRow*/, int /*prevCol*/) {
+                if (row < 0 || row >= m_table->rowCount()) return;
+                auto get = [&](int col) -> QString {
+                    auto* it = m_table->item(row, col);
+                    return it ? it->text() : "";
+                };
+                LcdSerialBridge::instance().sendToLcd(get(COL_NOM), get(COL_STATUS));
+            });
 }
 
 // ============================================================
@@ -786,6 +803,10 @@ Document généré automatiquement par WoodFlow le %4 · Toute reproduction inte
                        .arg(p.getDeadline().toString("dd/MM/yyyy"))                  // %12
                        .arg(QString::number(p.getBudget(), 'f', 2));                 // %13
 
+
+
+
+
     QTextDocument doc;
     doc.setHtml(html);
     doc.print(&printer);
@@ -817,6 +838,8 @@ void ProjectManagementPage::onRowDoubleClicked(int row, int /*column*/)
         auto* it = m_table->item(row, col);
         return it ? it->text() : "—";
     };
+
+    LcdSerialBridge::instance().sendToLcd(get(COL_NOM), get(COL_STATUS));
 
     QString status = get(COL_STATUS);
     QString statusColor =
@@ -889,3 +912,5 @@ void ProjectManagementPage::onEmailAlertClicked()
     ProjectEmailAlertDialog dlg(this);
     dlg.exec();
 }
+
+
