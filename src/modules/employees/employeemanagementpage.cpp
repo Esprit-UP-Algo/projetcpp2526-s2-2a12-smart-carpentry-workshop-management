@@ -1,6 +1,7 @@
 #include "employeemanagementpage.h"
 #include "employeedialog.h"
 #include "../../database/employeedatabase.h"
+#include "pincodesdialog.h"
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QLabel>
@@ -158,6 +159,16 @@ void EmployeeManagementPage::createToolbar()
     m_certButton->setCursor(Qt::PointingHandCursor);
     m_certButton->setEnabled(false);   // only active when a row is selected
 
+
+
+
+
+    m_pinCodesButton = new QPushButton("Codes PIN", toolbar);
+    m_pinCodesButton->setObjectName("empSecondaryBtn");
+    m_pinCodesButton->setFixedHeight(40);
+    m_pinCodesButton->setCursor(Qt::PointingHandCursor);
+    m_pinCodesButton->setEnabled(false);
+
     m_refreshButton = new QPushButton("Actualiser", toolbar);
     m_refreshButton->setObjectName("empSecondaryBtn");
     m_refreshButton->setFixedHeight(40);
@@ -168,6 +179,7 @@ void EmployeeManagementPage::createToolbar()
     buttonLayout->addWidget(m_deleteButton);
     //buttonLayout->addWidget(m_exportButton);  // export list is broken so i commented out for now    ~lain
     buttonLayout->addWidget(m_certButton);
+    buttonLayout->addWidget(m_pinCodesButton);
     buttonLayout->addWidget(m_refreshButton);
     buttonLayout->addStretch();
 
@@ -225,6 +237,12 @@ void EmployeeManagementPage::setupConnections()
     connect(m_sortCombo,    QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EmployeeManagementPage::onSortChanged);
     connect(m_table, &QTableWidget::itemSelectionChanged, this, &EmployeeManagementPage::onTableSelectionChanged);
     connect(m_table, &QTableWidget::doubleClicked, this, &EmployeeManagementPage::onEditEmployee);
+    connect(m_pinCodesButton, &QPushButton::clicked, this, [this]() {
+            Employee e = getSelectedEmployee();
+            if (!e.isValid()) return;
+            PinCodesDialog dlg(e.getCin(), e.getFullName(), this);
+            dlg.exec();
+        });
 }
 
 // ---------------------------------------------------------------------------
@@ -312,6 +330,7 @@ void EmployeeManagementPage::updateButtonStates()
     m_editButton->setEnabled(has);
     m_deleteButton->setEnabled(has);
     m_certButton->setEnabled(has);
+    m_pinCodesButton->setEnabled(has);
 }
 
 QString EmployeeManagementPage::getPosteBadgeColor(const QString& poste) const

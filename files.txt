@@ -1,0 +1,426 @@
+.
+├── build
+│   ├── cmake_install.cmake
+│   ├── CMakeCache.txt
+│   ├── CMakeFiles
+│   │   ├── 4.3.1
+│   │   │   ├── CMakeCXXCompiler.cmake
+│   │   │   ├── CMakeDetermineCompilerABI_CXX.bin
+│   │   │   ├── CMakeSystem.cmake
+│   │   │   └── CompilerIdCXX
+│   │   │       ├── a.out
+│   │   │       ├── CMakeCXXCompilerId.cpp
+│   │   │       └── tmp
+│   │   ├── all_aotstats.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── all_qmllint.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── all_qmllint_json.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── all_qmllint_module.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── all_qmltyperegistrations.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── clean_qml_context_properties.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── cmake.check_cache
+│   │   ├── CMakeConfigureLog.yaml
+│   │   ├── CMakeDirectoryInformation.cmake
+│   │   ├── CMakeRuleHashes.txt
+│   │   ├── dump_qml_context_properties.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── generate_qmlls_build_ini_file.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── InstallScripts.json
+│   │   ├── Makefile.cmake
+│   │   ├── Makefile2
+│   │   ├── module_WoodFlow_aotstats_target.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── pkgRedirects
+│   │   ├── progress.marks
+│   │   ├── TargetDirectories.txt
+│   │   ├── WoodFlow.dir
+│   │   │   ├── build
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.internal
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── depend.make
+│   │   │   ├── DependInfo.cmake
+│   │   │   ├── flags.make
+│   │   │   ├── link.d
+│   │   │   ├── link.txt
+│   │   │   ├── main.cpp.o
+│   │   │   ├── main.cpp.o.d
+│   │   │   ├── mainwindow.cpp.o
+│   │   │   ├── mainwindow.cpp.o.d
+│   │   │   ├── progress.make
+│   │   │   ├── src
+│   │   │   │   ├── common
+│   │   │   │   │   ├── projectvalidators.cpp.o
+│   │   │   │   │   ├── projectvalidators.cpp.o.d
+│   │   │   │   │   ├── stockvalidators.cpp.o
+│   │   │   │   │   ├── stockvalidators.cpp.o.d
+│   │   │   │   │   ├── validators.cpp.o
+│   │   │   │   │   └── validators.cpp.o.d
+│   │   │   │   ├── core
+│   │   │   │   │   ├── session.cpp.o
+│   │   │   │   │   └── session.cpp.o.d
+│   │   │   │   ├── database
+│   │   │   │   │   ├── connection.cpp.o
+│   │   │   │   │   ├── connection.cpp.o.d
+│   │   │   │   │   ├── employeedatabase.cpp.o
+│   │   │   │   │   ├── employeedatabase.cpp.o.d
+│   │   │   │   │   ├── projectdatabase.cpp.o
+│   │   │   │   │   ├── projectdatabase.cpp.o.d
+│   │   │   │   │   ├── stockdatabase.cpp.o
+│   │   │   │   │   └── stockdatabase.cpp.o.d
+│   │   │   │   ├── models
+│   │   │   │   │   ├── employee.cpp.o
+│   │   │   │   │   ├── employee.cpp.o.d
+│   │   │   │   │   ├── projet.cpp.o
+│   │   │   │   │   ├── projet.cpp.o.d
+│   │   │   │   │   ├── stockmaterial.cpp.o
+│   │   │   │   │   └── stockmaterial.cpp.o.d
+│   │   │   │   └── modules
+│   │   │   │       ├── auth
+│   │   │   │       │   ├── forgotpasswordpage.cpp.o
+│   │   │   │       │   ├── forgotpasswordpage.cpp.o.d
+│   │   │   │       │   ├── loginpage.cpp.o
+│   │   │   │       │   └── loginpage.cpp.o.d
+│   │   │   │       ├── employees
+│   │   │   │       │   ├── employeedialog.cpp.o
+│   │   │   │       │   ├── employeedialog.cpp.o.d
+│   │   │   │       │   ├── employeemanagementpage.cpp.o
+│   │   │   │       │   ├── employeemanagementpage.cpp.o.d
+│   │   │   │       │   ├── pincodesdialog.cpp.o
+│   │   │   │       │   └── pincodesdialog.cpp.o.d
+│   │   │   │       ├── finance
+│   │   │   │       │   ├── financemodel.cpp.o
+│   │   │   │       │   ├── financemodel.cpp.o.d
+│   │   │   │       │   ├── financeview.cpp.o
+│   │   │   │       │   ├── financeview.cpp.o.d
+│   │   │   │       │   ├── transactiondialog.cpp.o
+│   │   │   │       │   └── transactiondialog.cpp.o.d
+│   │   │   │       ├── projects
+│   │   │   │       │   ├── projectmanagementpage.cpp.o
+│   │   │   │       │   ├── projectmanagementpage.cpp.o.d
+│   │   │   │       │   ├── projectstatspage.cpp.o
+│   │   │   │       │   └── projectstatspage.cpp.o.d
+│   │   │   │       └── stock
+│   │   │   │           ├── stockalertbell.cpp.o
+│   │   │   │           ├── stockalertbell.cpp.o.d
+│   │   │   │           ├── stockalertpanel.cpp.o
+│   │   │   │           ├── stockalertpanel.cpp.o.d
+│   │   │   │           ├── stocklocales.cpp.o
+│   │   │   │           ├── stocklocales.cpp.o.d
+│   │   │   │           ├── stockmapview.cpp.o
+│   │   │   │           ├── stockmapview.cpp.o.d
+│   │   │   │           ├── stockpage.cpp.o
+│   │   │   │           └── stockpage.cpp.o.d
+│   │   │   ├── toggleswitch.cpp.o
+│   │   │   ├── toggleswitch.cpp.o.d
+│   │   │   ├── WoodFlow_autogen
+│   │   │   │   ├── mocs_compilation.cpp.o
+│   │   │   │   └── mocs_compilation.cpp.o.d
+│   │   │   ├── woodflow_qmltyperegistrations.cpp.o
+│   │   │   └── woodflow_qmltyperegistrations.cpp.o.d
+│   │   ├── WoodFlow_autogen.dir
+│   │   │   ├── AutogenInfo.json
+│   │   │   ├── AutogenUsed.txt
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.internal
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   ├── ParseCache.txt
+│   │   │   └── progress.make
+│   │   ├── WoodFlow_autogen_timestamp_deps.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── WoodFlow_copy_qml.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── WoodFlow_copy_res.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── WoodFlow_qmlimportscan.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── WoodFlow_qmllint.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── WoodFlow_qmllint_json.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   ├── WoodFlow_qmllint_module.dir
+│   │   │   ├── build.make
+│   │   │   ├── cmake_clean.cmake
+│   │   │   ├── compiler_depend.make
+│   │   │   ├── compiler_depend.ts
+│   │   │   ├── DependInfo.cmake
+│   │   │   └── progress.make
+│   │   └── WoodFlow_qmltyperegistration.dir
+│   │       ├── build.make
+│   │       ├── cmake_clean.cmake
+│   │       ├── compiler_depend.make
+│   │       ├── compiler_depend.ts
+│   │       ├── DependInfo.cmake
+│   │       └── progress.make
+│   ├── compile_commands.json
+│   ├── Makefile
+│   ├── meta_types
+│   │   ├── qt6woodflow_metatypes.json
+│   │   ├── qt6woodflow_metatypes.json.gen
+│   │   ├── WoodFlow_json_file_list.txt
+│   │   └── WoodFlow_json_file_list.txt.timestamp
+│   ├── qmltypes
+│   │   └── WoodFlow_foreign_types.txt
+│   ├── src
+│   │   └── assets
+│   │       └── icons
+│   │           ├── icon.jpeg
+│   │           ├── logo1.png
+│   │           └── pfp.jpeg
+│   ├── style-dark.qss
+│   ├── style.qss
+│   ├── WoodFlow
+│   ├── WoodFlow_autogen
+│   │   ├── 3XISDMRZGD
+│   │   │   ├── moc_employeedialog.cpp
+│   │   │   ├── moc_employeedialog.cpp.d
+│   │   │   ├── moc_employeedialog.cpp.json
+│   │   │   ├── moc_employeemanagementpage.cpp
+│   │   │   ├── moc_employeemanagementpage.cpp.d
+│   │   │   ├── moc_employeemanagementpage.cpp.json
+│   │   │   ├── moc_pincodesdialog.cpp
+│   │   │   ├── moc_pincodesdialog.cpp.d
+│   │   │   └── moc_pincodesdialog.cpp.json
+│   │   ├── 4BVYGFSTNT
+│   │   │   ├── moc_stockalertbell.cpp
+│   │   │   ├── moc_stockalertbell.cpp.d
+│   │   │   ├── moc_stockalertbell.cpp.json
+│   │   │   ├── moc_stockalertpanel.cpp
+│   │   │   ├── moc_stockalertpanel.cpp.d
+│   │   │   ├── moc_stockalertpanel.cpp.json
+│   │   │   ├── moc_stockmapview.cpp
+│   │   │   ├── moc_stockmapview.cpp.d
+│   │   │   ├── moc_stockmapview.cpp.json
+│   │   │   ├── moc_stockpage.cpp
+│   │   │   ├── moc_stockpage.cpp.d
+│   │   │   └── moc_stockpage.cpp.json
+│   │   ├── 6MB76OGVS6
+│   │   │   ├── moc_forgotpasswordpage.cpp
+│   │   │   ├── moc_forgotpasswordpage.cpp.d
+│   │   │   ├── moc_forgotpasswordpage.cpp.json
+│   │   │   ├── moc_loginpage.cpp
+│   │   │   ├── moc_loginpage.cpp.d
+│   │   │   └── moc_loginpage.cpp.json
+│   │   ├── CPKQQ6B7AU
+│   │   │   ├── moc_projectmanagementpage.cpp
+│   │   │   ├── moc_projectmanagementpage.cpp.d
+│   │   │   ├── moc_projectmanagementpage.cpp.json
+│   │   │   ├── moc_projectstatspage.cpp
+│   │   │   ├── moc_projectstatspage.cpp.d
+│   │   │   └── moc_projectstatspage.cpp.json
+│   │   ├── deps
+│   │   ├── EWIEGA46WW
+│   │   │   ├── moc_mainwindow.cpp
+│   │   │   ├── moc_mainwindow.cpp.d
+│   │   │   ├── moc_mainwindow.cpp.json
+│   │   │   ├── moc_toggleswitch.cpp
+│   │   │   ├── moc_toggleswitch.cpp.d
+│   │   │   └── moc_toggleswitch.cpp.json
+│   │   ├── include
+│   │   │   ├── ui_loginpage.h
+│   │   │   └── ui_mainwindow.h
+│   │   ├── moc_predefs.h
+│   │   ├── mocs_compilation.cpp
+│   │   ├── RODU7W4RJJ
+│   │   │   ├── moc_financemodel.cpp
+│   │   │   ├── moc_financemodel.cpp.d
+│   │   │   ├── moc_financemodel.cpp.json
+│   │   │   ├── moc_financeview.cpp
+│   │   │   ├── moc_financeview.cpp.d
+│   │   │   ├── moc_financeview.cpp.json
+│   │   │   ├── moc_transactiondialog.cpp
+│   │   │   ├── moc_transactiondialog.cpp.d
+│   │   │   └── moc_transactiondialog.cpp.json
+│   │   └── timestamp
+│   ├── woodflow_qmltyperegistrations.cpp
+│   └── WoodFlowApp
+│       ├── qmldir
+│       ├── src
+│       │   └── modules
+│       │       └── stock
+│       │           └── qml
+│       │               └── MapView.qml
+│       ├── WoodFlow.qmltypes
+│       └── WoodFlow_qml_module_dir_map.qrc
+├── CMakeLists.txt
+├── compile_commands.json -> build/compile_commands.json
+├── docs
+│   ├── Fatima_Mejri_certif.pdf
+│   └── Sana_Trabelsi_certif.pdf
+├── files.txt
+├── main.cpp
+├── mainwindow.cpp
+├── mainwindow.h
+├── mainwindow.ui
+├── README.md
+├── src
+│   ├── assets
+│   │   └── icons
+│   │       ├── ASSETS_GUIDE.md
+│   │       ├── icon.jpeg
+│   │       ├── image_list.txt
+│   │       ├── logo1.png
+│   │       ├── pfp.jpeg
+│   │       └── README.txt
+│   ├── common
+│   │   ├── projectvalidators.cpp
+│   │   ├── projectvalidators.h
+│   │   ├── stockvalidators.cpp
+│   │   ├── stockvalidators.h
+│   │   ├── validators.cpp
+│   │   └── validators.h
+│   ├── core
+│   │   ├── session.cpp
+│   │   └── session.h
+│   ├── database
+│   │   ├── connection.cpp
+│   │   ├── connection.h
+│   │   ├── employeedatabase.cpp
+│   │   ├── employeedatabase.h
+│   │   ├── projectdatabase.cpp
+│   │   ├── projectdatabase.h
+│   │   ├── stockdatabase.cpp
+│   │   └── stockdatabase.h
+│   ├── models
+│   │   ├── employee.cpp
+│   │   ├── employee.h
+│   │   ├── projet.cpp
+│   │   ├── projet.h
+│   │   ├── stockmaterial.cpp
+│   │   └── stockmaterial.h
+│   └── modules
+│       ├── auth
+│       │   ├── forgotpasswordpage.cpp
+│       │   ├── forgotpasswordpage.h
+│       │   ├── loginpage.cpp
+│       │   ├── loginpage.h
+│       │   ├── registerpage.cpp
+│       │   └── registerpage.h
+│       ├── employees
+│       │   ├── employeedialog.cpp
+│       │   ├── employeedialog.h
+│       │   ├── employeemanagementpage.cpp
+│       │   ├── employeemanagementpage.h
+│       │   ├── 'Modèle relationnelle.docx'
+│       │   ├── pincodesdialog.cpp
+│       │   └── pincodesdialog.h
+│       ├── finance
+│       │   ├── financemodel.cpp
+│       │   ├── financemodel.h
+│       │   ├── financeview.cpp
+│       │   ├── financeview.h
+│       │   ├── transactiondialog.cpp
+│       │   └── transactiondialog.h
+│       ├── projects
+│       │   ├── projectmanagementpage.cpp
+│       │   ├── projectmanagementpage.h
+│       │   ├── projectstatspage.cpp
+│       │   └── projectstatspage.h
+│       └── stock
+│           ├── qml
+│           │   └── MapView.qml
+│           ├── stockalertbell.cpp
+│           ├── stockalertbell.h
+│           ├── stockalertpanel.cpp
+│           ├── stockalertpanel.h
+│           ├── stocklocales.cpp
+│           ├── stocklocales.h
+│           ├── stockmapview.cpp
+│           ├── stockmapview.h
+│           ├── stockpage.cpp
+│           └── stockpage.h
+├── style-dark.qss
+├── style.qss
+├── toggleswitch.cpp
+├── toggleswitch.h
+└── ui
+    └── modules
+        └── auth
+            ├── loginpage.ui
+            └── registerpage.ui

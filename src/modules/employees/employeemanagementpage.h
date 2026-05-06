@@ -46,6 +46,7 @@ private:
     QPushButton *m_deleteButton;
     QPushButton *m_exportButton;
     QPushButton *m_certButton;
+    QPushButton *m_pinCodesButton = nullptr;
     QPushButton *m_refreshButton;
 
     // Stats tab widgets

@@ -13,6 +13,10 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_AUTOUIC_SEARCH_PATHS ui ui/modules/auth)
 
+# ── libserialport (via pkg-config) ────────────────────────────────────────────
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SERIALPORT REQUIRED libserialport)
+
 # ── Qt: find ONCE with ALL required modules ───────────────────────────────────
 find_package(Qt6 COMPONENTS
     Core
@@ -77,6 +81,8 @@ set(PROJECT_SOURCES
     src/modules/employees/employeemanagementpage.h
     src/modules/employees/employeedialog.cpp
     src/modules/employees/employeedialog.h
+    src/modules/employees/pincodesdialog.cpp
+    src/modules/employees/pincodesdialog.h
 
     # Stock Module
     src/models/stockmaterial.h
@@ -134,13 +140,14 @@ else()
     add_executable(WoodFlow ${PROJECT_SOURCES})
 endif()
 
-# Include directories
+# ── Include directories ────────────────────────────────────────────────────────
 target_include_directories(WoodFlow PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${SERIALPORT_INCLUDE_DIRS}
 )
 
-# ── Link ALL Qt modules ────────────────────────────────────────────────────────
+# ── Link ALL Qt modules + libserialport ───────────────────────────────────────
 if(Qt6_FOUND)
     target_link_libraries(WoodFlow PRIVATE
         Qt6::Core
@@ -154,19 +161,21 @@ if(Qt6_FOUND)
         Qt6::Quick
         Qt6::QuickWidgets
         Qt6::QuickControls2
+        ${SERIALPORT_LIBRARIES}
     )
 else()
     target_link_libraries(WoodFlow PRIVATE
         Qt5::Core Qt5::Widgets Qt5::PrintSupport Qt5::Sql Qt5::Network Qt5::SvgWidgets
         Qt5::Location Qt5::Positioning Qt5::Quick Qt5::QuickWidgets Qt5::QuickControls2
-)
+        ${SERIALPORT_LIBRARIES}
+    )
 endif()
 
-# Copy stylesheets
-configure_file(${CMAKE_SOURCE_DIR}/style.qss     ${CMAKE_BINARY_DIR}/style.qss     COPYONLY)
+# ── Copy stylesheets ──────────────────────────────────────────────────────────
+configure_file(${CMAKE_SOURCE_DIR}/style.qss      ${CMAKE_BINARY_DIR}/style.qss      COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/style-dark.qss ${CMAKE_BINARY_DIR}/style-dark.qss COPYONLY)
 
-# Create assets directories in build
+# ── Create assets directories in build ───────────────────────────────────────
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/src/assets/icons)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/src/assets)
 
