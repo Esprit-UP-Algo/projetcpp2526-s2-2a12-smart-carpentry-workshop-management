@@ -1,0 +1,284 @@
+cmake_minimum_required(VERSION 3.16)
+
+project(WoodFlow VERSION 1.0.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS ui ui/modules/auth)
+
+# ── Qt: find ONCE with ALL required modules ───────────────────────────────────
+find_package(Qt6 COMPONENTS
+    Core
+    Widgets
+    Charts
+    PrintSupport
+    Sql
+    Network
+    SvgWidgets
+    Location
+    Positioning
+    Quick
+    QuickWidgets
+    QuickControls2
+    SerialPort
+    QUIET
+)
+
+if (NOT Qt6_FOUND)
+    find_package(Qt5 5.15 REQUIRED COMPONENTS
+        Core Widgets Charts PrintSupport Sql Network SvgWidgets
+        Location Positioning Quick QuickWidgets QuickControls2)
+    find_package(Qt5SerialPort QUIET)
+endif()
+
+set(PROJECT_SOURCES
+    main.cpp
+    mainwindow.cpp
+    mainwindow.h
+    mainwindow.ui
+    toggleswitch.cpp
+    toggleswitch.h
+
+    # Models
+    src/models/employee.cpp
+    src/models/employee.h
+    src/models/projet.h
+    src/models/projet.cpp
+
+    # Database
+    src/database/connection.cpp
+    src/database/connection.h
+    src/database/employeedatabase.cpp
+    src/database/employeedatabase.h
+    src/database/stockdatabase.h
+    src/database/stockdatabase.cpp
+    src/database/projectdatabase.h
+    src/database/projectdatabase.cpp
+
+    # Core
+    src/core/session.cpp
+    src/core/session.h
+
+    # Common
+    src/common/validators.cpp
+    src/common/validators.h
+
+    # Auth Module
+    src/modules/auth/loginpage.cpp
+    src/modules/auth/loginpage.h
+    src/modules/auth/forgotpasswordpage.cpp
+    src/modules/auth/forgotpasswordpage.h
+
+    # Employee Module
+    src/modules/employees/employeemanagementpage.cpp
+    src/modules/employees/employeemanagementpage.h
+    src/modules/employees/employeedialog.cpp
+    src/modules/employees/employeedialog.h
+
+    # Stock Module
+    src/models/stockmaterial.h
+    src/models/stockmaterial.cpp
+    src/modules/stock/stockpage.h
+    src/modules/stock/stockpage.cpp
+
+    # Projects Module
+    src/modules/projects/projectmanagementpage.h
+    src/modules/projects/projectmanagementpage.cpp
+    src/modules/projects/projectstatspage.h
+    src/modules/projects/projectstatspage.cpp
+
+    # Finance Module
+    src/modules/finance/financemodel.h
+    src/modules/finance/financemodel.cpp
+    src/modules/finance/financeview.h
+    src/modules/finance/financeview.cpp
+    src/modules/finance/transactiondialog.h
+    src/modules/finance/transactiondialog.cpp
+
+    # Config
+    src/config/configmanager.cpp
+    src/config/configmanager.h
+
+    # Chat Module
+    src/models/chatmessage.cpp
+    src/models/chatmessage.h
+    src/services/openrouterservice.cpp
+    src/services/openrouterservice.h
+    src/modules/chat/chatbotwidget.cpp
+    src/modules/chat/chatbotwidget.h
+
+    # UI Files
+    ui/modules/auth/loginpage.ui
+)
+
+if(Qt6_FOUND)
+    # Check if SerialPort is available
+    if(Qt6SerialPort_FOUND)
+        set(PROJECT_SOURCES ${PROJECT_SOURCES} src/common/arduino.cpp src/common/arduino.h)
+        set(EXTRA_QT_COMPONENTS SerialPort)
+    else()
+        # Force include arduino files even if SerialPort not found
+        set(PROJECT_SOURCES ${PROJECT_SOURCES} src/common/arduino.cpp src/common/arduino.h)
+        set(EXTRA_QT_COMPONENTS SerialPort)
+    endif()
+
+    qt_add_executable(WoodFlow ${PROJECT_SOURCES}
+        src/modules/stock/stockpage.h src/modules/stock/stockpage.cpp
+        src/database/stockdatabase.h src/database/stockdatabase.cpp
+        src/models/stockmaterial.h src/models/stockmaterial.cpp
+        src/modules/projects/projectmanagementpage.h src/modules/projects/projectmanagementpage.cpp
+        src/models/projet.h src/models/projet.cpp
+        src/database/projectdatabase.h src/database/projectdatabase.cpp
+        src/modules/projects/projectstatspage.h src/modules/projects/projectstatspage.cpp
+        src/common/projectvalidators.h src/common/projectvalidators.cpp
+        src/common/stockvalidators.h src/common/stockvalidators.cpp
+        src/modules/stock/stockalertbell.h src/modules/stock/stockalertbell.cpp
+        src/modules/stock/stockalertpanel.h src/modules/stock/stockalertpanel.cpp
+        src/modules/stock/stocklocales.h src/modules/stock/stocklocales.cpp
+
+        # Map view (Qt Location / QML-based)
+        src/modules/stock/stockmapview.h
+        src/modules/stock/stockmapview.cpp
+
+        # Arduino Bridge Module
+        src/modules/stock/arduinobridge.cpp
+        src/modules/stock/arduinobridge.h
+    )
+
+    # ── QML module: embeds MapView.qml into the binary as a Qt resource ───────
+    qt_add_qml_module(WoodFlow
+        URI WoodFlowApp
+        VERSION 1.0
+        QML_FILES
+            src/modules/stock/qml/MapView.qml
+        RESOURCE_PREFIX /
+        SOURCES src/modules/projects/projectcalendarpage.h src/modules/projects/projectcalendarpage.cpp
+        SOURCES src/modules/projects/projectemailalerts.h src/modules/projects/projectemailalerts.cpp
+        SOURCES
+        SOURCES src/modules/projects/lcdconnectorwidget.h src/modules/projects/lcdconnectorwidget.cpp
+        SOURCES src/modules/projects/lcdserialbridge.h src/modules/projects/lcdserialbridge.cpp
+        SOURCES src/database/produitdatabase.cpp
+        SOURCES src/database/produitdatabase.h
+        SOURCES src/models/produit.cpp
+        SOURCES src/models/produit.h
+        SOURCES produit3ddialog.h
+
+        SOURCES produitbarcodedialog.h
+        SOURCES produitbarcodedialog.cpp
+        SOURCES produit3ddialog.cpp
+        SOURCES src/modules/employees/pinassigndialog.h
+        SOURCES src/modules/employees/pinassigndialog.cpp
+
+    )
+else()
+    add_executable(WoodFlow ${PROJECT_SOURCES})
+endif()
+
+# Include directories
+target_include_directories(WoodFlow PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
+# ── Link ALL Qt modules ────────────────────────────────────────────────────────
+if(Qt6_FOUND)
+    target_link_libraries(WoodFlow PRIVATE
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::Charts
+        Qt6::PrintSupport
+        Qt6::Sql
+        Qt6::Network
+        Qt6::SvgWidgets
+        Qt6::Location
+        Qt6::Positioning
+        Qt6::Quick
+        Qt6::QuickWidgets
+        Qt6::QuickControls2
+    )
+    if(Qt6SerialPort_FOUND)
+        target_link_libraries(WoodFlow PRIVATE Qt6::SerialPort)
+        target_compile_definitions(WoodFlow PRIVATE QT_SERIALPORT_LIB)
+    else()
+        # Try to link SerialPort anyway
+        find_package(Qt6 QUIET COMPONENTS SerialPort)
+        if(Qt6SerialPort_FOUND)
+            target_link_libraries(WoodFlow PRIVATE Qt6::SerialPort)
+        endif()
+        target_compile_definitions(WoodFlow PRIVATE QT_SERIALPORT_LIB)
+    endif()
+else()
+    target_link_libraries(WoodFlow PRIVATE
+        Qt5::Core Qt5::Widgets Qt5::Charts Qt5::PrintSupport Qt5::Sql Qt5::Network Qt5::SvgWidgets
+        Qt5::Location Qt5::Positioning Qt5::Quick Qt5::QuickWidgets Qt5::QuickControls2
+    )
+    if(Qt5SerialPort_FOUND)
+        target_link_libraries(WoodFlow PRIVATE Qt5::SerialPort)
+        target_compile_definitions(WoodFlow PRIVATE QT_SERIALPORT_LIB)
+    endif()
+endif()
+
+# Test Arduino executable
+# Après (✅ avec Widgets ajouté + include dirs)
+if(Qt6_FOUND AND Qt6SerialPort_FOUND)
+    qt_add_executable(TestArduino test_arduino.cpp src/common/arduino.cpp src/common/arduino.h
+        src/database/produitdatabase.h
+        src/models/produit.cpp
+        src/models/produit.h
+        produit3ddialog.cpp
+        produit3ddialog.h
+        produitbarcodedialog.cpp
+        produitbarcodedialog.h
+        src/modules/employees/pinassigndialog.h
+        src/modules/employees/pinassigndialog.cpp)
+    target_link_libraries(TestArduino PRIVATE
+        Qt6::Core
+        Qt6::Widgets
+        Qt6::PrintSupport
+        Qt6::SerialPort
+        Qt6::Sql )
+    target_include_directories(TestArduino PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/src)
+    target_compile_definitions(TestArduino PRIVATE QT_SERIALPORT_LIB)
+endif()
+
+# Copy stylesheets
+configure_file(${CMAKE_SOURCE_DIR}/style.qss     ${CMAKE_BINARY_DIR}/style.qss     COPYONLY)
+configure_file(${CMAKE_SOURCE_DIR}/style-dark.qss ${CMAKE_BINARY_DIR}/style-dark.qss COPYONLY)
+
+# Create assets directories in build
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/src/assets/icons)
+file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/src/assets)
+
+if(EXISTS ${CMAKE_SOURCE_DIR}/src/assets/icons/icon.jpeg)
+    configure_file(${CMAKE_SOURCE_DIR}/src/assets/icons/icon.jpeg
+                   ${CMAKE_BINARY_DIR}/src/assets/icons/icon.jpeg COPYONLY)
+endif()
+if(EXISTS ${CMAKE_SOURCE_DIR}/src/assets/icons/pfp.jpeg)
+    configure_file(${CMAKE_SOURCE_DIR}/src/assets/icons/pfp.jpeg
+                   ${CMAKE_BINARY_DIR}/src/assets/icons/pfp.jpeg COPYONLY)
+endif()
+if(EXISTS ${CMAKE_SOURCE_DIR}/src/assets/icons/logo1.png)
+    configure_file(${CMAKE_SOURCE_DIR}/src/assets/icons/logo1.png
+                   ${CMAKE_BINARY_DIR}/src/assets/icons/logo1.png COPYONLY)
+endif()
+
+# NOTE: tunisia.svg is no longer needed — the map is now rendered by Qt Location (OSM tiles)
+
+set_target_properties(WoodFlow PROPERTIES
+    WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
+)
+
+if(EXISTS ${CMAKE_SOURCE_DIR}/config.ini)
+    configure_file(${CMAKE_SOURCE_DIR}/config.ini ${CMAKE_BINARY_DIR}/config.ini COPYONLY)
+    message(STATUS "config.ini copied from source to build directory")
+endif()
